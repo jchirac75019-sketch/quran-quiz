@@ -5,18 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Quiz Versets Coran Avancé</title>
 <style>
+  /* === Corps de page === */
   body {
     font-family: Arial, sans-serif;
     margin: 5px;
     max-width: 100%;
     padding: 0 5px;
-    font-size: 14px;
+    font-size: 14px;  /* Taille globale de base du texte */
   }
+  /* === Titre principal === */
   h1 {
     font-size: 1.2em;
     text-align: center;
     margin-bottom: 6px;
   }
+  /* === Labels, sélecteurs et inputs === */
   label, select, input {
     font-size: 0.9em;
     margin: 0 4px 6px 0;
@@ -32,6 +35,7 @@
   .rtl-range {
     direction: rtl;
   }
+  /* === Boutons dans la barre d’actions === */
   .controls {
     margin-bottom: 8px;
     display: flex;
@@ -40,14 +44,15 @@
   }
   button {
     padding: 4px 8px;
-    font-size: 0.9em;
+    font-size: 0.9em;  /* Taille des boutons : augmentez ici */
     cursor: pointer;
   }
+  /* === Grille des numéros de verset === */
   .table-wrap {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    max-height: 460px; /* réduit pour téléphone */
+    max-height: 160px; /* Hauteur de la grille ; augmentez/diminuez ici */
     overflow-y: auto;
     border: 1px solid #ccc;
     padding: 4px;
@@ -56,13 +61,14 @@
   }
   .num {
     border-radius: 5px;
-    padding: 6px 10px;
+    padding: 6px 10px;    /* Padding des numéros de verset */
     background: #d2f0d2;
     border: 1px solid #84b784;
     cursor: pointer;
     transition: background-color 0.3s;
     min-width: 36px;
     text-align: center;
+    font-size: 0.95em;    /* Taille texte numéros, ajustable */
   }
   .num.traited.correct {
     background-color: #0b3d0b;
@@ -78,7 +84,7 @@
     border-color: #5e1212;
     text-decoration: line-through;
   }
-  /* Bloc verset compact */
+  /* === Cadre affichage du verset (boîte scrollable) === */
   #ayat-box {
     position: fixed;
     bottom: 10px;
@@ -86,87 +92,95 @@
     right: 10px;
     background: #f5f5f5;
     border-radius: 8px;
-    padding: 6px 8px;
+    padding: 8px 10px;     /* Padding interne du cadre, ajustable */
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    max-height: 25vh;
-    overflow-y: auto;
-    font-size: 1em;
-    line-height: 1.2em;
+    max-height: 32vh;      /* Hauteur max du cadre, augmentez ici */
+    overflow-y: auto;      /* Scroll vertical si nécessaire */
+    font-size: 1.25em;     /* Taille de la police du verset, ajustable */
+    line-height: 1.35em;   /* Hauteur de ligne dans le texte */
     direction: rtl;
     text-align: right;
     display: none;
     z-index: 1000;
   }
+  /* === Titre du verset (Sourate N°, Verset N°) === */
   #verse-header {
     font-weight: 600;
-    font-size: 0.95em;
-    margin-bottom: 2px;
+    font-size: 1.1em;     /* Taille du titre verset, augmentez ici */
+    margin-bottom: 3px;   /* Espace sous titre, réduisez/augmentez */
   }
+  /* === Texte du verset dans la boîte === */
   #verse-text {
-    margin-bottom: 4px;
-    font-size: 2.2em;
-    line-height: 1.4em;
-    max-height: 18vh;
+    margin-bottom: 6px;   /* Espace entre texte et boutons */
+    font-size: 1.2em;     /* Taille du texte du verset, augmentez ici */
+    line-height: 1.5em;   /* Hauteur de ligne texte */
+    max-height: 15vh;     /* Hauteur max du texte dans le cadre, scroll si dépassement */
     overflow-y: auto;
   }
+  /* === Boutons "Bonne réponse" et "Mauvaise réponse" === */
   #response-buttons {
-    margin-top: 2px;
+    margin-top: 4px;      /* Espace au-dessus boutons, ajustable */
     display: flex;
     justify-content: space-between;
-    gap: 4px;
+    gap: 6px;
   }
   #response-buttons button {
     flex: 1;
-    font-size: 0.85em;
-    padding: 4px 0;
-    line-height: 1.1em;
+    font-size: 1em;       /* Taille des boutons, augmentez ici */
+    padding: 8px 0;       /* Hauteur du bouton */
+    line-height: 1.2em;
   }
+  /* === Compteurs en bas de page === */
   #counters {
     display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    font-size: 0.9em;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 1em;       /* Taille des compteurs */
     font-weight: 600;
     flex-wrap: wrap;
     justify-content: center;
   }
   .counter-box {
-    padding: 6px 10px;
+    padding: 8px 14px;
     border-radius: 5px;
     color: white;
-    flex: 1 1 120px;
+    flex: 1 1 130px;
     text-align: center;
   }
   .correct-box { background-color: #0b3d0b; }
   .incorrect-box { background-color: #8b1c1c; }
   .remaining-box { background-color: #505050; }
+  /* === Colorations textes du verset === */
   .verset-red { color: red; font-weight: bold; }
   .verset-green { color: green; font-weight: bold; }
   .verset-blue { color: blue; font-weight: bold; }
   .verset-yellow { color: orange; font-weight: bold; }
   .number-blue { color: blue; font-weight: bold; }
 
-  /* Responsive petit écran */
+  /* === Responsive pour écran petit === */
   @media (max-width: 400px) {
     body {
-      font-size: 12px;
+      font-size: 13px;
     }
     #ayat-box {
       max-height: 40vh;
-      font-size: 1em;
-      padding: 6px;
+      font-size: 1.3em;
+      padding: 10px 12px;
     }
     #response-buttons button {
-      padding: 5px 0;
-      font-size: 0.85em;
+      padding: 10px 0;
+      font-size: 1.1em;
     }
     .table-wrap {
-      max-height: 120px;
+      max-height: 140px;
     }
     .num {
-      padding: 4px 8px;
-      min-width: 30px;
-      font-size: 0.9em;
+      padding: 6px 10px;
+      min-width: 34px;
+      font-size: 1em;
+    }
+    #counters {
+      font-size: 1.1em;
     }
   }
 </style>
@@ -703,7 +717,3 @@ document.addEventListener('visibilitychange', () => {
 </script>
 </body>
 </html>
-
-
-
-
