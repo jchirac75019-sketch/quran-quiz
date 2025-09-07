@@ -5,47 +5,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Quiz Versets Coran Avancé</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 10px; max-width: 720px; }
-  h1 { text-align: center; margin-bottom: 10px; }
-  label, select, input { font-size: 1em; margin: 0 5px 10px 0; }
-  .range-wrap { display: flex; gap: 10px; align-items: center; }
-  .rtl-range { direction: rtl; }
-  input[type=number] { width: 60px; }
-  .controls { margin-bottom: 1em; display: flex; gap: 10px; flex-wrap: wrap; }
-  button { padding: 6px 12px; font-size: 1em; cursor: pointer; }
-  .table-wrap { 
-    display: flex; flex-wrap: wrap; gap: 6px; 
-    max-height: 240px; overflow-y: auto; 
-    border: 1px solid #ccc; padding: 6px; background: #fafafa; 
+  body {
+    font-family: Arial, sans-serif;
+    margin: 5px;
+    max-width: 100%;
+    padding: 0 5px;
+    font-size: 14px;
+  }
+  h1 {
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  label, select, input {
+    font-size: 0.9em;
+    margin: 0 4px 6px 0;
+  }
+  input[type=number] {
+    width: 50px;
+  }
+  .range-wrap {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .rtl-range {
+    direction: rtl;
+  }
+  .controls {
+    margin-bottom: 8px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+  }
+  button {
+    padding: 4px 8px;
+    font-size: 0.9em;
+    cursor: pointer;
+  }
+  .table-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 160px; /* réduit pour téléphone */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 4px;
+    background: #fafafa;
     user-select: none;
   }
-  .num { 
-    border-radius: 5px; padding: 8px 14px; background: #d2f0d2; 
-    border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s;
-    min-width: 42px; text-align: center;
+  .num {
+    border-radius: 5px;
+    padding: 6px 10px;
+    background: #d2f0d2;
+    border: 1px solid #84b784;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    min-width: 36px;
+    text-align: center;
   }
-  .num.traited.correct { 
-    background-color: #0b3d0b; color: #d8f5d8; cursor: default; 
-    border-color: #064206; text-decoration: line-through;
+  .num.traited.correct {
+    background-color: #0b3d0b;
+    color: #d8f5d8;
+    cursor: default;
+    border-color: #064206;
+    text-decoration: line-through;
   }
-  .num.traited.incorrect { 
-    background-color: #8b1c1c; color: #f5d8d8; cursor: default; 
-    border-color: #5e1212; text-decoration: line-through;
+  .num.traited.incorrect {
+    background-color: #8b1c1c;
+    color: #f5d8d8;
+    cursor: default;
+    border-color: #5e1212;
+    text-decoration: line-through;
   }
-  #ayat-box { 
-    background: #f5f5f5; padding: 1em; border-radius: 6px; margin-top: 1em; 
-    min-height: 90px; white-space: pre-wrap; user-select: text;
+  #ayat-box {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    max-height: 30vh;
+    overflow-y: auto;
+    font-size: 1.1em;
     direction: rtl;
     text-align: right;
+    display: none;
+    z-index: 1000;
   }
-  #response-buttons { margin-top: 10px; }
+  #verse-header {
+    font-weight: bold;
+    font-size: 1em;
+    margin-bottom: 4px;
+  }
+  #verse-text {
+    margin-bottom: 8px;
+  }
+  #response-buttons {
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  #response-buttons button {
+    flex: 1;
+    font-size: 0.9em;
+    padding: 6px 0;
+  }
   #counters {
-    display: flex; gap: 12px; margin-top: 16px; font-weight: bold;
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.9em;
+    font-weight: 600;
     flex-wrap: wrap;
+    justify-content: center;
   }
   .counter-box {
-    padding: 8px 15px; border-radius: 6px; flex: 1 1 150px;
-    color: white; text-align: center; user-select: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    color: white;
+    flex: 1 1 120px;
+    text-align: center;
   }
   .correct-box { background-color: #0b3d0b; }
   .incorrect-box { background-color: #8b1c1c; }
@@ -55,6 +138,30 @@
   .verset-blue { color: blue; font-weight: bold; }
   .verset-yellow { color: orange; font-weight: bold; }
   .number-blue { color: blue; font-weight: bold; }
+
+  /* Responsive petit écran */
+  @media (max-width: 400px) {
+    body {
+      font-size: 12px;
+    }
+    #ayat-box {
+      max-height: 40vh;
+      font-size: 1em;
+      padding: 6px;
+    }
+    #response-buttons button {
+      padding: 5px 0;
+      font-size: 0.85em;
+    }
+    .table-wrap {
+      max-height: 120px;
+    }
+    .num {
+      padding: 4px 8px;
+      min-width: 30px;
+      font-size: 0.9em;
+    }
+  }
 </style>
 </head>
 <body>
@@ -81,8 +188,8 @@
 </div>
 <div class="table-wrap" id="ayah-numbers"></div>
 <div id="ayat-box" style="display:none;">
-  <div id="verse-header" style="font-weight:bold; font-size:1.1em; margin-bottom: 8px;"></div>
-  <div id="verse-text" style="font-size:1.3em; margin-bottom: 12px;"></div>
+  <div id="verse-header"></div>
+  <div id="verse-text"></div>
   <div id="response-buttons">
     <button id="btnCorrect">إجابة صحيحة</button>
     <button id="btnIncorrect">إجابة خاطئة</button>
@@ -271,8 +378,8 @@
       correctCountLabel: "الإجابات الصحيحة :",
       errorCountLabel: "الأخطاء :",
       remainingCountLabel: "المتبقية :",
-      surahText: "السورة عدد: ",
-      ayahText: "الآية عدد: "
+      surahText: "السورة ن°: ",
+      ayahText: "الآية ن°: "
     },
     en: {
       title: "Advanced Quran Verses Quiz",
@@ -385,22 +492,25 @@
   function shuffleAyahs() {
     if (!validateInputs()) return;
     ayahNumbers = [];
-    for(let i=+startEl.value; i <= +endEl.value; i++) ayahNumbers.push(i);
-    for(let i=ayahNumbers.length-1; i>0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
+    for(let i = +startEl.value; i <= +endEl.value; i++) ayahNumbers.push(i);
+    for(let i = ayahNumbers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
       [ayahNumbers[i], ayahNumbers[j]] = [ayahNumbers[j], ayahNumbers[i]];
     }
-    traitedMap.clear(); correctCount=0; errorCount=0; verseCache.clear();
+    traitedMap.clear();
+    correctCount = 0;
+    errorCount = 0;
+    verseCache.clear();
     updateCounters();
-    currentAyah=null;
-    currentSourah=null;
-    ayatBox.style.display="none";
+    currentAyah = null;
+    currentSourah = null;
+    ayatBox.style.display = "none";
     renderAyahs();
     updateVerseHeader();
   }
 
   function sortAyahs() {
-    ayahNumbers.sort((a,b) => a-b);
+    ayahNumbers.sort((a,b) => a - b);
     renderAyahs();
   }
 
@@ -529,6 +639,7 @@
   sourahEl.value = 1;
   updateRange();
   shuffleAyahs();
+
   sourahEl.addEventListener("change", () => {
     updateRange();
     shuffleAyahs();
@@ -542,10 +653,8 @@
   btnToggleTraites.onclick = toggleTreated;
   btnCorrect.onclick = () => registerResponse(true);
   btnIncorrect.onclick = () => registerResponse(false);
-
 })();
 </script>
-
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -559,11 +668,8 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-
-<!-- Début du code Wake Lock -->
 <script>
 let wakeLock = null;
-
 async function requestWakeLock() {
   if ('wakeLock' in navigator) {
     try {
@@ -579,19 +685,14 @@ async function requestWakeLock() {
     console.log('Wake Lock API non supportée sur ce navigateur.');
   }
 }
-
 window.addEventListener('load', () => {
   requestWakeLock();
 });
-
 document.addEventListener('visibilitychange', () => {
   if (wakeLock !== null && document.visibilityState === 'visible') {
     requestWakeLock();
   }
 });
 </script>
-<!-- Fin du code Wake Lock -->
-
 </body>
 </html>
-
