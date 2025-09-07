@@ -4,8 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Quiz Versets Coran Avancé</title>
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#0b3d0b" />
 <style>
   body { font-family: Arial, sans-serif; margin: 10px; max-width: 720px; }
   h1 { text-align: center; margin-bottom: 10px; }
@@ -273,8 +271,8 @@
       correctCountLabel: "الإجابات الصحيحة :",
       errorCountLabel: "الأخطاء :",
       remainingCountLabel: "المتبقية :",
-      surahText: "السورة عدد: ",
-      ayahText: "الآية عدد: "
+      surahText: "السورة ن°: ",
+      ayahText: "الآية ن°: "
     },
     en: {
       title: "Advanced Quran Verses Quiz",
@@ -396,7 +394,7 @@
     updateCounters();
     currentAyah=null;
     currentSourah=null;
-    ayatBox.style.display = "none";
+    ayatBox.style.display="none";
     renderAyahs();
     updateVerseHeader();
   }
@@ -547,6 +545,7 @@
 
 })();
 </script>
+
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -560,6 +559,38 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- Début du code Wake Lock -->
+<script>
+let wakeLock = null;
+
+async function requestWakeLock() {
+  if ('wakeLock' in navigator) {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => {
+        console.log('Wake Lock released');
+      });
+      console.log('Wake Lock is active');
+    } catch (err) {
+      console.error(`Erreur de Wake Lock : ${err.name}, ${err.message}`);
+    }
+  } else {
+    console.log('Wake Lock API non supportée sur ce navigateur.');
+  }
+}
+
+window.addEventListener('load', () => {
+  requestWakeLock();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (wakeLock !== null && document.visibilityState === 'visible') {
+    requestWakeLock();
+  }
+});
+</script>
+<!-- Fin du code Wake Lock -->
+
 </body>
 </html>
-
