@@ -11,7 +11,7 @@
     margin: 5px;
     max-width: 100%;
     padding: 0 5px;
-    font-size: 14px;
+    font-size: 14px; /* Taille globale texte */
   }
   /* === Titre principal === */
   h1 {
@@ -19,7 +19,7 @@
     text-align: center;
     margin-bottom: 6px;
   }
-  /* === Labels, sélecteurs et inputs === */
+  /* === Labels, sélecteurs, inputs === */
   label, select, input {
     font-size: 0.9em;
     margin: 0 4px 6px 0;
@@ -35,7 +35,7 @@
   .rtl-range {
     direction: rtl;
   }
-  /* === Boutons dans la barre d’actions === */
+  /* === Boutons d’action === */
   .controls {
     margin-bottom: 8px;
     display: flex;
@@ -44,7 +44,7 @@
   }
   button {
     padding: 4px 8px;
-    font-size: 0.9em;  /* Taille des boutons : augmentez ici */
+    font-size: 0.9em; /* Taille boutons, modifiable ici */
     cursor: pointer;
   }
   /* === Grille des numéros de verset === */
@@ -52,7 +52,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    max-height: 160px; /* Hauteur de la grille ; augmentez/diminuez ici */
+    max-height: 160px; /* Hauteur de la grille */
     overflow-y: auto;
     border: 1px solid #ccc;
     padding: 4px;
@@ -61,14 +61,14 @@
   }
   .num {
     border-radius: 5px;
-    padding: 6px 10px;    /* Padding des numéros de verset */
+    padding: 6px 10px;
     background: #d2f0d2;
     border: 1px solid #84b784;
     cursor: pointer;
     transition: background-color 0.3s;
     min-width: 36px;
     text-align: center;
-    font-size: 0.95em;    /* Taille texte numéros, ajustable */
+    font-size: 0.95em;
   }
   .num.traited.correct {
     background-color: #0b3d0b;
@@ -84,7 +84,7 @@
     border-color: #5e1212;
     text-decoration: line-through;
   }
-  /* === Cadre affichage du verset (boîte scrollable) - HAUTEUR MAXI POUR ENVIRON 17 LIGNES === */
+  /* === Cadre verset maximum 9 lignes (scroll si dépasse) === */
   #ayat-box {
     position: fixed;
     bottom: 10px;
@@ -92,32 +92,29 @@
     right: 10px;
     background: #f5f5f5;
     border-radius: 8px;
-    padding: 10px 12px;    /* Padding interne ajusté */
+    padding: 10px 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    max-height: 85vh;      /* Hauteur quasi plein écran */
-    overflow-y: auto;
-    font-size: 1.2em;      /* Taille de la police agrandie */
-    line-height: 1.4em;    /* Hauteur de ligne pour confort */
+    max-height: 22em; /* Cadre plus grand que texte */
+    font-size: 1.2em;
+    line-height: 1.4em;
     direction: rtl;
     text-align: right;
     display: none;
+    overflow-y: visible; /* Scroll dans texte seul */
     z-index: 1000;
   }
-  /* === Titre du verset (Sourate N°, Verset N°) === */
   #verse-header {
     font-weight: 600;
     font-size: 1.1em;
     margin-bottom: 6px;
   }
-  /* === Texte du verset dans la boîte === */
   #verse-text {
-    margin-bottom: 8px;
+    max-height: 15em; /* Limité à env. 9 lignes */
+    overflow-y: auto;
     font-size: 1.2em;
     line-height: 1.4em;
-    max-height: 80vh;      /* Hauteur max du texte */
-    overflow-y: auto;
+    margin-bottom: 8px;
   }
-  /* === Boutons "Bonne réponse" et "Mauvaise réponse" === */
   #response-buttons {
     margin-top: 6px;
     display: flex;
@@ -130,7 +127,7 @@
     padding: 10px 0;
     line-height: 1.3em;
   }
-  /* === Compteurs en bas de page === */
+  /* === Compteurs en bas === */
   #counters {
     display: flex;
     gap: 10px;
@@ -150,22 +147,26 @@
   .correct-box { background-color: #0b3d0b; }
   .incorrect-box { background-color: #8b1c1c; }
   .remaining-box { background-color: #505050; }
-  /* === Colorations textes du verset === */
+  /* === Couleurs texte verset === */
   .verset-red { color: red; font-weight: bold; }
   .verset-green { color: green; font-weight: bold; }
   .verset-blue { color: blue; font-weight: bold; }
   .verset-yellow { color: orange; font-weight: bold; }
   .number-blue { color: blue; font-weight: bold; }
-
-  /* === Responsive pour écran petit === */
+  /* === Responsive petit écran === */
   @media (max-width: 400px) {
     body {
       font-size: 13px;
     }
     #ayat-box {
-      max-height: 90vh;
+      max-height: 24em;
       font-size: 1.3em;
       padding: 12px 14px;
+      overflow-y: visible;
+    }
+    #verse-text {
+      max-height: 17em;
+      font-size: 1.3em;
     }
     #response-buttons button {
       padding: 12px 0;
@@ -654,13 +655,10 @@
   const defaultLang = "ar";
   languageEl.value = defaultLang;
   updateInterfaceTexts(defaultLang);
-  languageEl.addEventListener("change", (e) => {
-    updateInterfaceTexts(e.target.value);
-  });
+  languageEl.addEventListener("change", (e) => updateInterfaceTexts(e.target.value));
   sourahEl.value = 1;
   updateRange();
   shuffleAyahs();
-
   sourahEl.addEventListener("change", () => {
     updateRange();
     shuffleAyahs();
@@ -675,45 +673,6 @@
   btnCorrect.onclick = () => registerResponse(true);
   btnIncorrect.onclick = () => registerResponse(false);
 })();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(registration => {
-        console.log('Service Worker enregistré avec succès:', registration.scope);
-      })
-      .catch(error => {
-        console.log('Erreur d’enregistrement du Service Worker:', error);
-      });
-  });
-}
-</script>
-<script>
-let wakeLock = null;
-async function requestWakeLock() {
-  if ('wakeLock' in navigator) {
-    try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => {
-        console.log('Wake Lock released');
-      });
-      console.log('Wake Lock is active');
-    } catch (err) {
-      console.error(`Erreur de Wake Lock : ${err.name}, ${err.message}`);
-    }
-  } else {
-    console.log('Wake Lock API non supportée sur ce navigateur.');
-  }
-}
-window.addEventListener('load', () => {
-  requestWakeLock();
-});
-document.addEventListener('visibilitychange', () => {
-  if (wakeLock !== null && document.visibilityState === 'visible') {
-    requestWakeLock();
-  }
-});
 </script>
 </body>
 </html>
