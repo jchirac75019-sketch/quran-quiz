@@ -61,13 +61,12 @@
   <input type="number" id="end" min="1" />
 </div>
 
-<!-- AJOUT COMPTEUR ET CHRONOMETRE -->
+<!-- Compteur et Chronomètre affichage -->
 <div id="timer-container" style="text-align:center; margin-bottom:10px; font-weight:bold; font-size:1.1em; font-family: monospace;">
   <div>Début du quiz : <span id="start-date">--:--:--</span></div>
   <div>Temps écoulé : <span id="elapsed-time">00:00:00</span></div>
   <div>Fin du quiz : <span id="end-date">--:--:--</span></div>
 </div>
-<!-- FIN AJOUT -->
 
 <div class="controls">
   <button id="btnRedistribuer">إعادة التوزيع</button>
@@ -567,8 +566,9 @@ btnTrier.onclick = sortAyahs;
 btnToggleTraites.onclick = toggleTreated;
 btnCorrect.onclick = () => registerResponse(true);
 btnIncorrect.onclick = () => registerResponse(false);
+})();
 
-/* ==== AJOUT COMPTEUR ET CHRONOMETRE ==== */
+/* ==== AJOUT COMPTEUR ET CHRONOMETRE AVEC PERSISTANCE ==== */
 (() => {
   let startTime = null;
   let elapsedMs = 0; // ms cumulés lors pause
@@ -595,6 +595,16 @@ btnIncorrect.onclick = () => registerResponse(false);
     elapsedTimeEl.textContent = formatTime(diff);
   }
 
+  function saveTimerState() {
+    localStorage.setItem("quizTimerState", JSON.stringify({
+      quizStarted,
+      quizEnded,
+      startDate: startDateEl.textContent,
+      endDate: endDateEl.textContent,
+      elapsedMs
+    }));
+  }
+
   function startTimer() {
     if (quizStarted) return;
     quizStarted = true;
@@ -605,6 +615,7 @@ btnIncorrect.onclick = () => registerResponse(false);
     endDateEl.textContent = "--:--:--";
     elapsedTimeEl.textContent = "00:00:00";
     timerInterval = setInterval(updateElapsed, 250);
+    saveTimerState();
   }
 
   function pauseTimer() {
@@ -613,12 +624,15 @@ btnIncorrect.onclick = () => registerResponse(false);
     startTime = null;
     clearInterval(timerInterval);
     timerInterval = null;
+    saveTimerState();
+    elapsedTimeEl.textContent = formatTime(elapsedMs);
   }
 
   function resumeTimer() {
     if (!quizStarted || quizEnded || timerInterval) return;
     startTime = performance.now();
     timerInterval = setInterval(updateElapsed, 250);
+    saveTimerState();
   }
 
   function stopTimer() {
@@ -626,6 +640,31 @@ btnIncorrect.onclick = () => registerResponse(false);
     pauseTimer();
     quizEnded = true;
     endDateEl.textContent = new Date().toLocaleString();
+    saveTimerState();
+  }
+
+  function loadTimerState() {
+    const dataRaw = localStorage.getItem("quizTimerState");
+    if (!dataRaw) return;
+
+    try {
+      const data = JSON.parse(dataRaw);
+      quizStarted = data.quizStarted || false;
+      quizEnded = data.quizEnded || false;
+      startDateEl.textContent = data.startDate || "--:--:--";
+      endDateEl.textContent = data.endDate || "--:--:--";
+      elapsedMs = data.elapsedMs || 0;
+
+      if (quizStarted && !quizEnded) {
+        // redémarrer le timer en reprenant à elapsedMs
+        startTime = performance.now();
+        timerInterval = setInterval(updateElapsed, 250);
+      } else {
+        elapsedTimeEl.textContent = formatTime(elapsedMs);
+      }
+    } catch (e) {
+      // erreur parse ignorée
+    }
   }
 
   // Surveiller la visibilité page pour pause/reprise timer
@@ -654,9 +693,9 @@ btnIncorrect.onclick = () => registerResponse(false);
       stopTimer();
     }
   };
-})();
 
-/* ==== FIN AJOUT COMPTEUR ET CHRONOMETRE ==== */
+  // Charger état timer au démarrage
+  loadTimerState();
 })();
 </script>
 <script>
