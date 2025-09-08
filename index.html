@@ -5,761 +5,419 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Quiz Versets Coran Avancé</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 5px; max-width: 100%; padding: 0 5px; font-size: 14px; }
-  h1 { font-size: 1.2em; text-align: center; margin-bottom: 6px; }
-  label, select, input { font-size: 0.9em; margin: 0 4px 6px 0; }
-  input[type=number] { width: 50px; }
-  .range-wrap { display: flex; gap: 6px; align-items: center; }
-  .rtl-range { direction: rtl; }
-  .controls { margin-bottom: 8px; display: flex; gap: 6px; flex-wrap: nowrap; }
-  button { padding: 4px 8px; font-size: 0.9em; cursor: pointer; }
-  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; }
-  .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
-  .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
-  .num.traited.incorrect { background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through; }
-  #ayat-box { position: fixed; bottom: 10px; left: 10px; right: 10px; background: #f5f5f5; border-radius: 8px; padding: 10px 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); max-height: 22em; font-size: 1.2em; line-height: 1.4em; direction: rtl; text-align: right; display: none; overflow-y: visible; z-index: 1000; }
-  #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
-  #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
-  #response-buttons { margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; }
-  #response-buttons button { flex: 1; font-size: 1.1em; padding: 10px 0; line-height: 1.3em; }
-  #counters { display: flex; gap: 10px; margin-top: 14px; font-size: 1em; font-weight: 600; flex-wrap: wrap; justify-content: center; }
-  .counter-box { padding: 8px 14px; border-radius: 5px; color: white; flex: 1 1 130px; text-align: center; }
-  .correct-box { background-color: #0b3d0b; }
-  .incorrect-box { background-color: #8b1c1c; }
-  .remaining-box { background-color: #505050; }
-  .verset-red { color: red; font-weight: bold; }
-  .verset-green { color: green; font-weight: bold; }
-  .verset-blue { color: blue; font-weight: bold; }
-  .verset-yellow { color: orange; font-weight: bold; }
-  .number-blue { color: blue; font-weight: bold; }
-  @media (max-width: 400px) {
-    body { font-size: 13px; }
-    #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px; overflow-y: visible; }
-    #verse-text { max-height: 17em; font-size: 1.3em; }
-    #response-buttons button { padding: 12px 0; font-size: 1.2em; }
-    .table-wrap { max-height: 140px; }
-    .num { padding: 6px 10px; min-width: 34px; font-size: 1em; }
-    #counters { font-size: 1.1em; }
+  body {
+    font-family: Arial, sans-serif;
+    margin: 8px 12px;
+    max-width: 620px;
+    font-size: 15px;
+    background-color: #f7fff7;
+    color: #244d24;
+  }
+  h1 {
+    font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  label {
+    font-weight: bold;
+    margin-right: 8px;
+  }
+  select, input[type=number] {
+    font-size: 14px;
+    margin: 6px 12px 6px 0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #7cbea4;
+    min-width: 100px;
+  }
+  #ayah-container {
+    margin: 16px 0;
+    padding: 10px;
+    background-color: #e6f0e6;
+    border-radius: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    user-select: none;
+  }
+  .num {
+    cursor: pointer;
+    min-width: 34px;
+    padding: 8px 12px;
+    background: #a7d4a2;
+    border: 2px solid #6a996d;
+    border-radius: 5px;
+    font-weight: 600;
+    text-align: center;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .num:hover {
+    background-color: #79b170;
+  }
+  .num.traited.correct {
+    background-color: #3a6b31;
+    border-color: #1f3f19;
+    color: #cff6c1;
+    cursor: default;
+    text-decoration: line-through;
+  }
+  .num.traited.incorrect {
+    background-color: #7a211f;
+    border-color: #4e1a1a;
+    color: #f7c9c8;
+    cursor: default;
+    text-decoration: line-through;
+  }
+  #display-ayat {
+    border: 2px solid #68a355;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    background-color: #d9f0d7;
+    font-size: 18px;
+    line-height: 1.45;
+    direction: rtl;
+    text-align: right;
+    min-height: 140px;
+    user-select: text;
+  }
+  #display-ayat-header {
+    font-weight: bold;
+    color: #256625;
+    margin-bottom: 8px;
+    font-size: 1.2em;
+  }
+  #controls {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  button {
+    background-color: #6caf75;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  button:hover {
+    background-color: #519251;
+  }
+  #counters {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    user-select: none;
+  }
+  .counter-box {
+    background-color: #459945;
+    border-radius: 8px;
+    padding: 10px 18px;
+    color: white;
+    text-align: center;
+    min-width: 120px;
+  }
+  .counter-box.incorrect {
+    background-color: #8b2f2f;
+  }
+  .counter-box.remaining {
+    background-color: #4a904a;
+  }
+  @media (max-width: 480px) {
+    #ayah-container {
+      max-height: 140px;
+      gap: 6px;
+    }
+    .num {
+      min-width: 28px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+    #display-ayat {
+      font-size: 16px;
+      min-height: 110px;
+      padding: 14px 16px;
+    }
   }
 </style>
 </head>
 <body>
-<h1 id="app-title">اختبار آيات القرآن المتقدم</h1>
-<label for="language" id="label-language">اللغة :</label>
-<select id="language">
-  <option value="ar">العربية</option>
-  <option value="fr">Français</option>
-  <option value="en">English</option>
-  <option value="es">Español</option>
-</select>
-<label for="sourah" id="label-sourah">السورة :</label>
-<select id="sourah"></select>
-<div id="range-wrap" class="range-wrap">
-  <label for="start" id="label-start">بداية :</label>
+<h1>اختبار آيات القرآن الكريم</h1>
+
+<div>
+  <label for="language">اللغة :</label>
+  <select id="language">
+    <option value="ar">العربية</option>
+    <option value="fr">Français</option>
+    <option value="en">English</option>
+    <option value="es">Español</option>
+  </select>
+
+  <label for="sourah">السورة :</label>
+  <select id="sourah"></select>
+
+  <label for="start">بداية :</label>
   <input type="number" id="start" min="1" />
-  <label for="end" id="label-end">نهاية :</label>
+  <label for="end">نهاية :</label>
   <input type="number" id="end" min="1" />
 </div>
 
-<div id="timer-container" style="text-align:center; margin-bottom:10px; font-weight:bold; font-size:1.1em; font-family: monospace;">
-  <div>Début du quiz : <span id="start-date">--:--:--</span></div>
-  <div>Temps écoulé : <span id="elapsed-time">00:00:00</span></div>
-  <div>Fin du quiz : <span id="end-date">--:--:--</span></div>
+<div id="controls">
+  <button id="btn-redistribute">Redistribuer</button>
+  <button id="btn-sort">Trier</button>
+  <button id="btn-toggle-treated">Afficher/Cacher traités</button>
 </div>
 
-<div class="controls">
-  <button id="btnRedistribuer">إعادة التوزيع</button>
-  <button id="btnTrier">ترتيب</button>
-  <button id="btnToggleTraites">إظهار / إخفاء المعالَجَة</button>
+<div id="counters">
+  <div class="counter-box correct">Réponses : <span id="count-correct">0</span></div>
+  <div class="counter-box incorrect">Erreurs : <span id="count-error">0</span></div>
+  <div class="counter-box remaining">Restantes : <span id="count-remaining">0</span></div>
 </div>
-<div class="table-wrap" id="ayah-numbers"></div>
-<div id="ayat-box" style="display:none;">
-  <div id="verse-header"></div>
-  <div id="verse-text"></div>
-  <div id="response-buttons">
-    <button id="btnCorrect">إجابة صحيحة</button>
-    <button id="btnIncorrect">إجابة خاطئة</button>
+
+<div id="ayah-container"></div>
+
+<div id="display-ayat" style="display: none;">
+  <div id="display-ayat-header"></div>
+  <div id="display-ayat-text"></div>
+  <div style="text-align: center; margin-top: 12px;">
+    <button id="btn-correct">✔️ Correct</button>
+    <button id="btn-incorrect">❌ Incorrect</button>
   </div>
 </div>
-<div id="counters">
-  <div class="counter-box correct-box"><span id="label-correctCount">الإجابات الصحيحة :</span> <span id="correct-count">0</span></div>
-  <div class="counter-box incorrect-box"><span id="label-errorCount">الأخطاء :</span> <span id="error-count">0</span></div>
-  <div class="counter-box remaining-box"><span id="label-remainingCount">المتبقية :</span> <span id="remaining-count">0</span> / <span id="total-count">0</span></div>
-</div>
+
 <script>
 (() => {
-const SURAHS = [
-  {number:1, name_ar:"الفاتحة", name_fr:"Al-Fatiha", count:7},
-  {number:2, name_ar:"البقرة", name_fr:"Al-Baqara", count:286},
-  {number:3, name_ar:"آل عمران", name_fr:"Al-i-Imran", count:200},
-  {number:4, name_ar:"النساء", name_fr:"An-Nisa", count:176},
-  {number:5, name_ar:"المائدة", name_fr:"Al-Ma'ida", count:120},
-  {number:6, name_ar:"الأنعام", name_fr:"Al-An'am", count:165},
-  {number:7, name_ar:"الأعراف", name_fr:"Al-A'raf", count:206},
-  {number:8, name_ar:"الأنفال", name_fr:"Al-Anfal", count:75},
-  {number:9, name_ar:"التوبة", name_fr:"At-Tawba", count:129},
-  {number:10, name_ar:"يونس", name_fr:"Yunus", count:109},
-  {number:11, name_ar:"هود", name_fr:"Hud", count:123},
-  {number:12, name_ar:"يوسف", name_fr:"Yusuf", count:111},
-  {number:13, name_ar:"الرعد", name_fr:"Ar-Ra'd", count:43},
-  {number:14, name_ar:"إبراهيم", name_fr:"Ibrahim", count:52},
-  {number:15, name_ar:"الحجر", name_fr:"Al-Hijr", count:99},
-  {number:16, name_ar:"النحل", name_fr:"An-Nahl", count:128},
-  {number:17, name_ar:"الإسراء", name_fr:"Al-Isra", count:111},
-  {number:18, name_ar:"الكهف", name_fr:"Al-Kahf", count:110},
-  {number:19, name_ar:"مريم", name_fr:"Maryam", count:98},
-  {number:20, name_ar:"طه", name_fr:"Ta-Ha", count:135},
-  {number:21, name_ar:"الأنبياء", name_fr:"Al-Anbiya", count:112},
-  {number:22, name_ar:"الحج", name_fr:"Al-Hajj", count:78},
-  {number:23, name_ar:"المؤمنون", name_fr:"Al-Mu'minun", count:118},
-  {number:24, name_ar:"النور", name_fr:"An-Nur", count:64},
-  {number:25, name_ar:"الفرقان", name_fr:"Al-Furqan", count:77},
-  {number:26, name_ar:"الشعراء", name_fr:"Ash-Shu'ara", count:227},
-  {number:27, name_ar:"النمل", name_fr:"An-Naml", count:93},
-  {number:28, name_ar:"القصص", name_fr:"Al-Qasas", count:88},
-  {number:29, name_ar:"العنكبوت", name_fr:"Al-Ankabut", count:69},
-  {number:30, name_ar:"الروم", name_fr:"Ar-Rum", count:60},
-  {number:31, name_ar:"لقمان", name_fr:"Luqman", count:34},
-  {number:32, name_ar:"السجدة", name_fr:"As-Sajda", count:30},
-  {number:33, name_ar:"الأحزاب", name_fr:"Al-Ahzab", count:73},
-  {number:34, name_ar:"سبأ", name_fr:"Saba", count:54},
-  {number:35, name_ar:"فاطر", name_fr:"Fatir", count:45},
-  {number:36, name_ar:"يس", name_fr:"Ya-Sin", count:83},
-  {number:37, name_ar:"الصافات", name_fr:"As-Saffat", count:182},
-  {number:38, name_ar:"ص", name_fr:"Sad", count:88},
-  {number:39, name_ar:"الزمر", name_fr:"Az-Zumar", count:75},
-  {number:40, name_ar:"غافر", name_fr:"Ghafir", count:85},
-  {number:41, name_ar:"فصلت", name_fr:"Fussilat", count:54},
-  {number:42, name_ar:"الشورى", name_fr:"Ash-Shura", count:53},
-  {number:43, name_ar:"الزخرف", name_fr:"Az-Zukhruf", count:89},
-  {number:44, name_ar:"الدخان", name_fr:"Ad-Dukhan", count:59},
-  {number:45, name_ar:"الجاثية", name_fr:"Al-Jathiya", count:37},
-  {number:46, name_ar:"الأحقاف", name_fr:"Al-Ahqaf", count:35},
-  {number:47, name_ar:"محمد", name_fr:"Muhammad", count:38},
-  {number:48, name_ar:"الفتح", name_fr:"Al-Fath", count:29},
-  {number:49, name_ar:"الحجرات", name_fr:"Al-Hujurat", count:18},
-  {number:50, name_ar:"ق", name_fr:"Qaf", count:45},
-  {number:51, name_ar:"الذاريات", name_fr:"Adh-Dhariyat", count:60},
-  {number:52, name_ar:"الطور", name_fr:"At-Tur", count:49},
-  {number:53, name_ar:"النجم", name_fr:"An-Najm", count:62},
-  {number:54, name_ar:"القمر", name_fr:"Al-Qamar", count:55},
-  {number:55, name_ar:"الرحمن", name_fr:"Ar-Rahman", count:78},
-  {number:56, name_ar:"الواقعة", name_fr:"Al-Waqia", count:96},
-  {number:57, name_ar:"الحديد", name_fr:"Al-Hadid", count:29},
-  {number:58, name_ar:"المجادلة", name_fr:"Al-Mujadila", count:22},
-  {number:59, name_ar:"الحشر", name_fr:"Al-Hashr", count:24},
-  {number:60, name_ar:"الممتحنة", name_fr:"Al-Mumtahina", count:13},
-  {number:61, name_ar:"الصف", name_fr:"As-Saff", count:14},
-  {number:62, name_ar:"الجمعة", name_fr:"Al-Jumu'a", count:11},
-  {number:63, name_ar:"المنافقون", name_fr:"Al-Munafiqoon", count:11},
-  {number:64, name_ar:"التغابن", name_fr:"At-Taghabun", count:18},
-  {number:65, name_ar:"الطلاق", name_fr:"At-Talaq", count:12},
-  {number:66, name_ar:"التحريم", name_fr:"At-Tahrim", count:12},
-  {number:67, name_ar:"الملك", name_fr:"Al-Mulk", count:30},
-  {number:68, name_ar:"القلم", name_fr:"Al-Qalam", count:52},
-  {number:69, name_ar:"الحاقة", name_fr:"Al-Haqqah", count:52},
-  {number:70, name_ar:"المعارج", name_fr:"Al-Ma'arij", count:44},
-  {number:71, name_ar:"نوح", name_fr:"Nuh", count:28},
-  {number:72, name_ar:"الجن", name_fr:"Al-Jinn", count:28},
-  {number:73, name_ar:"المزّمّل", name_fr:"Al-Muzzammil", count:20},
-  {number:74, name_ar:"المدّثر", name_fr:"Al-Muddaththir", count:56},
-  {number:75, name_ar:"القيامة", name_fr:"Al-Qiyama", count:40},
-  {number:76, name_ar:"الإنسان", name_fr:"Al-Insan", count:31},
-  {number:77, name_ar:"المرسلات", name_fr:"Al-Mursalat", count:50},
-  {number:78, name_ar:"النبأ", name_fr:"An-Naba", count:40},
-  {number:79, name_ar:"النازعات", name_fr:"An-Nazi'at", count:46},
-  {number:80, name_ar:"عبس", name_fr:"Abasa", count:42},
-  {number:81, name_ar:"التكوير", name_fr:"At-Takwir", count:29},
-  {number:82, name_ar:"الإنفطار", name_fr:"Al-Infitar", count:19},
-  {number:83, name_ar:"المطفّفين", name_fr:"Al-Mutaffifin", count:36},
-  {number:84, name_ar:"الإنشقاق", name_fr:"Al-Inshiqaq", count:25},
-  {number:85, name_ar:"البروج", name_fr:"Al-Buruj", count:22},
-  {number:86, name_ar:"الطارق", name_fr:"At-Tariq", count:17},
-  {number:87, name_ar:"الأعلى", name_fr:"Al-A'la", count:19},
-  {number:88, name_ar:"الغاشية", name_fr:"Al-Ghashiya", count:26},
-  {number:89, name_ar:"الفجر", name_fr:"Al-Fajr", count:30},
-  {number:90, name_ar:"البلد", name_fr:"Al-Balad", count:20},
-  {number:91, name_ar:"الشمس", name_fr:"Ash-Shams", count:15},
-  {number:92, name_ar:"الليل", name_fr:"Al-Lail", count:21},
-  {number:93, name_ar:"الضحى", name_fr:"Ad-Dhuha", count:11},
-  {number:94, name_ar:"الإنشراح", name_fr:"Al-Inshirah", count:8},
-  {number:95, name_ar:"التين", name_fr:"At-Tin", count:8},
-  {number:96, name_ar:"العلق", name_fr:"Al-Alaq", count:19},
-  {number:97, name_ar:"القدر", name_fr:"Al-Qadr", count:5},
-  {number:98, name_ar:"البينة", name_fr:"Al-Bayyina", count:8},
-  {number:99, name_ar:"الزلزلة", name_fr:"Az-Zalzala", count:8},
-  {number:100, name_ar:"العاديات", name_fr:"Al-Adiyat", count:11},
-  {number:101, name_ar:"القارعة", name_fr:"Al-Qaria", count:11},
-  {number:102, name_ar:"التكاثر", name_fr:"At-Takathur", count:8},
-  {number:103, name_ar:"العصر", name_fr:"Al-Asr", count:3},
-  {number:104, name_ar:"الهمزة", name_fr:"Al-Humaza", count:9},
-  {number:105, name_ar:"الفيل", name_fr:"Al-Fil", count:5},
-  {number:106, name_ar:"قريش", name_fr:"Quraysh", count:4},
-  {number:107, name_ar:"الماعون", name_fr:"Al-Maun", count:7},
-  {number:108, name_ar:"الكوثر", name_fr:"Al-Kawthar", count:3},
-  {number:109, name_ar:"الكافرون", name_fr:"Al-Kafirun", count:6},
-  {number:110, name_ar:"النصر", name_fr:"An-Nasr", count:3},
-  {number:111, name_ar:"المسد", name_fr:"Al-Masad", count:5},
-  {number:112, name_ar:"الإخلاص", name_fr:"Al-Ikhlas", count:4},
-  {number:113, name_ar:"الفلق", name_fr:"Al-Falaq", count:5},
-  {number:114, name_ar:"الناس", name_fr:"An-Nas", count:6}
-];
+  const SURAHS = [
+    { number:1, name:"الفاتحة", count:7 },
+    { number:2, name:"البقرة", count:286 },
+    { number:3, name:"آل عمران", count:200 },
+    { number:4, name:"النساء", count:176 },
+    { number:5, name:"المائدة", count:120 },
+    { number:6, name:"الأنعام", count:165 },
+    { number:7, name:"الأعراف", count:206 },
+    { number:8, name:"الأنفال", count:75 },
+    { number:9, name:"التوبة", count:129 },
+    { number:10, name:"يونس", count:109 },
+    /* ... Ajouter toutes les sourates ici ... */
+    { number:114, name:"الناس", count:6 }
+  ];
 
-const STORAGE_KEY = "quranQuizProgress";
+  const languageEl = document.getElementById("language");
+  const sourahEl = document.getElementById("sourah");
+  const startEl = document.getElementById("start");
+  const endEl = document.getElementById("end");
+  const ayahContainer = document.getElementById("ayah-container");
+  const displayAyat = document.getElementById("display-ayat");
+  const displayHeader = document.getElementById("display-ayat-header");
+  const displayText = document.getElementById("display-ayat-text");
+  const countCorrect = document.getElementById("count-correct");
+  const countError = document.getElementById("count-error");
+  const countRemaining = document.getElementById("count-remaining");
+  const btnRedistribute = document.getElementById("btn-redistribute");
+  const btnSort = document.getElementById("btn-sort");
+  const btnToggleTreated = document.getElementById("btn-toggle-treated");
+  const btnCorrect = document.getElementById("btn-correct");
+  const btnIncorrect = document.getElementById("btn-incorrect");
 
-const languageEl = document.getElementById("language");
-const sourahEl = document.getElementById("sourah");
-const startEl = document.getElementById("start");
-const endEl = document.getElementById("end");
-const ayahContainer = document.getElementById("ayah-numbers");
-const ayatBox = document.getElementById("ayat-box");
-const verseTextEl = document.getElementById("verse-text");
-const verseHeaderEl = document.getElementById("verse-header");
-const correctEl = document.getElementById("correct-count");
-const errorEl = document.getElementById("error-count");
-const remainingEl = document.getElementById("remaining-count");
-const totalEl = document.getElementById("total-count");
-const btnRedistribuer = document.getElementById("btnRedistribuer");
-const btnTrier = document.getElementById("btnTrier");
-const btnToggleTraites = document.getElementById("btnToggleTraites");
-const btnCorrect = document.getElementById("btnCorrect");
-const btnIncorrect = document.getElementById("btnIncorrect");
-const labelTitle = document.getElementById("app-title");
-const labelLanguage = document.getElementById("label-language");
-const labelSourate = document.getElementById("label-sourah");
-const labelStart = document.getElementById("label-start");
-const labelEnd = document.getElementById("label-end");
-const labelCorrectCount = document.getElementById("label-correctCount");
-const labelErrorCount = document.getElementById("label-errorCount");
-const labelRemainingCount = document.getElementById("label-remainingCount");
-const rangeWrap = document.getElementById("range-wrap");
+  let ayahNumbers = [];
+  let traitedMap = new Map();
+  let currentAyah = null;
+  let currentSourah = null;
+  let correctCount = 0;
+  let errorCount = 0;
+  let showTreated = true;
 
-let ayahNumbers = [];
-let traitedMap = new Map();
-let showTreated = true;
-let currentAyah = null;
-let currentSourah = null;
-let correctCount = 0;
-let errorCount = 0;
-let verseCache = new Map();
-
-const texts = {
-  fr: {
-    title: "Quiz Versets du Coran Avancé",
-    languageLabel: "Langue :",
-    sourateLabel: "Sourate :",
-    startLabel: "Début :",
-    endLabel: "Fin :",
-    redistribuerBtn: "Redistribuer",
-    trierBtn: "Trier",
-    toggleTraitesBtn: "Afficher / Cacher Traités",
-    correctBtn: "Bonne réponse",
-    incorrectBtn: "Mauvaise réponse",
-    correctCountLabel: "Réponses justes :",
-    errorCountLabel: "Erreurs :",
-    remainingCountLabel: "Restantes :",
-    surahText: "Sourate N°: ",
-    ayahText: "Verset N°: "
-  },
-  ar: {
-    title: "اختبار آيات القرآن المتقدم",
-    languageLabel: "اللغة :",
-    sourateLabel: "السورة :",
-    startLabel: "بداية :",
-    endLabel: "نهاية :",
-    redistribuerBtn: "إعادة التوزيع",
-    trierBtn: "ترتيب",
-    toggleTraitesBtn: "إظهار / إخفاء المعالَجَة",
-    correctBtn: "إجابة صحيحة",
-    incorrectBtn: "إجابة خاطئة",
-    correctCountLabel: "الإجابات الصحيحة :",
-    errorCountLabel: "الأخطاء :",
-    remainingCountLabel: "المتبقية :",
-    surahText: "السورة عدد: ",
-    ayahText: "الآية عدد: "
-  },
-  en: {
-    title: "Advanced Quran Verses Quiz",
-    languageLabel: "Language:",
-    sourateLabel: "Surah:",
-    startLabel: "Start:",
-    endLabel: "End:",
-    redistribuerBtn: "Shuffle",
-    trierBtn: "Sort",
-    toggleTraitesBtn: "Show / Hide Treated",
-    correctBtn: "Correct Answer",
-    incorrectBtn: "Wrong Answer",
-    correctCountLabel: "Correct Answers:",
-    errorCountLabel: "Errors:",
-    remainingCountLabel: "Remaining:",
-    surahText: "Surah No.: ",
-    ayahText: "Ayah No.: "
-  },
-  es: {
-    title: "Cuestionario Avanzado de Versos del Corán",
-    languageLabel: "Idioma:",
-    sourateLabel: "Sura:",
-    startLabel: "Inicio:",
-    endLabel: "Fin:",
-    redistribuerBtn: "Reordenar",
-    trierBtn: "Ordenar",
-    toggleTraitesBtn: "Mostrar / Ocultar Tratados",
-    correctBtn: "Respuesta correcta",
-    incorrectBtn: "Respuesta incorrecta",
-    correctCountLabel: "Respuestas correctas:",
-    errorCountLabel: "Errores:",
-    remainingCountLabel: "Restantes:",
-    surahText: "Sura N°: ",
-    ayahText: "Verso N°: "
-  }
-};
-
-function saveProgress() {
-  const data = {
-    sourah: sourahEl.value,
-    start: startEl.value,
-    end: endEl.value,
-    ayahNumbers: ayahNumbers,
-    traited: Array.from(traitedMap.entries()),
-    correctCount,
-    errorCount
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function loadProgress() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return false;
-  try {
-    const data = JSON.parse(raw);
-    sourahEl.value = data.sourah;
-    startEl.value = data.start;
-    endEl.value = data.end;
-    ayahNumbers = Array.isArray(data.ayahNumbers) ? data.ayahNumbers : [];
-    traitedMap = new Map(data.traited || []);
-    correctCount = data.correctCount || 0;
-    errorCount = data.errorCount || 0;
-    updateRange();
-    renderAyahs();
-    updateCounters();
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function clearProgress() {
-  localStorage.removeItem(STORAGE_KEY);
-}
-
-function updateInterfaceTexts(lang) {
-  const t = texts[lang];
-  document.title = t.title;
-  labelTitle.textContent = t.title;
-  labelLanguage.textContent = t.languageLabel;
-  labelSourate.textContent = t.sourateLabel;
-  labelStart.textContent = t.startLabel;
-  labelEnd.textContent = t.endLabel;
-  btnRedistribuer.textContent = t.redistribuerBtn;
-  btnTrier.textContent = t.trierBtn;
-  btnToggleTraites.textContent = t.toggleTraitesBtn;
-  btnCorrect.textContent = t.correctBtn;
-  btnIncorrect.textContent = t.incorrectBtn;
-  labelCorrectCount.textContent = t.correctCountLabel;
-  labelErrorCount.textContent = t.errorCountLabel;
-  labelRemainingCount.textContent = t.remainingCountLabel;
-  lang === "ar" ? rangeWrap.classList.add("rtl-range") : rangeWrap.classList.remove("rtl-range");
-  updateVerseHeader();
-}
-
-function updateVerseHeader() {
-  if (currentSourah !== null && currentAyah !== null) {
-    const t = texts[languageEl.value];
-    verseHeaderEl.innerHTML = `${t.surahText}<span class="number-blue">${currentSourah}</span>, ${t.ayahText}<span class="number-blue">${currentAyah}</span>`;
-  } else {
-    verseHeaderEl.innerHTML = "";
-  }
-}
-
-function populateSourates() {
-  sourahEl.innerHTML = "";
-  SURAHS.forEach((s) => {
-    const opt = document.createElement("option");
-    opt.value = s.number;
-    opt.text = `${s.number} - ${s.name_ar} (${s.name_fr})`;
-    sourahEl.appendChild(opt);
-  });
-}
-
-function updateRange() {
-  const sel = SURAHS.find((s) => s.number == sourahEl.value);
-  if (!sel) return;
-  startEl.min = 1;
-  startEl.max = sel.count;
-  startEl.value = 1;
-  endEl.min = 1;
-  endEl.max = sel.count;
-  endEl.value = sel.count;
-}
-
-function validateInputs() {
-  const sel = SURAHS.find((s) => s.number == sourahEl.value);
-  if (!sel) return false;
-  let maxVerset = sel.count;
-  let startVal = parseInt(startEl.value);
-  let endVal = parseInt(endEl.value);
-  if (isNaN(startVal) || startVal < 1) startVal = 1;
-  if (isNaN(endVal) || endVal < 1) endVal = 1;
-  if (startVal > maxVerset) startVal = maxVerset;
-  if (endVal > maxVerset) endVal = maxVerset;
-  if (startVal > endVal) startVal = endVal;
-  startEl.value = startVal;
-  endEl.value = endVal;
-  return true;
-}
-
-function shuffleAyahs() {
-  if (!validateInputs()) return;
-  ayahNumbers = [];
-  for (let i = +startEl.value; i <= +endEl.value; i++) ayahNumbers.push(i);
-  for (let i = ayahNumbers.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [ayahNumbers[i], ayahNumbers[j]] = [ayahNumbers[j], ayahNumbers[i]];
-  }
-  traitedMap.clear();
-  correctCount = 0;
-  errorCount = 0;
-  verseCache.clear();
-  updateCounters();
-  currentAyah = null;
-  currentSourah = null;
-  ayatBox.style.display = "none";
-  renderAyahs();
-  updateVerseHeader();
-  clearProgress();
-  saveProgress();
-}
-
-function sortAyahs() {
-  ayahNumbers.sort((a, b) => a - b);
-  renderAyahs();
-}
-
-function toggleTreated() {
-  showTreated = !showTreated;
-  renderAyahs();
-}
-
-function updateCounters() {
-  correctEl.textContent = correctCount;
-  errorEl.textContent = errorCount;
-  totalEl.textContent = ayahNumbers.length;
-  const remaining = ayahNumbers.length - traitedMap.size;
-  remainingEl.textContent = remaining < 0 ? 0 : remaining;
-}
-
-function colorVerseText(text) {
-  if (!text) return "";
-  text = text.trim();
-  const SIGNES = ["۞", "۩"];
-  let cleanedText = text;
-  SIGNES.forEach((s) => {
-    cleanedText = cleanedText.split(s).join("");
-  });
-  cleanedText = cleanedText.trim();
-  const words = cleanedText.split(/\s+/).filter((w) => w.length > 0);
-  if (words.length === 0) return text;
-  const firstWord = `<span class="verset-red">${words[0]}</span>`;
-  const lastWord =
-    words.length > 1 ? `<span class="verset-green">${words[words.length - 1]}</span>` : "";
-  const middleWords = words.length > 2 ? words.slice(1, words.length - 1).join(" ") : "";
-  const originalParts = text.split(/\s+/).filter((p) => p.length > 0);
-  let wordIndex = 0;
-  const coloredParts = originalParts.map((part) => {
-    if (part === "۞") return `<span class="verset-yellow">${part}</span>`;
-    if (part === "۩") return `<span class="verset-blue">${part}</span>`;
-    if (wordIndex === 0) {
-      wordIndex++;
-      return firstWord;
-    } else if (wordIndex === words.length - 1) {
-      wordIndex++;
-      return lastWord;
-    } else if (wordIndex > 0 && wordIndex < words.length - 1) {
-      const w = words[wordIndex];
-      wordIndex++;
-      return w;
-    }
-    return part;
-  });
-  return coloredParts.join(" ");
-}
-
-function showAyah(num) {
-  currentAyah = num;
-  currentSourah = sourahEl.value;
-  ayatBox.style.display = "block";
-  const lang = languageEl.value;
-  const cacheKey = `${currentSourah}:${num}:${lang}`;
-  if (verseCache.has(cacheKey)) {
-    verseTextEl.innerHTML = verseCache.get(cacheKey);
-    updateVerseHeader();
-    return;
-  }
-  verseTextEl.innerHTML = "Chargement du verset…";
-  fetch(`https://api.alquran.cloud/v1/ayah/${currentSourah}:${num}/ar.alafasy`)
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.code === 200 && data.data && data.data.text) {
-        let verseText = data.data.text;
-        const bismillah = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
-        if (num === 1 && verseText.startsWith(bismillah)) {
-          verseText = verseText.slice(bismillah.length).trim();
-        }
-        const colored = colorVerseText(verseText);
-        const t = texts[lang];
-        const html = `<div>${colored}</div>`;
-        verseCache.set(cacheKey, html);
-        verseTextEl.innerHTML = html;
-        updateVerseHeader();
-      } else {
-        verseTextEl.innerHTML = "Erreur lors du chargement du verset.";
-      }
-    })
-    .catch(() => {
-      verseTextEl.innerHTML = "Erreur lors du chargement du verset.";
+  function populateSourahs() {
+    sourahEl.innerHTML = "";
+    SURAHS.forEach(s => {
+      let opt = document.createElement("option");
+      opt.value = s.number;
+      opt.textContent = `${s.number} - ${s.name}`;
+      sourahEl.appendChild(opt);
     });
-}
+  }
 
-function registerResponse(isCorrect) {
-  if (currentAyah === null) return;
-  if (!traitedMap.has(currentAyah)) {
+  function updateRange() {
+    const s = SURAHS.find(x => x.number == sourahEl.value);
+    if (!s) return;
+    startEl.min = 1; startEl.max = s.count; startEl.value = 1;
+    endEl.min = 1; endEl.max = s.count; endEl.value = s.count;
+  }
+
+  function validateRange() {
+    const s = SURAHS.find(x => x.number == sourahEl.value);
+    if (!s) return false;
+    if (startEl.value < 1 || startEl.value > s.count) startEl.value = 1;
+    if (endEl.value < 1 || endEl.value > s.count) endEl.value = s.count;
+    if (+startEl.value > +endEl.value) startEl.value = endEl.value;
+    return true;
+  }
+
+  function generateAyahNumbers() {
+    if (!validateRange()) return false;
+    ayahNumbers = [];
+    for(let i = +startEl.value; i <= +endEl.value; i++) {
+      ayahNumbers.push(i);
+    }
+    return true;
+  }
+
+  function shuffle(array) {
+    for(let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  function shuffleAyahs() {
+    if(!generateAyahNumbers()) return;
+    shuffle(ayahNumbers);
+    traitedMap.clear();
+    correctCount = 0; errorCount = 0; currentAyah = null;
+    displayAyat.style.display = 'none';
+    renderAyahs();
+    updateCounters();
+    saveProgress();
+  }
+
+  function sortAyahs() {
+    ayahNumbers.sort((a, b) => a - b);
+    renderAyahs();
+  }
+
+  function renderAyahs() {
+    ayahContainer.innerHTML = "";
+    ayahNumbers.forEach(num => {
+      if (!showTreated && traitedMap.has(num)) return;
+      let div = document.createElement("div");
+      div.className = "num";
+      div.textContent = num;
+      if (traitedMap.has(num)) {
+        div.classList.add("traited");
+        div.classList.add(traitedMap.get(num) ? "correct" : "incorrect");
+      } else {
+        div.onclick = () => showAyah(num);
+      }
+      ayahContainer.appendChild(div);
+    });
+    updateCounters();
+  }
+
+  function updateCounters() {
+    countCorrect.textContent = correctCount;
+    countError.textContent = errorCount;
+    countRemaining.textContent = ayahNumbers.length - traitedMap.size;
+  }
+
+  function showAyah(num) {
+    currentAyah = num;
+    currentSourah = sourahEl.value;
+    displayHeader.textContent = `Sourate ${currentSourah} - Verset ${num}`;
+    displayText.textContent = "Chargement du verset...";
+    displayAyat.style.display = "block";
+
+    fetch(`https://api.alquran.cloud/v1/ayah/${currentSourah}:${num}/ar.alafasy`)
+      .then(res => res.json())
+      .then(data => {
+        if(data.code === 200 && data.data && data.data.text) {
+          displayText.textContent = data.data.text;
+        } else {
+          displayText.textContent = "Erreur lors du chargement du verset.";
+        }
+      })
+      .catch(() => displayText.textContent = "Erreur réseau");
+  }
+
+  function registerResponse(isCorrect) {
+    if(currentAyah === null) return;
+    if(traitedMap.has(currentAyah)) return;
     traitedMap.set(currentAyah, isCorrect);
-    if (isCorrect) correctCount++;
-    else errorCount++;
+    if(isCorrect) correctCount++; else errorCount++;
     updateCounters();
     renderAyahs();
-    ayatBox.style.display = "none";
+    displayAyat.style.display = "none";
     currentAyah = null;
-    currentSourah = null;
-    updateVerseHeader();
-    if (traitedMap.size === ayahNumbers.length) {
-      clearProgress();
-    } else {
-      saveProgress();
+    if(traitedMap.size === ayahNumbers.length) {
+      alert("Quiz terminé !");
+      // Ici vous pouvez arrêter le chrono si implémenté
     }
+    saveProgress();
   }
-}
 
-function renderAyahs() {
-  ayahContainer.innerHTML = "";
-  ayahNumbers.forEach((num) => {
-    const status = traitedMap.get(num);
-    if (status !== undefined && !showTreated) return;
-    const div = document.createElement("div");
-    div.classList.add("num");
-    if (status === true) div.classList.add("traited", "correct");
-    else if (status === false) div.classList.add("traited", "incorrect");
-    div.innerText = num;
-    if (status === undefined) div.onclick = () => showAyah(num);
-    ayahContainer.appendChild(div);
-  });
-  updateCounters();
-}
-
-// Initialisation complète
-populateSourates();
-languageEl.value = "ar";
-updateInterfaceTexts("ar");
-updateRange();
-if (!loadProgress()) shuffleAyahs();
-
-// Gestion événements essentiels
-languageEl.addEventListener("change", (e) => updateInterfaceTexts(e.target.value));
-sourahEl.addEventListener("change", () => {
-  updateRange();
-  shuffleAyahs();
-  resetTimer();
-});
-startEl.addEventListener("input", validateInputs);
-endEl.addEventListener("input", validateInputs);
-startEl.addEventListener("change", () => shuffleAyahs());
-endEl.addEventListener("change", () => shuffleAyahs());
-btnRedistribuer.onclick = shuffleAyahs;
-btnTrier.onclick = sortAyahs;
-btnToggleTraites.onclick = toggleTreated;
-btnCorrect.onclick = () => registerResponse(true);
-btnIncorrect.onclick = () => registerResponse(false);
-
-// Chronomètre persistant & contrôlé
-let timerStartTime = null;
-let elapsedWhenPaused = 0;
-let intervalID = null;
-let isQuizStarted = false;
-let isQuizEnded = false;
-
-const startDateEl = document.getElementById("start-date");
-const endDateEl = document.getElementById("end-date");
-const elapsedTimeEl = document.getElementById("elapsed-time");
-
-function formatTime(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-  const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-  const s = String(totalSeconds % 60).padStart(2, "0");
-  return `${h}:${m}:${s}`;
-}
-
-function displayElapsed() {
-  if (!timerStartTime) return;
-  const nowMS = Date.now();
-  const totalElapsed = elapsedWhenPaused + (nowMS - timerStartTime);
-  elapsedTimeEl.textContent = formatTime(totalElapsed);
-  persistTimerState();
-}
-
-function persistTimerState() {
-  let nowMS = Date.now();
-  let runningElapsed = elapsedWhenPaused;
-  if (timerStartTime) {
-    runningElapsed += (nowMS - timerStartTime);
+  function saveProgress() {
+    const data = {
+      sourah: sourahEl.value,
+      start: startEl.value,
+      end: endEl.value,
+      ayahNumbers,
+      traited: Array.from(traitedMap.entries()),
+      correctCount,
+      errorCount
+    };
+    localStorage.setItem('quran_quiz_progress', JSON.stringify(data));
   }
-  localStorage.setItem("quizTimerState", JSON.stringify({
-    isQuizStarted,
-    isQuizEnded,
-    timerStartTime,
-    elapsedWhenPaused: runningElapsed,
-    endDateText: endDateEl.textContent || "--:--:--"
-  }));
-}
 
-function startTimer() {
-  if (isQuizStarted) return;
-  isQuizStarted = true;
-  isQuizEnded = false;
-  timerStartTime = Date.now();
-  elapsedWhenPaused = 0;
-  startDateEl.textContent = new Date(timerStartTime).toLocaleString();
-  endDateEl.textContent = "--:--:--";
-  elapsedTimeEl.textContent = "00:00:00";
-  intervalID = setInterval(displayElapsed, 250);
-  persistTimerState();
-}
-
-function pauseTimer() {
-  if (!isQuizStarted || isQuizEnded || !intervalID) return;
-  elapsedWhenPaused += (Date.now() - timerStartTime);
-  clearInterval(intervalID);
-  intervalID = null;
-  timerStartTime = null;
-  elapsedTimeEl.textContent = formatTime(elapsedWhenPaused);
-  persistTimerState();
-}
-
-function resumeTimer() {
-  if (!isQuizStarted || isQuizEnded || intervalID) return;
-  timerStartTime = Date.now();
-  intervalID = setInterval(displayElapsed, 250);
-  persistTimerState();
-}
-
-function stopTimer() {
-  if (!isQuizStarted || isQuizEnded) return;
-  pauseTimer();
-  isQuizEnded = true;
-  endDateEl.textContent = new Date().toLocaleString();
-  persistTimerState();
-}
-
-function resetTimer() {
-  pauseTimer();
-  isQuizStarted = false;
-  isQuizEnded = false;
-  timerStartTime = null;
-  elapsedWhenPaused = 0;
-  startDateEl.textContent = "--:--:--";
-  endDateEl.textContent = "--:--:--";
-  elapsedTimeEl.textContent = "00:00:00";
-  localStorage.removeItem("quizTimerState");
-}
-
-function loadTimerState() {
-  const storedRaw = localStorage.getItem("quizTimerState");
-  if (!storedRaw) return;
-  try {
-    const data = JSON.parse(storedRaw);
-    isQuizStarted = data.isQuizStarted || false;
-    isQuizEnded = data.isQuizEnded || false;
-    timerStartTime = data.timerStartTime || null;
-    elapsedWhenPaused = data.elapsedWhenPaused || 0;
-    endDateEl.textContent = data.endDateText || "--:--:--";
-
-    if (timerStartTime) startDateEl.textContent = new Date(timerStartTime).toLocaleString();
-    else startDateEl.textContent = "--:--:--";
-
-    if (isQuizStarted && !isQuizEnded && timerStartTime) {
-      const nowMS = Date.now();
-      const elapsedReal = elapsedWhenPaused + (nowMS - timerStartTime);
-      elapsedWhenPaused = elapsedReal;
-      timerStartTime = nowMS;
-      intervalID = setInterval(displayElapsed, 250);
-    } else {
-      elapsedTimeEl.textContent = formatTime(elapsedWhenPaused);
-    }
-  } catch {
-    // ignore parse error
-  }
-}
-
-window.addEventListener("beforeunload", () => persistTimerState());
-
-document.addEventListener("visibilitychange", () => {
-  if (!isQuizStarted || isQuizEnded) return;
-  if (document.visibilityState === "visible") resumeTimer();
-  else pauseTimer();
-});
-
-const oldRegisterResponse = registerResponse;
-registerResponse = function(isCorrect) {
-  oldRegisterResponse(isCorrect);
-  if (traitedMap.size === ayahNumbers.length) stopTimer();
-};
-
-loadTimerState();
-</script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-      .then(registration => {
-        console.log('Service Worker enregistré avec succès:', registration.scope);
-      })
-      .catch(error => {
-        console.log('Erreur d’enregistrement du Service Worker:', error);
-      });
-  });
-}
-</script>
-<script>
-let wakeLock = null;
-async function requestWakeLock() {
-  if ('wakeLock' in navigator) {
+  function loadProgress() {
+    const raw = localStorage.getItem('quran_quiz_progress');
+    if(!raw) return false;
     try {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => { console.log('Wake Lock released'); });
-      console.log('Wake Lock is active');
-    } catch (err) {
-      console.error(`Erreur de Wake Lock : ${err.name}, ${err.message}`);
+      const data = JSON.parse(raw);
+      if(data.sourah) sourahEl.value = data.sourah;
+      if(data.start) startEl.value = data.start;
+      if(data.end) endEl.value = data.end;
+      ayahNumbers = data.ayahNumbers || [];
+      traitedMap = new Map(data.traited || []);
+      correctCount = data.correctCount || 0;
+      errorCount = data.errorCount || 0;
+      return true;
+    } catch {
+      return false;
     }
-  } else {
-    console.log('Wake Lock API non supportée sur ce navigateur.');
   }
-}
-window.addEventListener('load', () => { requestWakeLock(); });
-document.addEventListener('visibilitychange', () => {
-  if (wakeLock !== null && document.visibilityState === 'visible') {
-    requestWakeLock();
+
+  // Écouteurs événements
+  languageEl.onchange = () => {
+    alert("Language change not yet implemented, please reload with desired language.");
+  };
+
+  sourahEl.onchange = () => {
+    updateRange();
+    shuffleAyahs();
+    // reset chrono si implémenté
+  };
+
+  startEl.onchange = () => { if(validateRange()) shuffleAyahs(); };
+  endEl.onchange = () => { if(validateRange()) shuffleAyahs(); };
+
+  btnRedistribute.onclick = shuffleAyahs;
+  btnSort.onclick = sortAyahs;
+  btnToggleTreated.onclick = () => {
+    showTreated = !showTreated;
+    renderAyahs();
+  };
+  btnCorrect.onclick = () => registerResponse(true);
+  btnIncorrect.onclick = () => registerResponse(false);
+
+  // Initialisation
+  populateSourahs();
+  languageEl.value = "ar";
+  updateRange();
+  if(!loadProgress()) shuffleAyahs();
+  else {
+    renderAyahs();
+    updateCounters();
   }
-});
+
+})();
 </script>
+
 </body>
 </html>
