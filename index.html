@@ -61,7 +61,6 @@
   <input type="number" id="end" min="1" />
 </div>
 
-<!-- Compteur et Chronomètre affichage -->
 <div id="timer-container" style="text-align:center; margin-bottom:10px; font-weight:bold; font-size:1.1em; font-family: monospace;">
   <div>Début du quiz : <span id="start-date">--:--:--</span></div>
   <div>Temps écoulé : <span id="elapsed-time">00:00:00</span></div>
@@ -205,7 +204,9 @@ const SURAHS = [
   {number:113, name_ar:"الفلق", name_fr:"Al-Falaq", count:5},
   {number:114, name_ar:"الناس", name_fr:"An-Nas", count:6}
 ];
+
 const STORAGE_KEY = "quranQuizProgress";
+
 const languageEl = document.getElementById("language");
 const sourahEl = document.getElementById("sourah");
 const startEl = document.getElementById("start");
@@ -232,6 +233,7 @@ const labelCorrectCount = document.getElementById("label-correctCount");
 const labelErrorCount = document.getElementById("label-errorCount");
 const labelRemainingCount = document.getElementById("label-remainingCount");
 const rangeWrap = document.getElementById("range-wrap");
+
 let ayahNumbers = [];
 let traitedMap = new Map();
 let showTreated = true;
@@ -240,6 +242,7 @@ let currentSourah = null;
 let correctCount = 0;
 let errorCount = 0;
 let verseCache = new Map();
+
 const texts = {
   fr: {
     title: "Quiz Versets du Coran Avancé",
@@ -310,6 +313,7 @@ const texts = {
     ayahText: "Verso N°: "
   }
 };
+
 function saveProgress() {
   const data = {
     sourah: sourahEl.value,
@@ -322,6 +326,7 @@ function saveProgress() {
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
+
 function loadProgress() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return false;
@@ -342,9 +347,11 @@ function loadProgress() {
     return false;
   }
 }
+
 function clearProgress() {
   localStorage.removeItem(STORAGE_KEY);
 }
+
 function updateInterfaceTexts(lang) {
   const t = texts[lang];
   document.title = t.title;
@@ -364,6 +371,7 @@ function updateInterfaceTexts(lang) {
   lang === "ar" ? rangeWrap.classList.add("rtl-range") : rangeWrap.classList.remove("rtl-range");
   updateVerseHeader();
 }
+
 function updateVerseHeader() {
   if (currentSourah !== null && currentAyah !== null) {
     const t = texts[languageEl.value];
@@ -372,6 +380,7 @@ function updateVerseHeader() {
     verseHeaderEl.innerHTML = "";
   }
 }
+
 function populateSourates() {
   sourahEl.innerHTML = "";
   SURAHS.forEach((s) => {
@@ -381,6 +390,7 @@ function populateSourates() {
     sourahEl.appendChild(opt);
   });
 }
+
 function updateRange() {
   const sel = SURAHS.find((s) => s.number == sourahEl.value);
   if (!sel) return;
@@ -391,6 +401,7 @@ function updateRange() {
   endEl.max = sel.count;
   endEl.value = sel.count;
 }
+
 function validateInputs() {
   const sel = SURAHS.find((s) => s.number == sourahEl.value);
   if (!sel) return false;
@@ -406,6 +417,7 @@ function validateInputs() {
   endEl.value = endVal;
   return true;
 }
+
 function shuffleAyahs() {
   if (!validateInputs()) return;
   ayahNumbers = [];
@@ -427,14 +439,17 @@ function shuffleAyahs() {
   clearProgress();
   saveProgress();
 }
+
 function sortAyahs() {
   ayahNumbers.sort((a, b) => a - b);
   renderAyahs();
 }
+
 function toggleTreated() {
   showTreated = !showTreated;
   renderAyahs();
 }
+
 function updateCounters() {
   correctEl.textContent = correctCount;
   errorEl.textContent = errorCount;
@@ -442,6 +457,7 @@ function updateCounters() {
   const remaining = ayahNumbers.length - traitedMap.size;
   remainingEl.textContent = remaining < 0 ? 0 : remaining;
 }
+
 function colorVerseText(text) {
   if (!text) return "";
   text = text.trim();
@@ -477,6 +493,7 @@ function colorVerseText(text) {
   });
   return coloredParts.join(" ");
 }
+
 function showAyah(num) {
   currentAyah = num;
   currentSourah = sourahEl.value;
@@ -488,7 +505,7 @@ function showAyah(num) {
     updateVerseHeader();
     return;
   }
-  verseTextEl.innerHTML = "Chargement du verset...";
+  verseTextEl.innerHTML = "Chargement du verset…";
   fetch(`https://api.alquran.cloud/v1/ayah/${currentSourah}:${num}/ar.alafasy`)
     .then((res) => res.json())
     .then((data) => {
@@ -512,6 +529,7 @@ function showAyah(num) {
       verseTextEl.innerHTML = "Erreur lors du chargement du verset.";
     });
 }
+
 function registerResponse(isCorrect) {
   if (currentAyah === null) return;
   if (!traitedMap.has(currentAyah)) {
@@ -531,6 +549,7 @@ function registerResponse(isCorrect) {
     }
   }
 }
+
 function renderAyahs() {
   ayahContainer.innerHTML = "";
   ayahNumbers.forEach((num) => {
@@ -546,16 +565,20 @@ function renderAyahs() {
   });
   updateCounters();
 }
+
+// Initialisation complète
 populateSourates();
-const defaultLang = "ar";
-languageEl.value = defaultLang;
-updateInterfaceTexts(defaultLang);
+languageEl.value = "ar";
+updateInterfaceTexts("ar");
+updateRange();
 if (!loadProgress()) shuffleAyahs();
-/* ==== Événements ==== */
+
+// Gestion événements essentiels
 languageEl.addEventListener("change", (e) => updateInterfaceTexts(e.target.value));
 sourahEl.addEventListener("change", () => {
   updateRange();
   shuffleAyahs();
+  resetTimer();
 });
 startEl.addEventListener("input", validateInputs);
 endEl.addEventListener("input", validateInputs);
@@ -566,147 +589,142 @@ btnTrier.onclick = sortAyahs;
 btnToggleTraites.onclick = toggleTreated;
 btnCorrect.onclick = () => registerResponse(true);
 btnIncorrect.onclick = () => registerResponse(false);
-})();
 
-/* ==== AJOUT COMPTEUR ET CHRONOMETRE AVEC PERSISTANCE ==== */
-(() => {
-  let startTime = null;
-  let elapsedBeforeStart = 0; // ms cumulés après pause
-  let timerInterval = null;
-  let quizStarted = false;
-  let quizEnded = false;
+// Chronomètre persistant & contrôlé
+let timerStartTime = null;
+let elapsedWhenPaused = 0;
+let intervalID = null;
+let isQuizStarted = false;
+let isQuizEnded = false;
 
-  let quizStartTimestamp = null; // timestamp début réel (ms epoch)
+const startDateEl = document.getElementById("start-date");
+const endDateEl = document.getElementById("end-date");
+const elapsedTimeEl = document.getElementById("elapsed-time");
 
-  const startDateEl = document.getElementById("start-date");
-  const endDateEl = document.getElementById("end-date");
-  const elapsedTimeEl = document.getElementById("elapsed-time");
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+  const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+  const s = String(totalSeconds % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
 
-  function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-    const seconds = String(totalSeconds % 60).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
+function displayElapsed() {
+  if (!timerStartTime) return;
+  const nowMS = Date.now();
+  const totalElapsed = elapsedWhenPaused + (nowMS - timerStartTime);
+  elapsedTimeEl.textContent = formatTime(totalElapsed);
+  persistTimerState();
+}
+
+function persistTimerState() {
+  let nowMS = Date.now();
+  let runningElapsed = elapsedWhenPaused;
+  if (timerStartTime) {
+    runningElapsed += (nowMS - timerStartTime);
   }
+  localStorage.setItem("quizTimerState", JSON.stringify({
+    isQuizStarted,
+    isQuizEnded,
+    timerStartTime,
+    elapsedWhenPaused: runningElapsed,
+    endDateText: endDateEl.textContent || "--:--:--"
+  }));
+}
 
-  function updateElapsed() {
-    if (!startTime) return;
-    const now = performance.now();
-    const diff = elapsedBeforeStart + (now - startTime);
-    elapsedTimeEl.textContent = formatTime(diff);
-  }
+function startTimer() {
+  if (isQuizStarted) return;
+  isQuizStarted = true;
+  isQuizEnded = false;
+  timerStartTime = Date.now();
+  elapsedWhenPaused = 0;
+  startDateEl.textContent = new Date(timerStartTime).toLocaleString();
+  endDateEl.textContent = "--:--:--";
+  elapsedTimeEl.textContent = "00:00:00";
+  intervalID = setInterval(displayElapsed, 250);
+  persistTimerState();
+}
 
-  function saveTimerState() {
-    localStorage.setItem("quizTimerState", JSON.stringify({
-      quizStarted,
-      quizEnded,
-      quizStartTimestamp,
-      endDateText: endDateEl.textContent,
-      elapsedBeforeStart
-    }));
-  }
+function pauseTimer() {
+  if (!isQuizStarted || isQuizEnded || !intervalID) return;
+  elapsedWhenPaused += (Date.now() - timerStartTime);
+  clearInterval(intervalID);
+  intervalID = null;
+  timerStartTime = null;
+  elapsedTimeEl.textContent = formatTime(elapsedWhenPaused);
+  persistTimerState();
+}
 
-  function startTimer() {
-    if (quizStarted) return;
-    quizStarted = true;
-    quizEnded = false;
-    quizStartTimestamp = Date.now();
-    elapsedBeforeStart = 0;
-    startTime = performance.now();
+function resumeTimer() {
+  if (!isQuizStarted || isQuizEnded || intervalID) return;
+  timerStartTime = Date.now();
+  intervalID = setInterval(displayElapsed, 250);
+  persistTimerState();
+}
 
-    startDateEl.textContent = new Date(quizStartTimestamp).toLocaleString();
-    endDateEl.textContent = "--:--:--";
-    elapsedTimeEl.textContent = "00:00:00";
+function stopTimer() {
+  if (!isQuizStarted || isQuizEnded) return;
+  pauseTimer();
+  isQuizEnded = true;
+  endDateEl.textContent = new Date().toLocaleString();
+  persistTimerState();
+}
 
-    timerInterval = setInterval(updateElapsed, 250);
-    saveTimerState();
-  }
+function resetTimer() {
+  pauseTimer();
+  isQuizStarted = false;
+  isQuizEnded = false;
+  timerStartTime = null;
+  elapsedWhenPaused = 0;
+  startDateEl.textContent = "--:--:--";
+  endDateEl.textContent = "--:--:--";
+  elapsedTimeEl.textContent = "00:00:00";
+  localStorage.removeItem("quizTimerState");
+}
 
-  function pauseTimer() {
-    if (!quizStarted || quizEnded || !timerInterval) return;
-    elapsedBeforeStart += performance.now() - startTime;
-    startTime = null;
-    clearInterval(timerInterval);
-    timerInterval = null;
-    saveTimerState();
-    elapsedTimeEl.textContent = formatTime(elapsedBeforeStart);
-  }
+function loadTimerState() {
+  const storedRaw = localStorage.getItem("quizTimerState");
+  if (!storedRaw) return;
+  try {
+    const data = JSON.parse(storedRaw);
+    isQuizStarted = data.isQuizStarted || false;
+    isQuizEnded = data.isQuizEnded || false;
+    timerStartTime = data.timerStartTime || null;
+    elapsedWhenPaused = data.elapsedWhenPaused || 0;
+    endDateEl.textContent = data.endDateText || "--:--:--";
 
-  function resumeTimer() {
-    if (!quizStarted || quizEnded || timerInterval) return;
-    startTime = performance.now();
-    timerInterval = setInterval(updateElapsed, 250);
-    saveTimerState();
-  }
+    if (timerStartTime) startDateEl.textContent = new Date(timerStartTime).toLocaleString();
+    else startDateEl.textContent = "--:--:--";
 
-  function stopTimer() {
-    if (!quizStarted || quizEnded) return;
-    pauseTimer();
-    quizEnded = true;
-    endDateEl.textContent = new Date().toLocaleString();
-    saveTimerState();
-  }
-
-  function loadTimerState() {
-    const dataRaw = localStorage.getItem("quizTimerState");
-    if (!dataRaw) return;
-
-    try {
-      const data = JSON.parse(dataRaw);
-
-      quizStarted = data.quizStarted || false;
-      quizEnded = data.quizEnded || false;
-      quizStartTimestamp = data.quizStartTimestamp || null;
-      elapsedBeforeStart = data.elapsedBeforeStart || 0;
-
-      if (quizStarted && !quizEnded && quizStartTimestamp) {
-        // Recalcule temps écoulé total
-        elapsedBeforeStart = elapsedBeforeStart + (Date.now() - quizStartTimestamp);
-        startTime = performance.now();
-        startDateEl.textContent = new Date(quizStartTimestamp).toLocaleString();
-        timerInterval = setInterval(updateElapsed, 250);
-      } else {
-        if (quizStartTimestamp) {
-          startDateEl.textContent = new Date(quizStartTimestamp).toLocaleString();
-        } else {
-          startDateEl.textContent = "--:--:--";
-        }
-        elapsedTimeEl.textContent = formatTime(elapsedBeforeStart);
-      }
-
-      endDateEl.textContent = data.endDateText || "--:--:--";
-
-    } catch (e) {
-      // ignore JSON parse error
+    if (isQuizStarted && !isQuizEnded && timerStartTime) {
+      const nowMS = Date.now();
+      const elapsedReal = elapsedWhenPaused + (nowMS - timerStartTime);
+      elapsedWhenPaused = elapsedReal;
+      timerStartTime = nowMS;
+      intervalID = setInterval(displayElapsed, 250);
+    } else {
+      elapsedTimeEl.textContent = formatTime(elapsedWhenPaused);
     }
+  } catch {
+    // ignore parse error
   }
+}
 
-  // Visibilité page pause/reprise du timer
-  document.addEventListener("visibilitychange", () => {
-    if (!quizStarted || quizEnded) return;
-    if (document.visibilityState === "visible") resumeTimer();
-    else pauseTimer();
-  });
+window.addEventListener("beforeunload", () => persistTimerState());
 
-  // Démarrer timer au premier clic sur verset non traité
-  const ayahContainer = document.getElementById("ayah-numbers");
-  ayahContainer.addEventListener("click", (e) => {
-    if (!quizStarted && e.target.classList.contains("num") && !e.target.classList.contains("traited")) {
-      startTimer();
-    }
-  });
+document.addEventListener("visibilitychange", () => {
+  if (!isQuizStarted || isQuizEnded) return;
+  if (document.visibilityState === "visible") resumeTimer();
+  else pauseTimer();
+});
 
-  // Stop timer à fin quiz
-  const originalRegisterResponse = registerResponse;
-  registerResponse = function(isCorrect) {
-    originalRegisterResponse(isCorrect);
-    if (traitedMap.size === ayahNumbers.length) stopTimer();
-  };
+const oldRegisterResponse = registerResponse;
+registerResponse = function(isCorrect) {
+  oldRegisterResponse(isCorrect);
+  if (traitedMap.size === ayahNumbers.length) stopTimer();
+};
 
-  // Charger timer persisté au chargement page
-  loadTimerState();
-})();
+loadTimerState();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
