@@ -106,7 +106,7 @@
 
 <script>
 (() => {
-  const SURAHS = [
+  const SURAHS = [ 
     {number:1, name_ar:"الفاتحة", name_fr:"Al-Fatiha", count:7},
     {number:2, name_ar:"البقرة", name_fr:"Al-Baqara", count:286},
     {number:3, name_ar:"آل عمران", name_fr:"Al-i-Imran", count:200},
@@ -247,24 +247,23 @@
   const remainingEl = document.getElementById("remaining-count");
   const totalEl = document.getElementById("total-count");
 
-  // Elements timer affichage
+  // Timer display elements
   const startTimeEl = document.getElementById("start-time");
   const elapsedTimeEl = document.getElementById("elapsed-time");
   const totalTimeEl = document.getElementById("total-time");
 
-  // Chrono variables
+  // Timer variables
   let startTime = null;
   let elapsedTime = 0;
   let timerInterval = null;
   let quizRunning = false;
   let quizFinished = false;
 
-  // Formatage hh:mm:ss
   function formatTime(ms) {
     const totalSeconds = Math.floor(ms / 1000);
-    const h = Math.floor(totalSeconds / 3600).toString().padStart(2,'0');
-    const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2,'0');
-    const s = (totalSeconds % 60).toString().padStart(2,'0');
+    const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalSeconds % 60).toString().padStart(2, '0');
     return `${h}:${m}:${s}`;
   }
 
@@ -275,7 +274,6 @@
     }
   }
 
-  // Démarre chrono
   function startTimer() {
     if (quizRunning || quizFinished) return;
     startTime = Date.now();
@@ -283,21 +281,21 @@
     timerInterval = setInterval(updateElapsed, 500);
     quizRunning = true;
   }
-  // Pause chrono
+
   function pauseTimer() {
     if (!quizRunning) return;
     clearInterval(timerInterval);
     updateElapsed();
     quizRunning = false;
   }
-  // Reprise du chrono
+
   function resumeTimer() {
     if (quizRunning || quizFinished) return;
     startTime = Date.now() - elapsedTime;
     timerInterval = setInterval(updateElapsed, 500);
     quizRunning = true;
   }
-  // Arrêt chrono et affichage total
+
   function stopTimer() {
     if (timerInterval) clearInterval(timerInterval);
     updateElapsed();
@@ -306,14 +304,10 @@
     totalTimeEl.textContent = formatTime(elapsedTime);
   }
 
-  // Gestion pause/reprise selon activité page
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener("visibilitychange", () => {
     if (quizRunning) {
-      if (document.hidden) {
-        pauseTimer();
-      } else {
-        resumeTimer();
-      }
+      if (document.hidden) pauseTimer();
+      else resumeTimer();
     }
   });
 
@@ -333,7 +327,7 @@
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
-  
+
   function loadProgress() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return false;
@@ -353,17 +347,10 @@
       updateRange();
       renderAyahs();
       updateCounters();
-      if (startTime) {
-        startTimeEl.textContent = new Date(startTime).toLocaleString();
-      }
-      if (quizRunning) {
-        timerInterval = setInterval(updateElapsed, 500);
-      } else {
-        elapsedTimeEl.textContent = formatTime(elapsedTime);
-      }
-      if (quizFinished) {
-        totalTimeEl.textContent = formatTime(elapsedTime);
-      }
+      if (startTime) startTimeEl.textContent = new Date(startTime).toLocaleString();
+      if (quizRunning) timerInterval = setInterval(updateElapsed, 500);
+      else elapsedTimeEl.textContent = formatTime(elapsedTime);
+      if (quizFinished) totalTimeEl.textContent = formatTime(elapsedTime);
       return true;
     } catch {
       return false;
@@ -395,7 +382,7 @@
   }
 
   function updateVerseHeader() {
-    if(currentSourah !== null && currentAyah !== null) {
+    if (currentSourah !== null && currentAyah !== null) {
       const t = texts[languageEl.value];
       verseHeaderEl.innerHTML = `${t.surahText}<span class="number-blue">${currentSourah}</span>, ${t.ayahText}<span class="number-blue">${currentAyah}</span>`;
     } else {
@@ -405,7 +392,7 @@
 
   function populateSourates() {
     sourahEl.innerHTML = "";
-    SURAHS.forEach(s => {
+    SURAHS.forEach((s) => {
       const opt = document.createElement("option");
       opt.value = s.number;
       opt.text = `${s.number} - ${s.name_ar} (${s.name_fr})`;
@@ -414,14 +401,18 @@
   }
 
   function updateRange() {
-    const sel = SURAHS.find(s => s.number == sourahEl.value);
+    const sel = SURAHS.find((s) => s.number == sourahEl.value);
     if (!sel) return;
-    startEl.min = 1; startEl.max = sel.count; startEl.value = 1;
-    endEl.min = 1; endEl.max = sel.count; endEl.value = sel.count;
+    startEl.min = 1;
+    startEl.max = sel.count;
+    startEl.value = 1;
+    endEl.min = 1;
+    endEl.max = sel.count;
+    endEl.value = sel.count;
   }
 
   function validateInputs() {
-    const sel = SURAHS.find(s => s.number == sourahEl.value);
+    const sel = SURAHS.find((s) => s.number == sourahEl.value);
     if (!sel) return false;
     let maxVerset = sel.count;
     let startVal = parseInt(startEl.value);
@@ -439,8 +430,8 @@
   function shuffleAyahs() {
     if (!validateInputs()) return;
     ayahNumbers = [];
-    for(let i = +startEl.value; i <= +endEl.value; i++) ayahNumbers.push(i);
-    for(let i = ayahNumbers.length - 1; i > 0; i--) {
+    for (let i = +startEl.value; i <= +endEl.value; i++) ayahNumbers.push(i);
+    for (let i = ayahNumbers.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [ayahNumbers[i], ayahNumbers[j]] = [ayahNumbers[j], ayahNumbers[i]];
     }
@@ -489,56 +480,57 @@
     text = text.trim();
     const SIGNES = ["۞", "۩"];
     let cleanedText = text;
-    SIGNES.forEach(s => {
-      cleanedText = cleanedText.split(s).join('');
+    SIGNES.forEach((s) => {
+      cleanedText = cleanedText.split(s).join("");
     });
     cleanedText = cleanedText.trim();
-    const words = cleanedText.split(/\s+/).filter(w => w.length > 0);
-    if(words.length === 0) return text;
+    const words = cleanedText.split(/\s+/).filter((w) => w.length > 0);
+    if (words.length === 0) return text;
     const firstWord = `<span class="verset-red">${words[0]}</span>`;
-    const lastWord = words.length > 1 ? `<span class="verset-green">${words[words.length - 1]}</span>` : '';
-    const middleWords = words.length > 2 ? words.slice(1, words.length - 1).join(" ") : '';
-    const originalParts = text.split(/\s+/).filter(p => p.length > 0);
+    const lastWord =
+      words.length > 1 ? `<span class="verset-green">${words[words.length - 1]}</span>` : "";
+    const middleWords = words.length > 2 ? words.slice(1, words.length - 1).join(" ") : "";
+    const originalParts = text.split(/\s+/).filter((p) => p.length > 0);
     let wordIndex = 0;
-    const coloredParts = originalParts.map(part => {
-      if(part === "۞") return `<span class="verset-yellow">${part}</span>`;
-      if(part === "۩") return `<span class="verset-blue">${part}</span>`;
-      if(wordIndex === 0) {
+    const coloredParts = originalParts.map((part) => {
+      if (part === "۞") return `<span class="verset-yellow">${part}</span>`;
+      if (part === "۩") return `<span class="verset-blue">${part}</span>`;
+      if (wordIndex === 0) {
         wordIndex++;
         return firstWord;
-      } else if(wordIndex === words.length -1) {
+      } else if (wordIndex === words.length - 1) {
         wordIndex++;
         return lastWord;
-      } else if(wordIndex > 0 && wordIndex < words.length -1) {
+      } else if (wordIndex > 0 && wordIndex < words.length - 1) {
         const w = words[wordIndex];
         wordIndex++;
         return w;
       }
       return part;
     });
-    return coloredParts.join(' ');
+    return coloredParts.join(" ");
   }
 
   function showAyah(num) {
-    if(!quizRunning && !quizFinished) startTimer();
+    if (!quizRunning && !quizFinished) startTimer();
     currentAyah = num;
     currentSourah = sourahEl.value;
     ayatBox.style.display = "block";
     const lang = languageEl.value;
     const cacheKey = `${currentSourah}:${num}:${lang}`;
-    if(verseCache.has(cacheKey)) {
+    if (verseCache.has(cacheKey)) {
       verseTextEl.innerHTML = verseCache.get(cacheKey);
       updateVerseHeader();
       return;
     }
     verseTextEl.innerHTML = "Chargement du verset...";
     fetch(`https://api.alquran.cloud/v1/ayah/${currentSourah}:${num}/ar.alafasy`)
-      .then(res => res.json())
-      .then(data => {
-        if(data.code === 200 && data.data && data.data.text) {
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code === 200 && data.data && data.data.text) {
           let verseText = data.data.text;
           const bismillah = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
-          if(num === 1 && verseText.startsWith(bismillah)) {
+          if (num === 1 && verseText.startsWith(bismillah)) {
             verseText = verseText.slice(bismillah.length).trim();
           }
           const colored = colorVerseText(verseText);
@@ -557,10 +549,10 @@
   }
 
   function registerResponse(isCorrect) {
-    if(currentAyah === null) return;
-    if(!traitedMap.has(currentAyah)) {
+    if (currentAyah === null) return;
+    if (!traitedMap.has(currentAyah)) {
       traitedMap.set(currentAyah, isCorrect);
-      if(isCorrect) correctCount++;
+      if (isCorrect) correctCount++;
       else errorCount++;
       updateCounters();
       renderAyahs();
@@ -568,7 +560,7 @@
       currentAyah = null;
       currentSourah = null;
       updateVerseHeader();
-      if(traitedMap.size === ayahNumbers.length) {
+      if (traitedMap.size === ayahNumbers.length) {
         clearProgress();
         stopTimer();
       } else {
@@ -577,70 +569,13 @@
     }
   }
 
-  function renderAyahs() {
-    ayahContainer.innerHTML = "";
-    ayahNumbers.forEach(num => {
-      const status = traitedMap.get(num);
-      if(status !== undefined && !showTreated) return;
-      const div = document.createElement("div");
-      div.classList.add("num");
-      if(status === true) div.classList.add("traited", "correct");
-      else if(status === false) div.classList.add("traited", "incorrect");
-      div.innerText = num;
-      if(status === undefined) div.onclick = () => showAyah(num);
-      ayahContainer.appendChild(div);
-    });
-    updateCounters();
-  }
-
-  // Chrono functions
-  function startTimer() {
-    if(quizRunning || quizFinished) return;
-    startTime = Date.now();
-    startTimeEl.textContent = new Date(startTime).toLocaleString();
-    timerInterval = setInterval(updateElapsed, 500);
-    quizRunning = true;
-  }
-  function pauseTimer() {
-    if(!quizRunning) return;
-    clearInterval(timerInterval);
-    updateElapsed();
-    quizRunning = false;
-  }
-  function resumeTimer() {
-    if(quizRunning || quizFinished) return;
-    startTime = Date.now() - elapsedTime;
-    timerInterval = setInterval(updateElapsed, 500);
-    quizRunning = true;
-  }
-  function stopTimer() {
-    if(timerInterval) clearInterval(timerInterval);
-    updateElapsed();
-    quizRunning = false;
-    quizFinished = true;
-    totalTimeEl.textContent = formatTime(elapsedTime);
-  }
-  function updateElapsed() {
-    if(startTime) {
-      elapsedTime = Date.now() - startTime;
-      elapsedTimeEl.textContent = formatTime(elapsedTime);
-    }
-  }
-  // Gestion visibilité page pause/reprise chrono
-  document.addEventListener("visibilitychange", () => {
-    if(quizRunning) {
-      if(document.hidden) pauseTimer();
-      else resumeTimer();
-    }
-  });
-
   populateSourates();
   const defaultLang = "ar";
   languageEl.value = defaultLang;
   updateInterfaceTexts(defaultLang);
-  if(!loadProgress()) shuffleAyahs();
+  if (!loadProgress()) shuffleAyahs();
 
-  languageEl.addEventListener("change", e => updateInterfaceTexts(e.target.value));
+  languageEl.addEventListener("change", (e) => updateInterfaceTexts(e.target.value));
   sourahEl.addEventListener("change", () => {
     updateRange();
     shuffleAyahs();
