@@ -571,10 +571,12 @@ btnIncorrect.onclick = () => registerResponse(false);
 /* ==== AJOUT COMPTEUR ET CHRONOMETRE AVEC PERSISTANCE ==== */
 (() => {
   let startTime = null;
-  let elapsedMs = 0; // ms cumulés lors pause
+  let elapsedBeforeStart = 0; // ms cumulés après pause
   let timerInterval = null;
   let quizStarted = false;
   let quizEnded = false;
+
+  let quizStartTimestamp = null; // timestamp début réel (ms epoch)
 
   const startDateEl = document.getElementById("start-date");
   const endDateEl = document.getElementById("end-date");
@@ -591,7 +593,7 @@ btnIncorrect.onclick = () => registerResponse(false);
   function updateElapsed() {
     if (!startTime) return;
     const now = performance.now();
-    const diff = elapsedMs + (now - startTime);
+    const diff = elapsedBeforeStart + (now - startTime);
     elapsedTimeEl.textContent = formatTime(diff);
   }
 
@@ -599,9 +601,9 @@ btnIncorrect.onclick = () => registerResponse(false);
     localStorage.setItem("quizTimerState", JSON.stringify({
       quizStarted,
       quizEnded,
-      startDate: startDateEl.textContent,
-      endDate: endDateEl.textContent,
-      elapsedMs
+      quizStartTimestamp,
+      endDateText: endDateEl.textContent,
+      elapsedBeforeStart
     }));
   }
 
@@ -609,23 +611,26 @@ btnIncorrect.onclick = () => registerResponse(false);
     if (quizStarted) return;
     quizStarted = true;
     quizEnded = false;
+    quizStartTimestamp = Date.now();
+    elapsedBeforeStart = 0;
     startTime = performance.now();
-    elapsedMs = 0;
-    startDateEl.textContent = new Date().toLocaleString();
+
+    startDateEl.textContent = new Date(quizStartTimestamp).toLocaleString();
     endDateEl.textContent = "--:--:--";
     elapsedTimeEl.textContent = "00:00:00";
+
     timerInterval = setInterval(updateElapsed, 250);
     saveTimerState();
   }
 
   function pauseTimer() {
     if (!quizStarted || quizEnded || !timerInterval) return;
-    elapsedMs += performance.now() - startTime;
+    elapsedBeforeStart += performance.now() - startTime;
     startTime = null;
     clearInterval(timerInterval);
     timerInterval = null;
     saveTimerState();
-    elapsedTimeEl.textContent = formatTime(elapsedMs);
+    elapsedTimeEl.textContent = formatTime(elapsedBeforeStart);
   }
 
   function resumeTimer() {
@@ -649,35 +654,42 @@ btnIncorrect.onclick = () => registerResponse(false);
 
     try {
       const data = JSON.parse(dataRaw);
+
       quizStarted = data.quizStarted || false;
       quizEnded = data.quizEnded || false;
-      startDateEl.textContent = data.startDate || "--:--:--";
-      endDateEl.textContent = data.endDate || "--:--:--";
-      elapsedMs = data.elapsedMs || 0;
+      quizStartTimestamp = data.quizStartTimestamp || null;
+      elapsedBeforeStart = data.elapsedBeforeStart || 0;
 
-      if (quizStarted && !quizEnded) {
-        // redémarrer le timer en reprenant à elapsedMs
+      if (quizStarted && !quizEnded && quizStartTimestamp) {
+        // Recalcule temps écoulé total
+        elapsedBeforeStart = elapsedBeforeStart + (Date.now() - quizStartTimestamp);
         startTime = performance.now();
+        startDateEl.textContent = new Date(quizStartTimestamp).toLocaleString();
         timerInterval = setInterval(updateElapsed, 250);
       } else {
-        elapsedTimeEl.textContent = formatTime(elapsedMs);
+        if (quizStartTimestamp) {
+          startDateEl.textContent = new Date(quizStartTimestamp).toLocaleString();
+        } else {
+          startDateEl.textContent = "--:--:--";
+        }
+        elapsedTimeEl.textContent = formatTime(elapsedBeforeStart);
       }
+
+      endDateEl.textContent = data.endDateText || "--:--:--";
+
     } catch (e) {
-      // erreur parse ignorée
+      // ignore JSON parse error
     }
   }
 
-  // Surveiller la visibilité page pour pause/reprise timer
-  document.addEventListener('visibilitychange', () => {
+  // Visibilité page pause/reprise du timer
+  document.addEventListener("visibilitychange", () => {
     if (!quizStarted || quizEnded) return;
-    if (document.visibilityState === 'visible') {
-      resumeTimer();
-    } else {
-      pauseTimer();
-    }
+    if (document.visibilityState === "visible") resumeTimer();
+    else pauseTimer();
   });
 
-  // Démarrer timer dès 1er clic non traité sur numéro verset
+  // Démarrer timer au premier clic sur verset non traité
   const ayahContainer = document.getElementById("ayah-numbers");
   ayahContainer.addEventListener("click", (e) => {
     if (!quizStarted && e.target.classList.contains("num") && !e.target.classList.contains("traited")) {
@@ -685,16 +697,14 @@ btnIncorrect.onclick = () => registerResponse(false);
     }
   });
 
-  // STOPPER timer lorsque quiz terminé (tous versets traités)
+  // Stop timer à fin quiz
   const originalRegisterResponse = registerResponse;
   registerResponse = function(isCorrect) {
     originalRegisterResponse(isCorrect);
-    if (traitedMap.size === ayahNumbers.length) {
-      stopTimer();
-    }
+    if (traitedMap.size === ayahNumbers.length) stopTimer();
   };
 
-  // Charger état timer au démarrage
+  // Charger timer persisté au chargement page
   loadTimerState();
 })();
 </script>
