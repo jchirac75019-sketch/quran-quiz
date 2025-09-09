@@ -17,23 +17,23 @@
   button:active { background-color: #388e3c; }
   label, select, input[type=number] { font-size: 1em; padding: 6px 8px; border-radius: 5px; border: 1px solid #aaa; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; }
   input[type=number]:focus, select:focus { border-color: #3a8d3a; box-shadow: 0 0 6px #4caf5080; outline: none; }
-  /* Ajustement ligne filtres en arabe (RTL) pour éviter chevauchement */
+  /* Corrige chevauchement filtre Sourate en arabe */
   .range-wrap.rtl-range {
-    gap: 8px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    gap: 12px !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
   }
   .range-wrap.rtl-range label,
   .range-wrap.rtl-range select,
   .range-wrap.rtl-range input[type=number] {
-    min-width: 80px;
+    min-width: 100px !important;
     box-sizing: border-box;
   }
   /* Réduction de l'espace entre la grille et les compteurs */
   .table-wrap {
     margin-bottom: 6px !important;
   }
-  /* Conteneur compteurs amélioré, aligné juste en dessous de la grille */
+  /* Compteurs alignés juste sous la grille */
   #counters {
     margin-top: 6px !important;
     margin-bottom: 6px;
@@ -50,14 +50,15 @@
   .correct-box { background-color: #0b3d0b; }
   .incorrect-box { background-color: #8b1c1c; }
   .remaining-box { background-color: #505050; }
-  /* Bloc versets repositionné en bas sous les compteurs */
+  /* Bloc versets positionné entre compteurs et boutons réponse */
   #ayat-box {
     position: fixed;
-    bottom: auto; /* annule l'ancien bottom */
     left: 10px;
     right: 10px;
-    max-height: 28vh; /* hauteur raisonnable avec scroll */
-    overflow-y: auto; /* scroll vertical si trop grand */
+    top: auto;
+    bottom: 80px; /* espace sous le bloc pour boutons de réponse */
+    max-height: calc(60vh - 80px); /* hauteur limitée pour ne pas dépasser */
+    overflow-y: auto;
     margin-top: 6px;
     border-radius: 8px;
     padding: 10px 12px 12px 12px;
@@ -71,12 +72,12 @@
     display: none;
     transition: all 0.3s ease;
   }
-  /* Pour s'assurer que le bloc verset ne chevauche pas les compteurs */
-  @media (max-width: 600px) {
-    #ayat-box {
-      max-height: 40vh;
-    }
+  /* Réduction hauteur boutons Bonne/Mauvaise réponse pour plus d’espace */
+  #response-buttons button {
+    padding: 6px 0 !important;
+    font-size: 1em !important;
   }
+  /* Styles restants */
   .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; }
   .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
   .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
@@ -84,7 +85,7 @@
   #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
   #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
   #response-buttons {
-    position: fixed; bottom: 20px; left: 10px; right: 10px;
+    position: fixed; bottom: 10px; left: 10px; right: 10px;
     display: flex; justify-content: center; gap: 16px;
     background: #f5f5f5;
     border-radius: 8px;
@@ -95,7 +96,7 @@
   #response-buttons button {
     flex: 1;
     font-size: 1.1em;
-    padding: 10px 0;
+    padding: 6px 0;
     line-height: 1.3em;
     font-weight: bold;
     border-radius: 6px;
@@ -143,7 +144,7 @@
     body { font-size: 13px; }
     #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px 80px 14px; overflow-y: visible; }
     #verse-text { max-height: 17em; font-size: 1.3em; }
-    #response-buttons button { padding: 12px 0; font-size: 1.2em; }
+    #response-buttons button { padding: 6px 0; font-size: 1.1em; }
     .table-wrap { max-height: 140px; margin-bottom: 140px; }
     .num { padding: 6px 10px; min-width: 34px; font-size: 1em; }
     #counters { font-size: 1.1em; }
@@ -675,7 +676,6 @@ function colorVerseText(text) {
 function showAyah(num) {
   currentAyah = num;
   currentSourah = sourahEl.value;
-  ayatBox.style.bottom = "auto"; // Annule ancien bottom fixe
   ayatBox.style.display = "block";
   const lang = languageEl.value;
   const cacheKey = `${currentSourah}:${num}:${lang}`;
