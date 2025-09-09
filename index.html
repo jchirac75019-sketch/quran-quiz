@@ -50,14 +50,18 @@
   .correct-box { background-color: #0b3d0b; }
   .incorrect-box { background-color: #8b1c1c; }
   .remaining-box { background-color: #505050; }
-  /* Bloc versets positionné entre compteurs et boutons réponse */
+  /* Bloc versets positionné strictement entre compteurs et boutons réponse */
   #ayat-box {
     position: fixed;
     left: 10px;
     right: 10px;
-    top: auto;
-    bottom: 80px; /* espace sous le bloc pour boutons de réponse */
-    max-height: calc(60vh - 80px); /* hauteur limitée pour ne pas dépasser */
+    top:  calc(5.8em + 126px); /* hauteur approximative des compteurs + marges */
+    /* 
+      5.8em ≈ hauteur + marges des compteurs + timer, 
+      126px à ajuster en fonction hauteur cumulée de compteurs + timer, 
+      vous pouvez ajuster en testant.
+    */
+    bottom: 60px; /* hauteur des boutons de réponse + padding */
     overflow-y: auto;
     margin-top: 6px;
     border-radius: 8px;
@@ -73,29 +77,18 @@
     transition: all 0.3s ease;
   }
   /* Réduction hauteur boutons Bonne/Mauvaise réponse pour plus d’espace */
-  #response-buttons button {
-    padding: 6px 0 !important;
-    font-size: 1em !important;
-  }
-  /* Styles restants */
-  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; }
-  .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
-  .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
-  .num.traited.incorrect { background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through; }
-  #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
-  #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
   #response-buttons {
     position: fixed; bottom: 10px; left: 10px; right: 10px;
     display: flex; justify-content: center; gap: 16px;
     background: #f5f5f5;
     border-radius: 8px;
-    padding: 8px 12px;
+    padding: 6px 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     z-index: 1100;
   }
   #response-buttons button {
     flex: 1;
-    font-size: 1.1em;
+    font-size: 1em;
     padding: 6px 0;
     line-height: 1.3em;
     font-weight: bold;
@@ -124,25 +117,16 @@
   #btnIncorrect:hover {
     background-color: #e9cfcf;
   }
-  /* Icon styles */
-  .icon-check::before {
-    content: "✔";
-    color: #0b3d0b;
-    font-weight: bold;
-  }
-  .icon-cross::before {
-    content: "✖";
-    color: #8b1c1c;
-    font-weight: bold;
-  }
-  .verset-red { color: red; font-weight: bold; }
-  .verset-green { color: green; font-weight: bold; }
-  .verset-blue { color: blue; font-weight: bold; }
-  .verset-yellow { color: orange; font-weight: bold; }
-  .number-blue { color: blue; font-weight: bold; }
+  /* Styles restants */
+  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; }
+  .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
+  .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
+  .num.traited.incorrect { background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through; }
+  #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
+  #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
   @media (max-width: 400px) {
     body { font-size: 13px; }
-    #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px 80px 14px; overflow-y: visible; }
+    #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px 80px 14px; overflow-y: visible; top: 140px; bottom: 70px; }
     #verse-text { max-height: 17em; font-size: 1.3em; }
     #response-buttons button { padding: 6px 0; font-size: 1.1em; }
     .table-wrap { max-height: 140px; margin-bottom: 140px; }
