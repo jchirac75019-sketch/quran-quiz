@@ -9,11 +9,20 @@
   h1 { font-size: 1.2em; text-align: center; margin-bottom: 6px; }
   label, select, input { font-size: 0.9em; margin: 0 4px 6px 0; }
   input[type=number] { width: 50px; }
-  .range-wrap { display: flex; gap: 6px; align-items: center; }
+  .range-wrap { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
   .rtl-range { direction: rtl; }
-  .controls { margin-bottom: 8px; display: flex; gap: 6px; flex-wrap: nowrap; }
-  button { padding: 4px 8px; font-size: 0.9em; cursor: pointer; }
-  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+  button { padding: 8px 14px; font-size: 1em; border-radius: 6px; border: none; background-color: #4caf50; color: white; font-weight: 600; box-shadow: 0 2px 5px rgba(0,0,0,0.15); cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; }
+  button:hover { background-color: #43a047; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+  button:active { background-color: #388e3c; }
+  label, select, input[type=number] { font-size: 1em; padding: 6px 8px; border-radius: 5px; border: 1px solid #aaa; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; }
+  input[type=number]:focus, select:focus { border-color: #3a8d3a; box-shadow: 0 0 6px #4caf5080; outline: none; }
+  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; margin-bottom: 150px; transition: margin-bottom 0.3s ease; }
+  /* Ajout d’une marge inférieure à la grille des numéros quand #ayat-box est visible */
+  #ayat-box[style*="display: block"] + .table-wrap, 
+  #ayat-box[style*="display: block"] ~ .table-wrap {
+    margin-bottom: 150px;
+  }
   .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
   .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
   .num.traited.incorrect { background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through; }
@@ -23,6 +32,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.2); max-height: 22em; 
     font-size: 1.2em; line-height: 1.4em; direction: rtl; text-align: right; 
     display: none; overflow-y: auto; z-index: 1000; 
+    transition: all 0.3s ease;
   }
   #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
   #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
@@ -77,7 +87,6 @@
     color: #8b1c1c;
     font-weight: bold;
   }
-
   #counters {
     display: flex; gap: 10px; margin-top: 14px; font-size: 1em; font-weight: 600; flex-wrap: wrap; justify-content: center;
   }
@@ -97,7 +106,7 @@
     #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px 80px 14px; overflow-y: visible; }
     #verse-text { max-height: 17em; font-size: 1.3em; }
     #response-buttons button { padding: 12px 0; font-size: 1.2em; }
-    .table-wrap { max-height: 140px; }
+    .table-wrap { max-height: 140px; margin-bottom: 140px; }
     .num { padding: 6px 10px; min-width: 34px; font-size: 1em; }
     #counters { font-size: 1.1em; }
   }
@@ -214,7 +223,6 @@ const texts = {
     ayahText: "Verso N°: "
   }
 };
-
 const SURAHS = [
   {number:1, name_ar:"الفاتحة", name_fr:"Al-Fatiha", count:7},
   {number:2, name_ar:"البقرة", name_fr:"Al-Baqara", count:286},
@@ -331,7 +339,6 @@ const SURAHS = [
   {number:113, name_ar:"الفلق", name_fr:"Al-Falaq", count:5},
   {number:114, name_ar:"الناس", name_fr:"An-Nas", count:6}
 ];
-
 const STORAGE_KEY = "quranQuizProgress";
 const languageEl = document.getElementById("language");
 const sourahEl = document.getElementById("sourah");
@@ -361,7 +368,6 @@ const labelRemainingCount = document.getElementById("label-remainingCount");
 const rangeWrap = document.getElementById("range-wrap");
 const endTimeBox = document.getElementById("end-time-box");
 const endDisplay = document.getElementById("end-time-display");
-
 let ayahNumbers = [];
 let traitedMap = new Map();
 let showTreated = true;
@@ -370,13 +376,11 @@ let currentSourah = null;
 let correctCount = 0;
 let errorCount = 0;
 let verseCache = new Map();
-
 let startTime = null;
 let endTime = null;
 let elapsedTime = 0;
 let timerInterval = null;
 let lastUpdateTime = null;
-
 const timerBox = document.createElement('div');
 timerBox.classList.add('counter-box','remaining-box');
 timerBox.style.fontWeight = 'normal';
@@ -385,7 +389,6 @@ timerBox.innerHTML = 'Début : <span id="start-time-display">--:--:--</span> &nb
 document.getElementById('counters').appendChild(timerBox);
 const startDisplay = document.getElementById('start-time-display');
 const elapsedDisplay = document.getElementById('elapsed-time-display');
-
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
   const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
@@ -393,7 +396,6 @@ function formatTime(ms) {
   const s = String(totalSeconds % 60).padStart(2, '0');
   return `${h}:${m}:${s}`;
 }
-
 function updateTimerDisplay() {
   if (startTime && !endTime) {
     const now = Date.now();
@@ -404,7 +406,6 @@ function updateTimerDisplay() {
     elapsedDisplay.textContent = formatTime(elapsedTime);
   }
 }
-
 function startTimer() {
   if (startTime) return;
   startTime = Date.now();
@@ -417,7 +418,6 @@ function startTimer() {
     if (document.visibilityState === 'visible') updateTimerDisplay();
   }, 500);
 }
-
 function stopTimer() {
   if (!startTime || endTime) return;
   clearInterval(timerInterval);
@@ -427,7 +427,6 @@ function stopTimer() {
   endDisplay.textContent = new Date(endTime).toLocaleString();
   updateTimerDisplay();
 }
-
 document.addEventListener('visibilitychange', () => {
   if (!startTime) return;
   if (document.visibilityState === 'visible') {
@@ -442,7 +441,6 @@ document.addEventListener('visibilitychange', () => {
     timerInterval = null;
   }
 });
-
 function saveProgress() {
   const data = {
     sourah: sourahEl.value,
@@ -458,7 +456,6 @@ function saveProgress() {
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
-
 function loadProgress() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return false;
@@ -496,7 +493,6 @@ function loadProgress() {
     return false;
   }
 }
-
 function clearProgress() {
   localStorage.removeItem(STORAGE_KEY);
   startTime = null;
@@ -509,7 +505,6 @@ function clearProgress() {
   endTimeBox.style.display = 'none';
   endDisplay.textContent = "--:--:--";
 }
-
 function updateInterfaceTexts(lang) {
   const t = texts[lang];
   document.title = t.title;
@@ -529,7 +524,6 @@ function updateInterfaceTexts(lang) {
   lang === "ar" ? rangeWrap.classList.add("rtl-range") : rangeWrap.classList.remove("rtl-range");
   updateVerseHeader();
 }
-
 function updateVerseHeader() {
   if (currentSourah !== null && currentAyah !== null) {
     const t = texts[languageEl.value];
@@ -538,7 +532,6 @@ function updateVerseHeader() {
     verseHeaderEl.innerHTML = "";
   }
 }
-
 function populateSourates() {
   sourahEl.innerHTML = "";
   SURAHS.forEach(s => {
@@ -548,7 +541,6 @@ function populateSourates() {
     sourahEl.appendChild(opt);
   });
 }
-
 function updateRange() {
   const sel = SURAHS.find(s => s.number == sourahEl.value);
   if (!sel) return;
@@ -559,7 +551,6 @@ function updateRange() {
   endEl.max = sel.count;
   endEl.value = sel.count;
 }
-
 function validateInputs() {
   const sel = SURAHS.find(s => s.number == sourahEl.value);
   if (!sel) return false;
@@ -575,7 +566,6 @@ function validateInputs() {
   endEl.value = endVal;
   return true;
 }
-
 function shuffleAyahs() {
   if (!validateInputs()) return;
   ayahNumbers = [];
@@ -597,17 +587,14 @@ function shuffleAyahs() {
   clearProgress();
   saveProgress();
 }
-
 function sortAyahs() {
   ayahNumbers.sort((a, b) => a - b);
   renderAyahs();
 }
-
 function toggleTreated() {
   showTreated = !showTreated;
   renderAyahs();
 }
-
 function updateCounters() {
   correctEl.textContent = correctCount;
   errorEl.textContent = errorCount;
@@ -615,7 +602,6 @@ function updateCounters() {
   const remaining = ayahNumbers.length - traitedMap.size;
   remainingEl.textContent = remaining < 0 ? 0 : remaining;
 }
-
 function colorVerseText(text) {
   if (!text) return "";
   text = text.trim();
@@ -648,7 +634,6 @@ function colorVerseText(text) {
     return part;
   }).join(" ");
 }
-
 function showAyah(num) {
   currentAyah = num;
   currentSourah = sourahEl.value;
@@ -681,13 +666,11 @@ function showAyah(num) {
     .catch(() => {
       verseTextEl.innerHTML = "Erreur lors du chargement du verset.";
     });
-
   if (!startTime) {
     startTimer();
     saveProgress();
   }
 }
-
 function registerResponse(isCorrect) {
   if (currentAyah === null) return;
   if (!traitedMap.has(currentAyah)) {
@@ -700,7 +683,6 @@ function registerResponse(isCorrect) {
     currentAyah = null;
     currentSourah = null;
     updateVerseHeader();
-
     if (traitedMap.size === ayahNumbers.length) {
       stopTimer();
       saveProgress();
@@ -709,7 +691,6 @@ function registerResponse(isCorrect) {
     }
   }
 }
-
 function renderAyahs() {
   ayahContainer.innerHTML = "";
   ayahNumbers.forEach(num => {
@@ -725,13 +706,11 @@ function renderAyahs() {
   });
   updateCounters();
 }
-
 populateSourates();
 const defaultLang = "ar";
 languageEl.value = defaultLang;
 updateInterfaceTexts(defaultLang);
 if (!loadProgress()) shuffleAyahs();
-
 languageEl.addEventListener("change", e => updateInterfaceTexts(e.target.value));
 sourahEl.addEventListener("change", () => {
   updateRange();
@@ -746,7 +725,6 @@ btnTrier.onclick = sortAyahs;
 btnToggleTraites.onclick = toggleTreated;
 btnCorrect.onclick = () => registerResponse(true);
 btnIncorrect.onclick = () => registerResponse(false);
-
 })();
 </script>
 <script>
