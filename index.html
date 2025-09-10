@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="<style>viewport" content="width=device-width, initial-scale=1" />
 <title>Quiz Versets Coran Avancé</title>
 <style>
   body { font-family: Arial, sans-serif; margin: 5px; max-width: 100%; padding: 0 5px; font-size: 14px; }
@@ -110,6 +110,59 @@
     .num { padding: 6px 10px; min-width: 34px; font-size: 1em; }
     #counters { font-size: 1.1em; }
   }
+/* Améliore l'espacement et évite le chevauchement sans toucher à la structure */
+.table-wrap {
+  margin-bottom: 8px !important;
+}
+#counters {
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+}
+#ayat-box {
+  position: static !important;
+  margin: 10px auto 0 auto !important;
+  max-width: 98vw;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.13);
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px 14px 10px 14px;
+  font-size: 1.1em;
+  line-height: 1.35em;
+  display: none;
+  overflow: visible;
+  z-index: auto;
+}
+#verse-text {
+  max-height: 12em !important;
+  overflow-y: auto !important;
+  margin-bottom: 6px !important;
+}
+#response-buttons {
+  position: static !important;
+  margin-top: 8px !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  z-index: auto !important;
+}
+#response-buttons button {
+  flex: 1 !important;
+  font-size: 0.95em !important;
+  padding: 6px 0 !important;
+  line-height: 1.1em !important;
+  min-height: 32px !important;
+}
+@media (max-width: 400px) {
+  .table-wrap { margin-bottom: 8px !important; }
+  #counters { font-size: 1em !important; margin-bottom: 6px !important;}
+  #ayat-box { font-size: 1em !important; padding: 10px 8px 8px 8px !important; }
+  #verse-text { max-height: 9em !important; }
+  #response-buttons button { padding: 5px 0 !important; min-height:28px !important;}
+}
 </style>
 </head>
 <body>
