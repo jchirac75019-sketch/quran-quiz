@@ -17,79 +17,38 @@
   button:active { background-color: #388e3c; }
   label, select, input[type=number] { font-size: 1em; padding: 6px 8px; border-radius: 5px; border: 1px solid #aaa; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; }
   input[type=number]:focus, select:focus { border-color: #3a8d3a; box-shadow: 0 0 6px #4caf5080; outline: none; }
-  /* Corrige chevauchement filtre Sourate en arabe */
-  .range-wrap.rtl-range {
-    gap: 12px !important;
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
+  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; margin-bottom: 150px; transition: margin-bottom 0.3s ease; }
+  /* Ajout d’une marge inférieure à la grille des numéros quand #ayat-box est visible */
+  #ayat-box[style*="display: block"] + .table-wrap, 
+  #ayat-box[style*="display: block"] ~ .table-wrap {
+    margin-bottom: 150px;
   }
-  .range-wrap.rtl-range label,
-  .range-wrap.rtl-range select,
-  .range-wrap.rtl-range input[type=number] {
-    min-width: 100px !important;
-    box-sizing: border-box;
-  }
-  /* Réduction de l'espace entre la grille et les compteurs */
-  .table-wrap {
-    margin-bottom: 6px !important;
-  }
-  /* Compteurs alignés juste sous la grille */
-  #counters {
-    margin-top: 6px !important;
-    margin-bottom: 6px;
-    display: flex; /* conserve flex pour alignement */
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    font-size: 1em;
-    font-weight: 600;
-  }
-  .counter-box {
-    padding: 8px 14px; border-radius: 5px; color: white; flex: 1 1 130px; text-align: center;
-  }
-  .correct-box { background-color: #0b3d0b; }
-  .incorrect-box { background-color: #8b1c1c; }
-  .remaining-box { background-color: #505050; }
-  /* Bloc versets positionné strictement entre compteurs et boutons réponse */
-  #ayat-box {
-    position: fixed;
-    left: 10px;
-    right: 10px;
-    top:  calc(5.8em + 126px); /* hauteur approximative des compteurs + marges */
-    /* 
-      5.8em ≈ hauteur + marges des compteurs + timer, 
-      126px à ajuster en fonction hauteur cumulée de compteurs + timer, 
-      vous pouvez ajuster en testant.
-    */
-    bottom: 60px; /* hauteur des boutons de réponse + padding */
-    overflow-y: auto;
-    margin-top: 6px;
-    border-radius: 8px;
-    padding: 10px 12px 12px 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    background: #f5f5f5;
-    font-size: 1.2em;
-    line-height: 1.4em;
-    direction: rtl;
-    text-align: right;
-    z-index: 1000;
-    display: none;
+  .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
+  .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
+  .num.traited.incorrect { background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through; }
+  #ayat-box { 
+    position: fixed; bottom: 10px; left: 10px; right: 10px; 
+    background: #f5f5f5; border-radius: 8px; padding: 10px 12px 70px 12px; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); max-height: 22em; 
+    font-size: 1.2em; line-height: 1.4em; direction: rtl; text-align: right; 
+    display: none; overflow-y: auto; z-index: 1000; 
     transition: all 0.3s ease;
   }
-  /* Réduction hauteur boutons Bonne/Mauvaise réponse pour plus d’espace */
+  #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
+  #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
   #response-buttons {
-    position: fixed; bottom: 10px; left: 10px; right: 10px;
+    position: fixed; bottom: 20px; left: 10px; right: 10px;
     display: flex; justify-content: center; gap: 16px;
     background: #f5f5f5;
     border-radius: 8px;
-    padding: 6px 12px;
+    padding: 8px 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     z-index: 1100;
   }
   #response-buttons button {
     flex: 1;
-    font-size: 1em;
-    padding: 6px 0;
+    font-size: 1.1em;
+    padding: 10px 0;
     line-height: 1.3em;
     font-weight: bold;
     border-radius: 6px;
@@ -117,18 +76,36 @@
   #btnIncorrect:hover {
     background-color: #e9cfcf;
   }
-  /* Styles restants */
-  .table-wrap { display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; border: 1px solid #ccc; padding: 4px; background: #fafafa; user-select: none; }
-  .num { border-radius: 5px; padding: 6px 10px; background: #d2f0d2; border: 1px solid #84b784; cursor: pointer; transition: background-color 0.3s; min-width: 36px; text-align: center; font-size: 0.95em; }
-  .num.traited.correct { background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through; }
-  .num.traited.incorrect { background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through; }
-  #verse-header { font-weight: 600; font-size: 1.1em; margin-bottom: 6px; }
-  #verse-text { max-height: 15em; overflow-y: auto; font-size: 1.2em; line-height: 1.4em; margin-bottom: 8px; }
+  /* Icon styles */
+  .icon-check::before {
+    content: "✔";
+    color: #0b3d0b;
+    font-weight: bold;
+  }
+  .icon-cross::before {
+    content: "✖";
+    color: #8b1c1c;
+    font-weight: bold;
+  }
+  #counters {
+    display: flex; gap: 10px; margin-top: 14px; font-size: 1em; font-weight: 600; flex-wrap: wrap; justify-content: center;
+  }
+  .counter-box {
+    padding: 8px 14px; border-radius: 5px; color: white; flex: 1 1 130px; text-align: center;
+  }
+  .correct-box { background-color: #0b3d0b; }
+  .incorrect-box { background-color: #8b1c1c; }
+  .remaining-box { background-color: #505050; }
+  .verset-red { color: red; font-weight: bold; }
+  .verset-green { color: green; font-weight: bold; }
+  .verset-blue { color: blue; font-weight: bold; }
+  .verset-yellow { color: orange; font-weight: bold; }
+  .number-blue { color: blue; font-weight: bold; }
   @media (max-width: 400px) {
     body { font-size: 13px; }
-    #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px 80px 14px; overflow-y: visible; top: 140px; bottom: 70px; }
+    #ayat-box { max-height: 24em; font-size: 1.3em; padding: 12px 14px 80px 14px; overflow-y: visible; }
     #verse-text { max-height: 17em; font-size: 1.3em; }
-    #response-buttons button { padding: 6px 0; font-size: 1.1em; }
+    #response-buttons button { padding: 12px 0; font-size: 1.2em; }
     .table-wrap { max-height: 140px; margin-bottom: 140px; }
     .num { padding: 6px 10px; min-width: 34px; font-size: 1em; }
     #counters { font-size: 1.1em; }
@@ -158,14 +135,6 @@
   <button id="btnToggleTraites">إظهار / إخفاء المعالَجَة</button>
 </div>
 <div class="table-wrap" id="ayah-numbers"></div>
-<div id="counters">
-  <div class="counter-box correct-box"><span id="label-correctCount">الإجابات الصحيحة :</span> <span id="correct-count">0</span></div>
-  <div class="counter-box incorrect-box"><span id="label-errorCount">الأخطاء :</span> <span id="error-count">0</span></div>
-  <div class="counter-box remaining-box"><span id="label-remainingCount">المتبقية :</span> <span id="remaining-count">0</span> / <span id="total-count">0</span></div>
-</div>
-<div class="counter-box remaining-box" id="end-time-box" style="display:none; margin-top: 8px; font-weight: bold; text-align:center; color:#fff; background: #222; border-radius:5px; padding:6px 12px;">
-  Fin : <span id="end-time-display">--:--:--</span>
-</div>
 <div id="ayat-box" style="display:none;">
   <div id="verse-header"></div>
   <div id="verse-text"></div>
@@ -173,6 +142,14 @@
     <button id="btnCorrect"><span class="icon-check"></span> Bonne réponse</button>
     <button id="btnIncorrect"><span class="icon-cross"></span> Mauvaise réponse</button>
   </div>
+</div>
+<div id="counters">
+  <div class="counter-box correct-box"><span id="label-correctCount">الإجابات الصحيحة :</span> <span id="correct-count">0</span></div>
+  <div class="counter-box incorrect-box"><span id="label-errorCount">الأخطاء :</span> <span id="error-count">0</span></div>
+  <div class="counter-box remaining-box"><span id="label-remainingCount">المتبقية :</span> <span id="remaining-count">0</span> / <span id="total-count">0</span></div>
+</div>
+<div class="counter-box remaining-box" id="end-time-box" style="display:none; margin-top: 8px; font-weight: bold; text-align:center; color:#fff; background: #222; border-radius:5px; padding:6px 12px;">
+  Fin : <span id="end-time-display">--:--:--</span>
 </div>
 <script>
 (() => {
