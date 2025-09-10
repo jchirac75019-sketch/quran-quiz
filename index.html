@@ -16,51 +16,50 @@
   }
   /* --- Titres --- */
   h1 {
-    font-size: 1.2em;               /* Taille titre principal */
-    text-align: center;             /* Centré */
-    margin-bottom: 6px;             /* Marge sous titre */
+    font-size: 1em;                /* Réduit taille titre principal */
+    text-align: center;            /* Centré */
+    margin-bottom: 4px;            /* Moins de marge sous titre */
+    font-weight: 600;
   }
   /* --- Nouvel conteneur pour sélecteurs langues et sourate --- */
   .selectors-container {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;                   /* Un peu moins d'espacement */
     flex-wrap: wrap;
-    margin-bottom: 8px;
-    /* Pour gérer RTL en arabe, on appliquera la direction sur chaque label-select individuel */
+    margin-bottom: 6px;           /* Moins d'espace vertical */
   }
   .selector-group {
     display: flex;
     align-items: center;
-    gap: 6px;
-    /* direction et text-align s'adaptent en JS selon langue */
+    gap: 4px;                    /* Moins d'espacement entre label et select */
   }
   /* --- Étiquettes, inputs et sélecteurs --- */
   label, select, input {
-    font-size: 1em;                 /* Taille labels */
-    padding: 6px 8px;               /* Padding interne */
-    border-radius: 5px;             /* Coins arrondis */
-    border: 1px solid #aaa;         /* Bordure */
+    font-size: 0.9em;            /* Réduction légère taille */
+    padding: 4px 6px;            /* Moins de padding interne */
+    border-radius: 4px;          /* Coins un peu plus petits */
+    border: 1px solid #aaa;      /* Bordure */
     box-sizing: border-box;
     transition: border-color 0.3s, box-shadow 0.3s;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
   }
   input[type=number] {
-    width: 50px;                    /* Largeur champs numériques */
+    width: 45px;                 /* Réduction largeur champs numériques */
   }
   input[type=number]:focus, select:focus {
-    border-color: #3a8d3a;          /* Couleur à la mise au focus */
-    box-shadow: 0 0 6px #4caf5080;  /* Ombre focus */
+    border-color: #3a8d3a;
+    box-shadow: 0 0 6px #4caf5080;
     outline: none;
   }
   /* --- Conteneur plage de versets --- */
   .range-wrap {
     display: flex;
-    gap: 10px;
+    gap: 8px;                   /* Un peu moins grand */
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 12px;
+    margin-bottom: 8px;          /* Moins de marge */
   }
   .rtl-range {
     direction: rtl;
@@ -68,22 +67,23 @@
   /* --- Contrôles boutons --- */
   .controls {
     display: flex;
-    gap: 10px;
+    gap: 8px;                   /* Plus compact */
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;          /* Moins de marge */
   }
   button {
-    padding: 8px 14px;
-    font-size: 1em;
-    border-radius: 6px;
+    padding: 6px 12px;          /* Moins de padding sur boutons */
+    font-size: 0.9em;           /* Taille légèrement plus petite */
+    border-radius: 5px;
     border: none;
-    background-color: #4caf50;        /* Couleur bouton principale */
+    background-color: #4caf50;
     color: white;
     font-weight: 600;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     cursor: pointer;
     transition: background-color 0.3s, box-shadow 0.3s;
+    min-width: 100px;           /* Largeur minimum pour garder lisible */
   }
   button:hover {
     background-color: #43a047;
@@ -97,9 +97,9 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    max-height: 160px;                /* Hauteur max (modifiable) */
-    overflow-y: auto;                 /* Défilement vertical */
-    overflow-x: auto;                 /* Possibilité scroll horizontal */
+    max-height: 160px;
+    overflow-y: auto;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border: 1px solid #ccc;
     padding: 4px;
@@ -111,8 +111,8 @@
   .num {
     border-radius: 5px;
     padding: 6px 10px;
-    background: #d2f0d2;              /* Couleur fond numéros */
-    border: 1px solid #84b784;        /* Couleur bordure */
+    background: #d2f0d2;
+    border: 1px solid #84b784;
     cursor: pointer;
     transition: background-color 0.3s;
     min-width: 36px;
@@ -136,7 +136,7 @@
   /* === Bloc affichage du verset === */
   #ayat-box {
     position: static;
-    margin: 0 auto; /* Suppression marge haute pour collage à la grille */
+    margin: 0 auto;
     max-width: 98vw;
     width: 100%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.13);
@@ -147,7 +147,7 @@
     line-height: 1.35em;
     display: none;
     overflow: visible;
-    direction: rtl;                 /* Texte en arabe direction RTL */
+    direction: rtl;
     text-align: right;
     box-sizing: border-box;
     z-index: auto;
@@ -158,8 +158,8 @@
     margin-bottom: 6px;
   }
   #verse-text {
-    max-height: 12em;               /* Hauteur max du texte */
-    overflow-y: auto;              /* Scroll vertical si texte long */
+    max-height: 12em;
+    overflow-y: auto;
     font-size: 1.2em;
     line-height: 1.4em;
     margin-bottom: 6px;
@@ -272,36 +272,69 @@
   /* === Responsive pour petits écrans === */
   @media (max-width: 480px) {
     body {
-      font-size: 13px;
+      font-size: 12px;              /* Plus petit texte général */
       padding-left: 6px;
       padding-right: 6px;
     }
+    h1 {
+      font-size: 0.9em;            /* Titre plus petit */
+      margin-bottom: 3px;
+    }
+    .selectors-container {
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .selector-group {
+      gap: 3px;
+    }
+    label, select, input {
+      font-size: 0.85em;
+      padding: 3px 5px;
+      margin-bottom: 3px;
+    }
+    input[type=number] {
+      width: 40px;
+    }
+    .range-wrap {
+      margin-bottom: 6px;
+      gap: 6px;
+    }
+    .controls {
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    button {
+      font-size: 0.85em;
+      padding: 5px 10px;
+      min-width: 90px;
+    }
     #ayat-box {
       max-height: 24em;
-      font-size: 1.3em;
-      padding: 12px 14px 18px 14px; /* Réduit padding bas et sup pour moins d'espace */
+      font-size: 1.1em;
+      padding: 10px 12px 16px 12px;
       overflow-y: auto;
-      margin-top: 0; /* Ajouté pour s'assurer pas de marge */
+      margin-top: 0;
     }
     #verse-text {
-      max-height: 17em;
-      font-size: 1.3em;
+      max-height: 16em;
+      font-size: 1.1em;
     }
     #response-buttons button {
-      padding: 12px 0;
-      font-size: 1.2em;
+      padding: 10px 0;
+      font-size: 1em;
     }
     .table-wrap {
       max-height: 140px;
-      margin-bottom: 4px; /* Réduit fortement la marge pour coller au bloc */
+      margin-bottom: 4px;
     }
     .num {
-      padding: 6px 10px;
-      min-width: 34px;
-      font-size: 1em;
+      padding: 6px 8px;
+      min-width: 32px;
+      font-size: 0.9em;
     }
     #counters {
-      font-size: 1.1em;
+      font-size: 1em;
+      margin-top: 12px;
     }
     .selectors-container {
       justify-content: center !important;
