@@ -1,559 +1,585 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quiz Versets Coran Avancé</title>
-<style>
-  /* === Corps de page et styles généraux === */
-  body {
-    font-family: Arial, sans-serif; /* Police générale */
-    margin: 5px auto;               /* Marge autour */
-    max-width: 480px;               /* Largeur max écran (modifiable) */
-    padding: 0 8px;                 /* Padding horizontal */
-    font-size: 14px;                /* Taille texte */
-    box-sizing: border-box;         /* Inclure padding dans largeur */
-  }
-  /* --- Titres --- */
-  h1 {
-    font-size: 1em;                /* Réduit taille titre principal */
-    text-align: center;            /* Centré */
-    margin-bottom: 4px;            /* Moins de marge sous titre */
-    font-weight: 600;
-  }
-  /* --- Nouvel conteneur pour sélecteurs langues et sourate --- */
-  .selectors-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 6px;
-  }
-  /* Normal style for selector-group LTR */
-  .selector-group {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    direction: ltr;
-  }
-  /* RTL flipped selector group - labels to right of inputs, default */
-  .selector-group.rtl-flip {
-    direction: rtl;
-    flex-direction: row-reverse;
-    gap: 4px;
-  }
-  /* Custom RTL order for first row in Arabic - centered horizontally */
-  .rtl-first-row {
-    direction: rtl;
-    display: flex;
-    justify-content: center !important; /* center horizontally */
-    gap: 10px;
-    flex-wrap: nowrap;
-  }
-  /* We reorder flex children in Arabic first row to match requested order */
-  .rtl-first-row .selector-group.language-label {
-    order: 1; /* bouton Langue */
-  }
-  .rtl-first-row .selector-group.language-select {
-    order: 2; /* filtre langues */
-  }
-  .rtl-first-row .selector-group.sourah-label {
-    order: 3; /* bouton Sourate */
-  }
-  .rtl-first-row .selector-group.sourah-select {
-    order: 4; /* filtre sourates */
-  }
-
-  /* Plage versets container for LTR */
-  .range-wrap {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-    direction: ltr;
-  }
-  /* Plage versets container for RTL */
-  .range-wrap.rtl-flip {
-    direction: rtl;
-    flex-direction: row-reverse;
-  }
-  /* Custom RTL order for second row in Arabic - centered horizontally */
-  .rtl-second-row {
-    direction: rtl;
-    display: flex;
-    justify-content: center !important; /* center horizontally */
-    gap: 8px;
-    flex-wrap: nowrap;
-  }
-  .rtl-second-row label#label-start {
-    order: 1; /* bouton Début */
-  }
-  .rtl-second-row #start {
-    order: 2; /* filtre num début */
-  }
-  .rtl-second-row label#label-end {
-    order: 3; /* bouton Fin */
-  }
-  .rtl-second-row #end {
-    order: 4; /* filtre num fin */
-  }
-  /* Style spécifique pour les labels "Langue :", "Sourate :", "Début :", "Fin :" */
-  label {
-    background-color: #a89e6e; /* beige foncé */
-    padding: 4px 6px;
-    border-radius: 4px;
-    color: #f5f0dc; /* beige clair */
-    display: inline-block;
-    font-family: inherit;
-    font-weight: bold; /* texte en gras ajouté */
-    user-select: none;
-    cursor: default;
-  }
-  /* Styles filtres selects et inputs avec fond beige clair et police héritée */
-  select, input[type=number] {
-    background-color: #f5f0dc; /* beige clair */
-    font-family: inherit;
-    color: #5a552a; /* un ton foncé pour texte */
-    border: 1px solid #888;
-  }
-  input[type=number] {
-    width: 45px; /* Champ par défaut */
-  }
-  #start {
-    width: 60px; /* plus large pour champ début */
-  }
-  #end {
-    width: 60px; /* plus large pour champ fin */
-  }
-  input[type=number]:focus, select:focus {
-    border-color: #3a8d3a;
-    box-shadow: 0 0 6px #4caf5080;
-    outline: none;
-    background-color: #e6e0b8;
-  }
-  /* --- Contrôles boutons --- */
-  .controls {
-    display: flex;
-    gap: 8px;
-    flex-wrap: nowrap;
-    justify-content: center;
-    margin-bottom: 8px;
-  }
-  /* Custom RTL order and centering for controls when Arabic selected */
-  .controls.rtl-reverse {
-    direction: rtl;
-    justify-content: center !important;
-    flex-wrap: nowrap;
-    gap: 8px;
-  }
-  .controls.rtl-reverse button:nth-child(1) {
-    order: 1; /* Redistribuer */
-  }
-  .controls.rtl-reverse button:nth-child(2) {
-    order: 2; /* Trier */
-  }
-  .controls.rtl-reverse button:nth-child(3) {
-    order: 3; /* Afficher / Cacher */
-  }
-  .controls button {
-    flex: 0 0 auto;
-    min-width: 110px;
-    padding: 6px 10px;
-    font-size: 0.9em;
-    border-radius: 5px;
-    border: none;
-    background-color: #4caf50;
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-  }
-  button:hover {
-    background-color: #43a047;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  }
-  button:active {
-    background-color: #388e3c;
-  }
-  /* === Grille des numéros de versets === */
-  .table-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    max-height: 80px;
-    overflow-y: auto;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border: 1px solid #ccc;
-    padding: 4px;
-    background: #fafafa;
-    user-select: none;
-    margin-bottom: 8px;
-    box-sizing: border-box;
-  }
-  .num {
-    border-radius: 5px;
-    padding: 6px 10px;
-    background: #d2f0d2;
-    border: 1px solid #84b784;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    min-width: 36px;
-    text-align: center;
-    font-size: 0.95em;
-  }
-  .num.traited.correct {
-    background-color: #0b3d0b;
-    color: #d8f5d8;
-    cursor: default;
-    border-color: #064206;
-    text-decoration: line-through;
-  }
-  .num.traited.incorrect {
-    background-color: #8b1c1c;
-    color: #f5d8d8;
-    cursor: default;
-    border-color: #5e1212;
-    text-decoration: line-through;
-  }
-  /* === Bloc affichage du verset === */
-  #ayat-box {
-    position: static;
-    margin: 0 auto;
-    max-width: 98vw;
-    width: 100%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.13);
-    background: #f5f5f5;
-    border-radius: 8px;
-    padding: 12px 14px 10px 14px;
-    font-size: 1.2em;
-    line-height: 1.45em;
-    display: none;
-    overflow: visible;
-    direction: rtl;
-    text-align: right;
-    box-sizing: border-box;
-    z-index: auto;
-  }
-  #verse-header {
-    font-weight: 600;
-    font-size: 1.1em;
-    margin-bottom: 6px;
-    background-color: #fff9c4;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  #verse-text {
-    max-height: 12em;
-    overflow-y: auto;
-    font-size: 1.3em;
-    line-height: 1.5em;
-    margin-bottom: 6px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-  /* === Styles des signes spéciaux coloriés en rouge === */
-  .special-red {
-    color: red;
-    font-weight: bold;
-  }
-  /* === Boutons réponse === */
-  #response-buttons {
-    position: static;
-    margin-top: 8px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    background: none;
-    box-shadow: none;
-    padding: 0;
-    z-index: auto;
-    flex-wrap: nowrap;
-  }
-  #response-buttons button {
-    flex: 0 0 auto;
-    min-width: 140px;
-    max-width: 160px;
-    padding: 6px 10px;
-    font-size: 0.95em;
-    min-height: 32px;
-    line-height: 1.1em;
-    border-radius: 6px;
-    font-weight: bold;
-    border: 3px solid transparent;
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  #btnCorrect {
-    background-color: #e6f6e6;
-    border-color: #0b3d0b;
-    color: #0b3d0b;
-  }
-  #btnCorrect:hover {
-    background-color: #d0ead0;
-  }
-  #btnIncorrect {
-    background-color: #f6e6e6;
-    border-color: #8b1c1c;
-    color: #8b1c1c;
-  }
-  #btnIncorrect:hover {
-    background-color: #e9cfcf;
-  }
-  /* === Icônes pour boutons intégrées en texte === */
-  #btnCorrect::before {
-    content: "✔ ";
-    color: #0b3d0b;
-    font-weight: bold;
-  }
-  #btnIncorrect::before {
-    content: "✖ ";
-    color: #8b1c1c;
-    font-weight: bold;
-  }
-  /* === Compteurs === */
-  #counters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 14px;
-    font-size: 1em;
-    font-weight: 600;
-    justify-content: center;
-  }
-  /* Ligne 1 des compteurs (justes et erreurs) */
-  .counters-line1 {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: 6px;
-  }
-  /* Ligne 2 des compteurs (restantes et début/durée) */
-  .counters-line2 {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-  }
-  .counter-box {
-    padding: 8px 14px;
-    border-radius: 5px;
-    color: white;
-    flex: 1 1 120px;
-    text-align: center;
-  }
-  /* Réduire largeur à environ 48% pour deux par ligne */
-  .half-width {
-    flex: 1 1 48%;
-    max-width: 48%;
-  }
-  .correct-box {
-    background-color: #0b3d0b;
-  }
-  .incorrect-box {
-    background-color: #8b1c1c;
-  }
-  .remaining-box {
-    background-color: #505050;
-  }
-  /* === Couleurs texte verset === */
-  .verset-red {
-    color: red;
-    font-weight: bold;
-  }
-  .verset-green {
-    color: green;
-    font-weight: bold;
-  }
-  .verset-blue {
-    color: blue;
-    font-weight: bold;
-  }
-  .verset-yellow {
-    color: orange;
-    font-weight: bold;
-  }
-  .number-blue {
-    color: blue;
-    font-weight: bold;
-  }
-  /* === Responsive pour petits écrans === */
-  @media (max-width: 480px) {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz Versets Coran Avancé</title>
+  <style>
+    /* === Corps de page et styles généraux === */
     body {
-      font-size: 12px;
-      padding-left: 6px;
-      padding-right: 6px;
+      font-family: Arial, sans-serif; /* Police générale */
+      margin: 5px auto;               /* Marge autour */
+      max-width: 480px;               /* Largeur max écran (modifiable) */
+      padding: 0 8px;                 /* Padding horizontal */
+      font-size: 14px;                /* Taille texte */
+      box-sizing: border-box;         /* Inclure padding dans largeur */
     }
+    /* --- Titres --- */
     h1 {
-      font-size: 0.9em;
-      margin-bottom: 3px;
+      font-size: 1em;                /* Réduit taille titre principal */
+      text-align: center;            /* Centré */
+      margin-bottom: 4px;            /* Moins de marge sous titre */
+      font-weight: 600;
     }
+    /* --- Nouvel conteneur pour sélecteurs langues et sourate --- */
     .selectors-container {
-      gap: 8px;
-      margin-bottom: 4px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
     }
+    /* Normal style for selector-group LTR */
     .selector-group {
-      gap: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      direction: ltr;
     }
-    label, select, input {
-      font-size: 0.85em;
-      padding: 3px 5px;
-      margin-bottom: 3px;
+    /* RTL flipped selector group - labels to right of inputs, default */
+    .selector-group.rtl-flip {
+      direction: rtl;
+      flex-direction: row-reverse;
+      gap: 4px;
     }
-    input[type=number] {
-      width: 40px;
-    }
-    #start {
-      width: 55px;
-    }
-    #end {
-      width: 55px;
-    }
-    .range-wrap {
-      margin-bottom: 6px;
-      gap: 6px;
-    }
-    .controls {
-      gap: 6px;
-      margin-bottom: 6px;
+    /* Custom RTL order for first row in Arabic - centered horizontally */
+    .rtl-first-row {
+      direction: rtl;
+      display: flex;
+      justify-content: center !important; /* center horizontally */
+      gap: 10px;
       flex-wrap: nowrap;
     }
+    /* We reorder flex children in Arabic first row to match requested order */
+    .rtl-first-row .selector-group.language-label {
+      order: 1; /* bouton Langue */
+    }
+    .rtl-first-row .selector-group.language-select {
+      order: 2; /* filtre langues */
+    }
+    .rtl-first-row .selector-group.sourah-label {
+      order: 3; /* bouton Sourate */
+    }
+    .rtl-first-row .selector-group.sourah-select {
+      order: 4; /* filtre sourates */
+    }
+    /* Plage versets container for LTR */
+    .range-wrap {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      direction: ltr;
+    }
+    /* Plage versets container for RTL */
+    .range-wrap.rtl-flip {
+      direction: rtl;
+      flex-direction: row-reverse;
+    }
+    /* Custom RTL order for second row in Arabic - centered horizontally */
+    .rtl-second-row {
+      direction: rtl;
+      display: flex;
+      justify-content: center !important; /* center horizontally */
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+    .rtl-second-row label#label-start {
+      order: 1; /* bouton Début */
+    }
+    .rtl-second-row #start {
+      order: 2; /* filtre num début */
+    }
+    .rtl-second-row label#label-end {
+      order: 3; /* bouton Fin */
+    }
+    .rtl-second-row #end {
+      order: 4; /* filtre num fin */
+    }
+    /* Style spécifique pour les labels "Langue :", "Sourate :", "Début :", "Fin :" */
+    /* Correction du positionnement du deux-points selon la direction */
+    label {
+      background-color: #a89e6e; /* beige foncé */
+      padding: 4px 6px;
+      border-radius: 4px;
+      color: #f5f0dc; /* beige clair */
+      display: inline-block;
+      font-family: inherit;
+      font-weight: bold; /* texte en gras ajouté */
+      user-select: none;
+      cursor: default;
+      /* Affichage via pseudo-élément pour gérer sens du 2-points */
+      position: relative;
+    }
+    /* Deux-points suffixed for LTR */
+    label.ltr::after {
+      content: " :";
+      position: absolute;
+      right: -0.4em;
+      top: 0;
+      color: inherit;
+      font-weight: bold;
+    }
+    /* Deux-points prefixed for RTL */
+    label.rtl::before {
+      content: " :";
+      position: absolute;
+      left: -0.4em;
+      top: 0;
+      color: inherit;
+      font-weight: bold;
+    }
+    /* Cache le deux-points originaux dans le texte des labels */
+    label[data-label-no-colon]::after,
+    label[data-label-no-colon]::before {
+      content: none !important;
+    }
+
+    /* Styles filtres selects et inputs avec fond beige clair et police héritée */
+    select, input[type=number] {
+      background-color: #f5f0dc; /* beige clair */
+      font-family: inherit;
+      color: #5a552a; /* un ton foncé pour texte */
+      border: 1px solid #888;
+    }
+    input[type=number] {
+      width: 45px; /* Champ par défaut */
+    }
+    #start {
+      width: 60px; /* plus large pour champ début */
+    }
+    #end {
+      width: 60px; /* plus large pour champ fin */
+    }
+    input[type=number]:focus, select:focus {
+      border-color: #3a8d3a;
+      box-shadow: 0 0 6px #4caf5080;
+      outline: none;
+      background-color: #e6e0b8;
+    }
+    /* --- Contrôles boutons --- */
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    /* Custom RTL order and centering for controls when Arabic selected */
+    .controls.rtl-reverse {
+      direction: rtl;
+      justify-content: center !important;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+    .controls.rtl-reverse button:nth-child(1) {
+      order: 1; /* Redistribuer */
+    }
+    .controls.rtl-reverse button:nth-child(2) {
+      order: 2; /* Trier */
+    }
+    .controls.rtl-reverse button:nth-child(3) {
+      order: 3; /* Afficher / Cacher */
+    }
     .controls button {
-      min-width: 90px;
-      padding: 5px 8px;
-      font-size: 0.85em;
+      flex: 0 0 auto;
+      min-width: 110px;
+      padding: 6px 10px;
+      font-size: 0.9em;
+      border-radius: 5px;
+      border: none;
+      background-color: #4caf50;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
     }
-    button {
-      min-width: unset;
-      max-width: unset;
+    button:hover {
+      background-color: #43a047;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
+    button:active {
+      background-color: #388e3c;
+    }
+    /* === Grille des numéros de versets === */
     .table-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
       max-height: 80px;
-      margin-bottom: 4px;
+      overflow-y: auto;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid #ccc;
+      padding: 4px;
+      background: #fafafa;
+      user-select: none;
+      margin-bottom: 8px;
+      box-sizing: border-box;
     }
     .num {
-      padding: 6px 8px;
-      min-width: 32px;
-      font-size: 0.9em;
+      border-radius: 5px;
+      padding: 6px 10px;
+      background: #d2f0d2;
+      border: 1px solid #84b784;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      min-width: 36px;
+      text-align: center;
+      font-size: 0.95em;
     }
+    .num.traited.correct {
+      background-color: #0b3d0b;
+      color: #d8f5d8;
+      cursor: default;
+      border-color: #064206;
+      text-decoration: line-through;
+    }
+    .num.traited.incorrect {
+      background-color: #8b1c1c;
+      color: #f5d8d8;
+      cursor: default;
+      border-color: #5e1212;
+      text-decoration: line-through;
+    }
+    /* === Bloc affichage du verset === */
     #ayat-box {
-      max-height: 24em;
+      position: static;
+      margin: 0 auto;
+      max-width: 98vw;
+      width: 100%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.13);
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 12px 14px 10px 14px;
       font-size: 1.2em;
-      padding: 10px 12px 16px 12px;
-      overflow-y: auto;
-      margin-top: 0;
-      line-height: 1.5em;
+      line-height: 1.45em;
+      display: none;
+      overflow: visible;
+      direction: rtl;
+      text-align: right;
+      box-sizing: border-box;
+      z-index: auto;
+    }
+    #verse-header {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin-bottom: 6px;
+      background-color: #fff9c4;
+      padding: 4px 8px;
+      border-radius: 4px;
     }
     #verse-text {
-      max-height: 16em;
-      font-size: 1.4em;
+      max-height: 12em;
+      overflow-y: auto;
+      font-size: 1.3em;
+      line-height: 1.5em;
+      margin-bottom: 6px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
+    /* === Styles des signes spéciaux coloriés en rouge === */
+    .special-red {
+      color: red;
+      font-weight: bold;
+    }
+    /* === Boutons réponse === */
     #response-buttons {
+      position: static;
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      background: none;
+      box-shadow: none;
+      padding: 0;
+      z-index: auto;
       flex-wrap: nowrap;
     }
     #response-buttons button {
-      min-width: 110px;
-      max-width: 120px;
-      padding: 5px 8px;
-      font-size: 0.9em;
+      flex: 0 0 auto;
+      min-width: 140px;
+      max-width: 160px;
+      padding: 6px 10px;
+      font-size: 0.95em;
+      min-height: 32px;
+      line-height: 1.1em;
+      border-radius: 6px;
+      font-weight: bold;
+      border: 3px solid transparent;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
+    #btnCorrect {
+      background-color: #e6f6e6;
+      border-color: #0b3d0b;
+      color: #0b3d0b;
+    }
+    #btnCorrect:hover {
+      background-color: #d0ead0;
+    }
+    #btnIncorrect {
+      background-color: #f6e6e6;
+      border-color: #8b1c1c;
+      color: #8b1c1c;
+    }
+    #btnIncorrect:hover {
+      background-color: #e9cfcf;
+    }
+    /* === Icônes pour boutons intégrées en texte === */
+    #btnCorrect::before {
+      content: "✔ ";
+      color: #0b3d0b;
+      font-weight: bold;
+    }
+    #btnIncorrect::before {
+      content: "✖ ";
+      color: #8b1c1c;
+      font-weight: bold;
+    }
+    /* === Compteurs === */
     #counters {
-      font-size: 1em;
-      margin-top: 12px;
-    }
-    /* Adaption des compteurs half-width en responsive */
-    .half-width {
-      flex-basis: 45%;
-      max-width: 45%;
-    }
-    .counters-line1, .counters-line2 {
+      display: flex;
       flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 1em;
+      font-weight: 600;
       justify-content: center;
     }
-  }
-</style>
+    /* Ligne 1 des compteurs (justes et erreurs) */
+    .counters-line1 {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    /* Ligne 2 des compteurs (restantes et début/durée) */
+    .counters-line2 {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .counter-box {
+      padding: 8px 14px;
+      border-radius: 5px;
+      color: white;
+      flex: 1 1 120px;
+      text-align: center;
+    }
+    /* Réduire largeur à environ 48% pour deux par ligne */
+    .half-width {
+      flex: 1 1 48%;
+      max-width: 48%;
+    }
+    .correct-box {
+      background-color: #0b3d0b;
+    }
+    .incorrect-box {
+      background-color: #8b1c1c;
+    }
+    .remaining-box {
+      background-color: #505050;
+    }
+    /* === Couleurs texte verset === */
+    .verset-red {
+      color: red;
+      font-weight: bold;
+    }
+    .verset-green {
+      color: green;
+      font-weight: bold;
+    }
+    .verset-blue {
+      color: blue;
+      font-weight: bold;
+    }
+    .verset-yellow {
+      color: orange;
+      font-weight: bold;
+    }
+    .number-blue {
+      color: blue;
+      font-weight: bold;
+    }
+    /* === Responsive pour petits écrans === */
+    @media (max-width: 480px) {
+      body {
+        font-size: 12px;
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+      h1 {
+        font-size: 0.9em;
+        margin-bottom: 3px;
+      }
+      .selectors-container {
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .selector-group {
+        gap: 3px;
+      }
+      label, select, input {
+        font-size: 0.85em;
+        padding: 3px 5px;
+        margin-bottom: 3px;
+      }
+      input[type=number] {
+        width: 40px;
+      }
+      #start {
+        width: 55px;
+      }
+      #end {
+        width: 55px;
+      }
+      .range-wrap {
+        margin-bottom: 6px;
+        gap: 6px;
+      }
+      .controls {
+        gap: 6px;
+        margin-bottom: 6px;
+        flex-wrap: nowrap;
+      }
+      .controls button {
+        min-width: 90px;
+        padding: 5px 8px;
+        font-size: 0.85em;
+      }
+      button {
+        min-width: unset;
+        max-width: unset;
+      }
+      .table-wrap {
+        max-height: 80px;
+        margin-bottom: 4px;
+      }
+      .num {
+        padding: 6px 8px;
+        min-width: 32px;
+        font-size: 0.9em;
+      }
+      #ayat-box {
+        max-height: 24em;
+        font-size: 1.2em;
+        padding: 10px 12px 16px 12px;
+        overflow-y: auto;
+        margin-top: 0;
+        line-height: 1.5em;
+      }
+      #verse-text {
+        max-height: 16em;
+        font-size: 1.4em;
+      }
+      #response-buttons {
+        flex-wrap: nowrap;
+      }
+      #response-buttons button {
+        min-width: 110px;
+        max-width: 120px;
+        padding: 5px 8px;
+        font-size: 0.9em;
+      }
+      #counters {
+        font-size: 1em;
+        margin-top: 12px;
+      }
+      /* Adaption des compteurs half-width en responsive */
+      .half-width {
+        flex-basis: 45%;
+        max-width: 45%;
+      }
+      .counters-line1, .counters-line2 {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
 <body>
-<!-- === Titre principal === -->
-<h1 id="app-title">اختبار آيات القرآن المتقدم</h1>
-<!-- === Conteneur flex pour sélecteurs langues et sourate === -->
-<div class="selectors-container" id="selectors-container">
-  <div class="selector-group rtl-flip language-label" id="language-label-group">
-    <label for="language" id="label-language">اللغة :</label>
-  </div>
-  <div class="selector-group rtl-flip language-select" id="language-select-group">
-    <select id="language">
-      <option value="ar">العربية</option>
-      <option value="fr">Français</option>
-      <option value="en">English</option>
-      <option value="es">Español</option>
-    </select>
-  </div>
-  <div class="selector-group rtl-flip sourah-label" id="sourah-label-group">
-    <label for="sourah" id="label-sourah">السورة :</label>
-  </div>
-  <div class="selector-group rtl-flip sourah-select" id="sourah-select-group">
-    <select id="sourah"></select>
-  </div>
-</div>
-<!-- === Plage de versets === -->
-<div id="range-wrap" class="range-wrap rtl-flip">
-  <label for="start" id="label-start">بداية :</label>
-  <input type="number" id="start" min="1" />
-  <label for="end" id="label-end">نهاية :</label>
-  <input type="number" id="end" min="1" />
-</div>
-<!-- === Boutons de contrôle (Redistribuer, Trier, Afficher/Cacher) === -->
-<div class="controls" id="controls-buttons">
-  <button id="btnRedistribuer">إعادة التوزيع</button>
-  <button id="btnTrier">ترتيب</button>
-  <button id="btnToggleTraites">إظهار / إخفاء</button>
-</div>
-<!-- === Grille des numéros de versets === -->
-<div class="table-wrap" id="ayah-numbers"></div>
-<!-- === Bloc d’affichage du verset sélectionné === -->
-<div id="ayat-box" style="display:none;">
-  <div id="verse-header"></div>
-  <div id="verse-text"></div>
-  <div id="response-buttons">
-    <button id="btnCorrect">Bonne réponse</button>
-    <button id="btnIncorrect">Mauvaise réponse</button>
-  </div>
-</div>
-<!-- === Compteurs avec deux lignes === -->
-<div id="counters">
-  <div class="counters-line1">
-    <div class="counter-box correct-box half-width">
-      <span id="label-correctCount">الإجابات الصحيحة :</span> <span id="correct-count">0</span>
+  <!-- === Titre principal === -->
+  <h1 id="app-title">اختبار آيات القرآن المتقدم</h1>
+  <!-- === Conteneur flex pour sélecteurs langues et sourate === -->
+  <div class="selectors-container" id="selectors-container">
+    <div class="selector-group rtl-flip language-label" id="language-label-group">
+      <label for="language" id="label-language">Langue</label>
     </div>
-    <div class="counter-box incorrect-box half-width">
-      <span id="label-errorCount">الأخطاء :</span> <span id="error-count">0</span>
+    <div class="selector-group rtl-flip language-select" id="language-select-group">
+      <select id="language">
+        <option value="ar">العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+    <div class="selector-group rtl-flip sourah-label" id="sourah-label-group">
+      <label for="sourah" id="label-sourah">Sourate</label>
+    </div>
+    <div class="selector-group rtl-flip sourah-select" id="sourah-select-group">
+      <select id="sourah"></select>
     </div>
   </div>
-  <div class="counters-line2">
-    <div class="counter-box remaining-box half-width">
-      <span id="label-remainingCount">المتبقية :</span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
-    </div>
-    <div class="counter-box remaining-box half-width" id="end-time-box" style="display:none; font-weight: bold; text-align:center; color:#fff; background: #222; border-radius:5px; padding:6px 12px;">
-      Fin : <span id="end-time-display">--:--:--</span>
+  <!-- === Plage de versets === -->
+  <div id="range-wrap" class="range-wrap rtl-flip">
+    <label for="start" id="label-start">Début</label>
+    <input type="number" id="start" min="1" />
+    <label for="end" id="label-end">Fin</label>
+    <input type="number" id="end" min="1" />
+  </div>
+  <!-- === Boutons de contrôle (Redistribuer, Trier, Afficher/Cacher) === -->
+  <div class="controls" id="controls-buttons">
+    <button id="btnRedistribuer">إعادة التوزيع</button>
+    <button id="btnTrier">ترتيب</button>
+    <button id="btnToggleTraites">إظهار / إخفاء</button>
+  </div>
+  <!-- === Grille des numéros de versets === -->
+  <div class="table-wrap" id="ayah-numbers"></div>
+  <!-- === Bloc d’affichage du verset sélectionné === -->
+  <div id="ayat-box" style="display:none;">
+    <div id="verse-header"></div>
+    <div id="verse-text"></div>
+    <div id="response-buttons">
+      <button id="btnCorrect">Bonne réponse</button>
+      <button id="btnIncorrect">Mauvaise réponse</button>
     </div>
   </div>
-</div>
-<script>
+  <!-- === Compteurs avec deux lignes === -->
+  <div id="counters">
+    <div class="counters-line1">
+      <div class="counter-box correct-box half-width">
+        <span id="label-correctCount">الإجابات الصحيحة :</span> <span id="correct-count">0</span>
+      </div>
+      <div class="counter-box incorrect-box half-width">
+        <span id="label-errorCount">الأخطاء :</span> <span id="error-count">0</span>
+      </div>
+    </div>
+    <div class="counters-line2">
+      <div class="counter-box remaining-box half-width">
+        <span id="label-remainingCount">المتبقية :</span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
+      </div>
+      <div class="counter-box remaining-box half-width" id="end-time-box" style="display:none; font-weight: bold; text-align:center; color:#fff; background: #222; border-radius:5px; padding:6px 12px;">
+        Fin : <span id="end-time-display">--:--:--</span>
+      </div>
+    </div>
+  </div>
+  <script>
 (() => {
   const texts = {
-    fr: {title:"Quiz Versets du Coran Avancé",languageLabel:"Langue :",sourateLabel:"Sourate :",startLabel:"Début :",endLabel:"Fin :",redistribuerBtn:"Redistribuer",trierBtn:"Trier",toggleTraitesBtn:"Afficher / Cacher",correctBtn:"Bonne réponse",incorrectBtn:"Mauvaise réponse",correctCountLabel:"Réponses justes :",errorCountLabel:"Erreurs :",remainingCountLabel:"Restantes :",surahText:"Sourate N° : ",ayahText:"Verset N° : "},
-    ar: {title:"اختبار آيات القرآن المتقدم",languageLabel:"اللغة :",sourateLabel:"السورة :",startLabel:"بداية :",endLabel:"نهاية :",redistribuerBtn:"إعادة التوزيع",trierBtn:"ترتيب",toggleTraitesBtn:"إظهار / إخفاء",correctBtn:"إجابة صحيحة",incorrectBtn:"إجابة خاطئة",correctCountLabel:"الإجابات الصحيحة :",errorCountLabel:"الأخطاء :",remainingCountLabel:"المتبقية :",surahText:"السورة عدد: ",ayahText:"الآية عدد: "},
-    en: {title:"Advanced Quran Verses Quiz",languageLabel:"Language:",sourateLabel:"Surah:",startLabel:"Start:",endLabel:"End:",redistribuerBtn:"Shuffle",trierBtn:"Sort",toggleTraitesBtn:"Show / Hide",correctBtn:"Correct Answer",incorrectBtn:"Wrong Answer",correctCountLabel:"Correct Answers:",errorCountLabel:"Errors:",remainingCountLabel:"Remaining:",surahText:"Surah No.: ",ayahText:"Ayah No.: "},
-    es: {title:"Cuestionario Avanzado de Versos del Corán",languageLabel:"Idioma:",sourahLabel:"Sura:",startLabel:"Inicio:",endLabel:"Fin:",redistribuerBtn:"Reordenar",trierBtn:"Ordenar",toggleTraitesBtn:"Mostrar / Ocultar",correctBtn:"Respuesta correcta",incorrectBtn:"Respuesta incorrecta",correctCountLabel:"Respuestas correctas:",errorCountLabel:"Errores:",remainingCountLabel:"Restantes:",surahText:"Sura N°: ",ayahText:"Verso N°: "}
+    fr: {title:"Quiz Versets du Coran Avancé",languageLabel:"Langue",sourateLabel:"Sourate",startLabel:"Début",endLabel:"Fin",redistribuerBtn:"Redistribuer",trierBtn:"Trier",toggleTraitesBtn:"Afficher / Cacher",correctBtn:"Bonne réponse",incorrectBtn:"Mauvaise réponse",correctCountLabel:"Réponses justes",errorCountLabel:"Erreurs",remainingCountLabel:"Restantes",surahText:"Sourate N° : ",ayahText:"Verset N° : "},
+    ar: {title:"اختبار آيات القرآن المتقدم",languageLabel:"اللغة",sourateLabel:"السورة",startLabel:"بداية",endLabel:"نهاية",redistribuerBtn:"إعادة التوزيع",trierBtn:"ترتيب",toggleTraitesBtn:"إظهار / إخفاء",correctBtn:"إجابة صحيحة",incorrectBtn:"إجابة خاطئة",correctCountLabel:"الإجابات الصحيحة",errorCountLabel:"الأخطاء",remainingCountLabel:"المتبقية",surahText:"السورة عدد: ",ayahText:"الآية عدد: "},
+    en: {title:"Advanced Quran Verses Quiz",languageLabel:"Language",sourateLabel:"Surah",startLabel:"Start",endLabel:"End",redistribuerBtn:"Shuffle",trierBtn:"Sort",toggleTraitesBtn:"Show / Hide",correctBtn:"Correct Answer",incorrectBtn:"Wrong Answer",correctCountLabel:"Correct Answers",errorCountLabel:"Errors",remainingCountLabel:"Remaining",surahText:"Surah No.: ",ayahText:"Ayah No.: "},
+    es: {title:"Cuestionario Avanzado de Versos del Corán",languageLabel:"Idioma",sourateLabel:"Sura",startLabel:"Inicio",endLabel:"Fin",redistribuerBtn:"Reordenar",trierBtn:"Ordenar",toggleTraitesBtn:"Mostrar / Ocultar",correctBtn:"Respuesta correcta",incorrectBtn:"Respuesta incorrecta",correctCountLabel:"Respuestas correctas",errorCountLabel:"Errores",remainingCountLabel:"Restantes",surahText:"Sura N°: ",ayahText:"Verso N°: "}
   };
 
   const SURAHS = [
@@ -788,72 +814,29 @@
     }
   });
 
-  /* === Sauvegarde / Chargement progression === */
-  function saveProgress() {
-    const data = {
-      sourah: sourahEl.value,
-      start: startEl.value,
-      end: endEl.value,
-      ayahNumbers,
-      traited: Array.from(traitedMap.entries()),
-      correctCount,
-      errorCount,
-      startTime,
-      elapsedTime,
-      endTime
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }
-  function loadProgress() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
-    try {
-      const data = JSON.parse(raw);
-      sourahEl.value = data.sourah;
-      startEl.value = data.start;
-      endEl.value = data.end;
-      ayahNumbers = Array.isArray(data.ayahNumbers) ? data.ayahNumbers : [];
-      traitedMap = new Map(data.traited || []);
-      correctCount = data.correctCount || 0;
-      errorCount = data.errorCount || 0;
-      startTime = data.startTime || null;
-      elapsedTime = data.elapsedTime || 0;
-      endTime = data.endTime || null;
-      updateRange();
-      renderAyahs();
-      updateCounters();
-      if (startTime) {
-        startDisplay.textContent = new Date(startTime).toLocaleString();
-        if (document.visibilityState === 'visible' && !endTime) {
-          lastUpdateTime = Date.now();
-          timerInterval = setInterval(() => {
-            if (document.visibilityState === 'visible') updateTimerDisplay();
-          }, 500);
-        }
-      }
-      if (endTime) {
-        endTimeBox.style.display = 'block';
-        endDisplay.textContent = new Date(endTime).toLocaleString();
-      }
-      updateVerseHeader();
-      return true;
-    } catch {
-      return false;
-    }
-  }
+  /* === Correction des labels pour le sens des deux-points === */
+  function adjustLabelColons(lang) {
+    // Remove all ltr or rtl classes from labels
+    labelLanguage.classList.remove('ltr', 'rtl');
+    labelSourate.classList.remove('ltr', 'rtl');
+    labelStart.classList.remove('ltr', 'rtl');
+    labelEnd.classList.remove('ltr', 'rtl');
 
-  /* === Réinitialise progression === */
-  function clearProgress() {
-    localStorage.removeItem(STORAGE_KEY);
-    startTime = null;
-    endTime = null;
-    elapsedTime = 0;
-    clearInterval(timerInterval);
-    timerInterval = null;
-    startDisplay.textContent = "--:--:--";
-    elapsedDisplay.textContent = "00:00:00";
-    endTimeBox.style.display = 'none';
-    endDisplay.textContent = "--:--:--";
+    // Determine if language is RTL (Arabic)
+    const isRTL = (lang === 'ar');
+
+    // For Arabic, add rtl class; for others add ltr
+    if (isRTL) {
+      labelLanguage.classList.add('rtl');
+      labelSourate.classList.add('rtl');
+      labelStart.classList.add('rtl');
+      labelEnd.classList.add('rtl');
+    } else {
+      labelLanguage.classList.add('ltr');
+      labelSourate.classList.add('ltr');
+      labelStart.classList.add('ltr');
+      labelEnd.classList.add('ltr');
+    }
   }
 
   /* === Mises à jour visuelles multilingues et direction === */
@@ -870,9 +853,11 @@
     btnToggleTraites.textContent = t.toggleTraitesBtn;
     btnCorrect.textContent = t.correctBtn;
     btnIncorrect.textContent = t.incorrectBtn;
-    labelCorrectCount.textContent = t.correctCountLabel;
-    labelErrorCount.textContent = t.errorCountLabel;
-    labelRemainingCount.textContent = t.remainingCountLabel;
+    labelCorrectCount.textContent = t.correctCountLabel + " :";
+    labelErrorCount.textContent = t.errorCountLabel + " :";
+    labelRemainingCount.textContent = t.remainingCountLabel + " :";
+
+    adjustLabelColons(lang); // Apply colon direction fix
 
     // Apply RTL flipping for language = Arabic but center lines horizontally:
     if (lang === "ar") {
@@ -956,10 +941,12 @@
     if (!sel) return;
     startEl.min = 1;
     startEl.max = sel.count;
-    startEl.value = 1;
+    if (parseInt(startEl.value) < 1) startEl.value = 1;
+    if (parseInt(startEl.value) > sel.count) startEl.value = sel.count;
     endEl.min = 1;
     endEl.max = sel.count;
-    endEl.value = sel.count;
+    if (parseInt(endEl.value) < 1) endEl.value = sel.count;
+    if (parseInt(endEl.value) > sel.count) endEl.value = sel.count;
   }
 
   /* === Validation des entrées === */
@@ -1029,7 +1016,7 @@
     const specialSigns = ["ۚ","ۗ","ۖ","ۘ","ۛ"];
     const normalSigns = ["۞","۩"];
     function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      return str.replace(/[&<>\"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
     let escaped = escapeHtml(text);
     specialSigns.forEach(sign => {
@@ -1165,6 +1152,75 @@
   btnToggleTraites.onclick = toggleTreated;
   btnCorrect.onclick = () => registerResponse(true);
   btnIncorrect.onclick = () => registerResponse(false);
+
+  /* === Sauvegarde / Chargement progression === */
+  function saveProgress() {
+    const data = {
+      sourah: sourahEl.value,
+      start: startEl.value,
+      end: endEl.value,
+      ayahNumbers,
+      traited: Array.from(traitedMap.entries()),
+      correctCount,
+      errorCount,
+      startTime,
+      elapsedTime,
+      endTime
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+  function loadProgress() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    try {
+      const data = JSON.parse(raw);
+      sourahEl.value = data.sourah;
+      startEl.value = data.start;
+      endEl.value = data.end;
+      ayahNumbers = Array.isArray(data.ayahNumbers) ? data.ayahNumbers : [];
+      traitedMap = new Map(data.traited || []);
+      correctCount = data.correctCount || 0;
+      errorCount = data.errorCount || 0;
+      startTime = data.startTime || null;
+      elapsedTime = data.elapsedTime || 0;
+      endTime = data.endTime || null;
+      updateRange();
+      renderAyahs();
+      updateCounters();
+      if (startTime) {
+        startDisplay.textContent = new Date(startTime).toLocaleString();
+        if (document.visibilityState === 'visible' && !endTime) {
+          lastUpdateTime = Date.now();
+          timerInterval = setInterval(() => {
+            if (document.visibilityState === 'visible') updateTimerDisplay();
+          }, 500);
+        }
+      }
+      if (endTime) {
+        endTimeBox.style.display = 'block';
+        endDisplay.textContent = new Date(endTime).toLocaleString();
+      }
+      updateVerseHeader();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /* === Réinitialise progression === */
+  function clearProgress() {
+    localStorage.removeItem(STORAGE_KEY);
+    startTime = null;
+    endTime = null;
+    elapsedTime = 0;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    startDisplay.textContent = "--:--:--";
+    elapsedDisplay.textContent = "00:00:00";
+    endTimeBox.style.display = 'none';
+    endDisplay.textContent = "--:--:--";
+  }
+
 })();
 </script>
 <script>
