@@ -68,13 +68,15 @@
   .controls {
     display: flex;
     gap: 8px;                   
-    flex-wrap: wrap;
+    flex-wrap: nowrap;            /* Forcer une ligne */
     justify-content: center;
     margin-bottom: 8px;          
   }
-  button {
-    padding: 6px 12px;          
-    font-size: 0.9em;           
+  .controls button {
+    flex: 0 0 auto;
+    min-width: 110px;      /* Réduit largeur par bouton */
+    padding: 6px 10px;     /* Ajuste padding */
+    font-size: 0.9em;       
     border-radius: 5px;
     border: none;
     background-color: #4caf50;
@@ -83,7 +85,6 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     cursor: pointer;
     transition: background-color 0.3s, box-shadow 0.3s;
-    min-width: 100px;           
   }
   button:hover {
     background-color: #43a047;
@@ -97,7 +98,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    max-height: 80px;           /* Ajusté pour 2 lignes visibles */
+    max-height: 80px;           
     overflow-y: auto;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -177,12 +178,14 @@
     box-shadow: none;
     padding: 0;
     z-index: auto;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;           /* Forcer une ligne */
   }
   #response-buttons button {
-    flex: 1 1 140px;
+    flex: 0 0 auto;
+    min-width: 140px;            /* Réduit largeur */
+    max-width: 160px;
+    padding: 6px 10px;
     font-size: 0.95em;
-    padding: 6px 0;
     min-height: 32px;
     line-height: 1.1em;
     border-radius: 6px;
@@ -302,14 +305,19 @@
     .controls {
       gap: 6px;
       margin-bottom: 6px;
+      flex-wrap: nowrap;
+    }
+    .controls button {
+      min-width: 90px;
+      padding: 5px 8px;
+      font-size: 0.85em;
     }
     button {
-      font-size: 0.85em;
-      padding: 5px 10px;
-      min-width: 90px;
+      min-width: unset;
+      max-width: unset;
     }
     .table-wrap {
-      max-height: 80px; /* 2 lignes sur mobile aussi */
+      max-height: 80px;
       margin-bottom: 4px;
     }
     .num {
@@ -329,9 +337,14 @@
       max-height: 16em;
       font-size: 1.4em;
     }
+    #response-buttons {
+      flex-wrap: nowrap;
+    }
     #response-buttons button {
-      padding: 10px 0;
-      font-size: 1em;
+      min-width: 110px;
+      max-width: 120px;
+      padding: 5px 8px;
+      font-size: 0.9em;
     }
     #counters {
       font-size: 1em;
@@ -373,7 +386,7 @@
   <div class="controls">
     <button id="btnRedistribuer">إعادة التوزيع</button>
     <button id="btnTrier">ترتيب</button>
-    <button id="btnToggleTraites">إظهار / إخفاء المعالَجَة</button>
+    <button id="btnToggleTraites">إظهار / إخفاء</button>
   </div>
   <!-- === Grille des numéros de versets === -->
   <div class="table-wrap" id="ayah-numbers"></div>
@@ -413,7 +426,7 @@
           endLabel: "Fin :",
           redistribuerBtn: "Redistribuer",
           trierBtn: "Trier",
-          toggleTraitesBtn: "Afficher / Cacher Traités",
+          toggleTraitesBtn: "Afficher / Cacher",
           correctBtn: "Bonne réponse",
           incorrectBtn: "Mauvaise réponse",
           correctCountLabel: "Réponses justes :",
@@ -430,7 +443,7 @@
           endLabel: "نهاية :",
           redistribuerBtn: "إعادة التوزيع",
           trierBtn: "ترتيب",
-          toggleTraitesBtn: "إظهار / إخفاء المعالَجَة",
+          toggleTraitesBtn: "إظهار / إخفاء",
           correctBtn: "إجابة صحيحة",
           incorrectBtn: "إجابة خاطئة",
           correctCountLabel: "الإجابات الصحيحة :",
@@ -447,7 +460,7 @@
           endLabel: "End:",
           redistribuerBtn: "Shuffle",
           trierBtn: "Sort",
-          toggleTraitesBtn: "Show / Hide Treated",
+          toggleTraitesBtn: "Show / Hide",
           correctBtn: "Correct Answer",
           incorrectBtn: "Wrong Answer",
           correctCountLabel: "Correct Answers:",
@@ -464,7 +477,7 @@
           endLabel: "Fin:",
           redistribuerBtn: "Reordenar",
           trierBtn: "Ordenar",
-          toggleTraitesBtn: "Mostrar / Ocultar Tratados",
+          toggleTraitesBtn: "Mostrar / Ocultar",
           correctBtn: "Respuesta correcta",
           incorrectBtn: "Respuesta incorrecta",
           correctCountLabel: "Respuestas correctas:",
