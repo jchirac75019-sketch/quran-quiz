@@ -136,7 +136,7 @@
   /* === Bloc affichage du verset === */
   #ayat-box {
     position: static;
-    margin: 0 auto; /* Modifié ici : suppression de la marge haute pour coller la grille */
+    margin: 0 auto; /* Suppression marge haute pour collage à la grille */
     max-width: 98vw;
     width: 100%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.13);
@@ -279,8 +279,9 @@
     #ayat-box {
       max-height: 24em;
       font-size: 1.3em;
-      padding: 12px 14px 80px 14px;
+      padding: 12px 14px 18px 14px; /* Réduit padding bas et sup pour moins d'espace */
       overflow-y: auto;
+      margin-top: 0; /* Ajouté pour s'assurer pas de marge */
     }
     #verse-text {
       max-height: 17em;
@@ -292,7 +293,7 @@
     }
     .table-wrap {
       max-height: 140px;
-      margin-bottom: 140px;
+      margin-bottom: 4px; /* Réduit fortement la marge pour coller au bloc */
     }
     .num {
       padding: 6px 10px;
