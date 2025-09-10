@@ -141,6 +141,22 @@
     justify-content: center;
     margin-bottom: 8px;
   }
+  /* Custom RTL order and centering for controls when Arabic selected */
+  .controls.rtl-reverse {
+    direction: rtl;
+    justify-content: center !important;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .controls.rtl-reverse button:nth-child(1) {
+    order: 1; /* Redistribuer */
+  }
+  .controls.rtl-reverse button:nth-child(2) {
+    order: 2; /* Trier */
+  }
+  .controls.rtl-reverse button:nth-child(3) {
+    order: 3; /* Afficher / Cacher */
+  }
   .controls button {
     flex: 0 0 auto;
     min-width: 110px;
@@ -496,7 +512,7 @@
   <input type="number" id="end" min="1" />
 </div>
 <!-- === Boutons de contrôle (Redistribuer, Trier, Afficher/Cacher) === -->
-<div class="controls">
+<div class="controls" id="controls-buttons">
   <button id="btnRedistribuer">إعادة التوزيع</button>
   <button id="btnTrier">ترتيب</button>
   <button id="btnToggleTraites">إظهار / إخفاء</button>
@@ -686,6 +702,7 @@
   const labelRemainingCount = document.getElementById("label-remainingCount");
   const selectorsContainer = document.getElementById("selectors-container");
   const rangeWrap = document.getElementById("range-wrap");
+  const controlsContainer = document.getElementById("controls-buttons");
   const endTimeBox = document.getElementById("end-time-box");
   const endDisplay = document.getElementById("end-time-display");
 
@@ -882,6 +899,9 @@
       rangeWrap.style.justifyContent = "center";
       rangeWrap.classList.add("rtl-second-row");
       rangeWrap.classList.remove("rtl-flip");
+
+      // Add rtl-reverse class to controls container to reverse button order and center horizontally
+      controlsContainer.classList.add("rtl-reverse");
     } else {
       selectorsContainer.style.direction = "";
       selectorsContainer.style.justifyContent = "center";
@@ -902,6 +922,9 @@
       rangeWrap.style.justifyContent = "center";
       rangeWrap.classList.remove("rtl-second-row");
       rangeWrap.classList.add("rtl-flip");
+
+      // Remove rtl-reverse class from controls container for non-Arabic
+      controlsContainer.classList.remove("rtl-reverse");
     }
     updateVerseHeader();
   }
