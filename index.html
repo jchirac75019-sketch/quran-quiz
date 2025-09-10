@@ -219,30 +219,18 @@ body {
     padding-right: 8px !important;
   }
 }
-/* Conteneur global pour centrer */
-body, html {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow-x: hidden; /* Empêche défilement horizontal */
-  display: flex;
-  justify-content: center; /* Centre horizontalement */
-  align-items: flex-start; /* Aligne en haut verticalement */
+
+
+/* Centrer tout le contenu horizontalement avec max-width limité */
+body {
+  margin: 0 auto !important;
+  padding: 0 8px !important;
+  max-width: 480px;
   box-sizing: border-box;
-  background: #fff; /* optionnel : fond clair */
   font-family: Arial, sans-serif;
 }
 
-/* Wrapper pour limiter la largeur et s’adapter */
-#app-wrapper {
-  max-width: 480px; /* largeur max adaptée mobile */
-  width: 100%;
-  padding: 5px 8px; /* garde un peu d’air sur les côtés */
-  box-sizing: border-box;
-}
-
-/* Grille, compteurs, verset et boutons prennent 100% largeur du wrapper */
+/* Assure largeur 100% aux containers essentiels */
 .table-wrap, #counters, #ayat-box {
   width: 100% !important;
   max-width: 100% !important;
@@ -251,14 +239,14 @@ body, html {
   box-sizing: border-box !important;
 }
 
-/* Empêche débordement horizontal dans la grille tout en gardant le scroll si besoin */
+/* Autorise scroll horizontal sur grille si trop large */
 .table-wrap {
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 4px;
 }
 
-/* Texte du verset : bons retours à la ligne */
+/* Texte du verset : retour à la ligne correct et scroll */
 #verse-text {
   word-wrap: break-word !important;
   overflow-wrap: break-word !important;
@@ -267,7 +255,7 @@ body, html {
   margin-bottom: 6px !important;
 }
 
-/* Boutons réponse responsives */
+/* Boutons réponse en flex wrap */
 #response-buttons {
   display: flex !important;
   flex-wrap: wrap !important;
@@ -280,7 +268,7 @@ body, html {
 }
 
 #response-buttons button {
-  flex: 1 1 140px !important; /* s’adaptent, minimum 140px */
+  flex: 1 1 140px !important;
   min-height: 32px !important;
   font-size: 0.95em !important;
   padding: 6px 0 !important;
@@ -288,9 +276,9 @@ body, html {
   border-radius: 6px !important;
 }
 
-/* Responsive spécial mobile */
+/* Adaptation mobile */
 @media (max-width: 480px) {
-  #app-wrapper {
+  body {
     padding-left: 6px !important;
     padding-right: 6px !important;
   }
@@ -307,6 +295,8 @@ body, html {
     min-height: 28px !important;
   }
 }
+
+
 
 </style>
 </head>
