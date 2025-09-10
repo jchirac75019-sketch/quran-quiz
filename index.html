@@ -214,14 +214,14 @@
   #btnIncorrect:hover {
     background-color: #e9cfcf;
   }
-  /* === Icônes pour boutons === */
-  .icon-check::before {
-    content: "✔";
+  /* === Icônes pour boutons intégrées en texte === */
+  #btnCorrect::before {
+    content: "✔ ";
     color: #0b3d0b;
     font-weight: bold;
   }
-  .icon-cross::before {
-    content: "✖";
+  #btnIncorrect::before {
+    content: "✖ ";
     color: #8b1c1c;
     font-weight: bold;
   }
@@ -395,8 +395,8 @@
     <div id="verse-header"></div>
     <div id="verse-text"></div>
     <div id="response-buttons">
-      <button id="btnCorrect"><span class="icon-check"></span> Bonne réponse</button>
-      <button id="btnIncorrect"><span class="icon-cross"></span> Mauvaise réponse</button>
+      <button id="btnCorrect">Bonne réponse</button>
+      <button id="btnIncorrect">Mauvaise réponse</button>
     </div>
   </div>
   <!-- === Compteurs avec début et durée (ajouté dynamiquement) === -->
