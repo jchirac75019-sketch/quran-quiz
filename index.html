@@ -219,6 +219,94 @@ body {
     padding-right: 8px !important;
   }
 }
+/* Conteneur global pour centrer */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden; /* Empêche défilement horizontal */
+  display: flex;
+  justify-content: center; /* Centre horizontalement */
+  align-items: flex-start; /* Aligne en haut verticalement */
+  box-sizing: border-box;
+  background: #fff; /* optionnel : fond clair */
+  font-family: Arial, sans-serif;
+}
+
+/* Wrapper pour limiter la largeur et s’adapter */
+#app-wrapper {
+  max-width: 480px; /* largeur max adaptée mobile */
+  width: 100%;
+  padding: 5px 8px; /* garde un peu d’air sur les côtés */
+  box-sizing: border-box;
+}
+
+/* Grille, compteurs, verset et boutons prennent 100% largeur du wrapper */
+.table-wrap, #counters, #ayat-box {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Empêche débordement horizontal dans la grille tout en gardant le scroll si besoin */
+.table-wrap {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+/* Texte du verset : bons retours à la ligne */
+#verse-text {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  max-height: 12em !important;
+  overflow-y: auto !important;
+  margin-bottom: 6px !important;
+}
+
+/* Boutons réponse responsives */
+#response-buttons {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  margin-top: 8px !important;
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+#response-buttons button {
+  flex: 1 1 140px !important; /* s’adaptent, minimum 140px */
+  min-height: 32px !important;
+  font-size: 0.95em !important;
+  padding: 6px 0 !important;
+  line-height: 1.1em !important;
+  border-radius: 6px !important;
+}
+
+/* Responsive spécial mobile */
+@media (max-width: 480px) {
+  #app-wrapper {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  .table-wrap {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  #ayat-box {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  #response-buttons button {
+    padding: 5px 0 !important;
+    min-height: 28px !important;
+  }
+}
 
 </style>
 </head>
