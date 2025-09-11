@@ -1,1262 +1,944 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quiz Versets Coran Avancé</title>
-  <style>
-    /* === Corps de page et styles généraux === */
-    body {
-      font-family: Arial, sans-serif; /* Police générale */
-      margin: 5px auto;               /* Marge autour */
-      max-width: 480px;               /* Largeur max écran (modifiable) */
-      padding: 0 8px;                 /* Padding horizontal */
-      font-size: 14px;                /* Taille texte */
-      box-sizing: border-box;         /* Inclure padding dans largeur */
-    }
-    /* --- Titres --- */
-    h1 {
-      font-size: 1em;                /* Réduit taille titre principal */
-      text-align: center;            /* Centré */
-      margin-bottom: 4px;            /* Moins de marge sous titre */
-      font-weight: 600;
-    }
-    /* --- Nouvel conteneur pour sélecteurs langues et sourate --- */
-    .selectors-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 6px;
-    }
-    /* Normal style for selector-group LTR */
-    .selector-group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      direction: ltr;
-    }
-    /* RTL flipped selector group - labels to right of inputs, default */
-    .selector-group.rtl-flip {
-      direction: rtl;
-      flex-direction: row-reverse;
-      gap: 4px;
-    }
-    /* Custom RTL order for first row in Arabic - centered horizontally */
-    .rtl-first-row {
-      direction: rtl;
-      display: flex;
-      justify-content: center !important; /* center horizontally */
-      gap: 10px;
-      flex-wrap: nowrap;
-    }
-    /* We reorder flex children in Arabic first row to match requested order */
-    .rtl-first-row .selector-group.language-label {
-      order: 1; /* bouton Langue */
-    }
-    .rtl-first-row .selector-group.language-select {
-      order: 2; /* filtre langues */
-    }
-    .rtl-first-row .selector-group.sourah-label {
-      order: 3; /* bouton Sourate */
-    }
-    .rtl-first-row .selector-group.sourah-select {
-      order: 4; /* filtre sourates */
-    }
-    /* Plage versets container for LTR */
-    .range-wrap {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-      direction: ltr;
-    }
-    /* Plage versets container for RTL */
-    .range-wrap.rtl-flip {
-      direction: rtl;
-      flex-direction: row-reverse;
-    }
-    /* Custom RTL order for second row in Arabic - centered horizontally */
-    .rtl-second-row {
-      direction: rtl;
-      display: flex;
-      justify-content: center !important; /* center horizontally */
-      gap: 8px;
-      flex-wrap: nowrap;
-    }
-    .rtl-second-row label#label-start {
-      order: 1; /* bouton Début */
-    }
-    .rtl-second-row #start {
-      order: 2; /* filtre num début */
-    }
-    .rtl-second-row label#label-end {
-      order: 3; /* bouton Fin */
-    }
-    .rtl-second-row #end {
-      order: 4; /* filtre num fin */
-    }
-    /* Style spécifique pour les labels "Langue :", "Sourate :", "Début :", "Fin :" */
-    /* Correction du positionnement du deux-points selon la direction */
-    label {
-      background-color: #a89e6e; /* beige foncé */
-      padding: 4px 6px;
-      border-radius: 4px;
-      color: #f5f0dc; /* beige clair */
-      display: inline-block;
-      font-family: inherit;
-      font-weight: bold; /* texte en gras ajouté */
-      user-select: none;
-      cursor: default;
-      /* Affichage via pseudo-élément pour gérer sens du 2-points */
-      position: relative;
-    }
-    /* Deux-points suffixed for LTR */
-    label.ltr::after {
-      content: " :";
-      position: absolute;
-      right: -0.4em;
-      top: 0;
-      color: inherit;
-      font-weight: bold;
-    }
-    /* Deux-points prefixed for RTL */
-    label.rtl::before {
-      content: " :";
-      position: absolute;
-      left: -0.4em;
-      top: 0;
-      color: inherit;
-      font-weight: bold;
-    }
-    /* Cache le deux-points originaux dans le texte des labels */
-    label[data-label-no-colon]::after,
-    label[data-label-no-colon]::before {
-      content: none !important;
-    }
-
-    /* Styles filtres selects et inputs avec fond beige clair et police héritée */
-    select, input[type=number] {
-      background-color: #f5f0dc; /* beige clair */
-      font-family: inherit;
-      color: #5a552a; /* un ton foncé pour texte */
-      border: 1px solid #888;
-    }
-    input[type=number] {
-      width: 45px; /* Champ par défaut */
-    }
-    #start {
-      width: 60px; /* plus large pour champ début */
-    }
-    #end {
-      width: 60px; /* plus large pour champ fin */
-    }
-    input[type=number]:focus, select:focus {
-      border-color: #3a8d3a;
-      box-shadow: 0 0 6px #4caf5080;
-      outline: none;
-      background-color: #e6e0b8;
-    }
-    /* --- Contrôles boutons --- */
-    .controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: nowrap;
-      justify-content: center;
-      margin-bottom: 8px;
-    }
-    /* Custom RTL order and centering for controls when Arabic selected */
-    .controls.rtl-reverse {
-      direction: rtl;
-      justify-content: center !important;
-      flex-wrap: nowrap;
-      gap: 8px;
-    }
-    .controls.rtl-reverse button:nth-child(1) {
-      order: 1; /* Redistribuer */
-    }
-    .controls.rtl-reverse button:nth-child(2) {
-      order: 2; /* Trier */
-    }
-    .controls.rtl-reverse button:nth-child(3) {
-      order: 3; /* Afficher / Cacher */
-    }
-    .controls button {
-      flex: 0 0 auto;
-      min-width: 110px;
-      padding: 6px 10px;
-      font-size: 0.9em;
-      border-radius: 5px;
-      border: none;
-      background-color: #4caf50;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-      cursor: pointer;
-      transition: background-color 0.3s, box-shadow 0.3s;
-    }
-    button:hover {
-      background-color: #43a047;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-    button:active {
-      background-color: #388e3c;
-    }
-    /* === Grille des numéros de versets === */
-    .table-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      max-height: 80px;
-      overflow-y: auto;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border: 1px solid #ccc;
-      padding: 4px;
-      background: #fafafa;
-      user-select: none;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-    }
-    .num {
-      border-radius: 5px;
-      padding: 6px 10px;
-      background: #d2f0d2;
-      border: 1px solid #84b784;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      min-width: 36px;
-      text-align: center;
-      font-size: 0.95em;
-    }
-    .num.traited.correct {
-      background-color: #0b3d0b;
-      color: #d8f5d8;
-      cursor: default;
-      border-color: #064206;
-      text-decoration: line-through;
-    }
-    .num.traited.incorrect {
-      background-color: #8b1c1c;
-      color: #f5d8d8;
-      cursor: default;
-      border-color: #5e1212;
-      text-decoration: line-through;
-    }
-    /* === Bloc affichage du verset === */
-    #ayat-box {
-      position: static;
-      margin: 0 auto;
-      max-width: 98vw;
-      width: 100%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.13);
-      background: #f5f5f5;
-      border-radius: 8px;
-      padding: 12px 14px 10px 14px;
-      font-size: 1.2em;
-      line-height: 1.45em;
-      display: none;
-      overflow: visible;
-      direction: rtl;
-      text-align: right;
-      box-sizing: border-box;
-      z-index: auto;
-    }
-    #verse-header {
-      font-weight: 600;
-      font-size: 1.1em;
-      margin-bottom: 6px;
-      background-color: #fff9c4;
-      padding: 4px 8px;
-      border-radius: 4px;
-    }
-    #verse-text {
-      max-height: 12em;
-      overflow-y: auto;
-      font-size: 1.3em;
-      line-height: 1.5em;
-      margin-bottom: 6px;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-    /* === Styles des signes spéciaux coloriés en rouge === */
-    .special-red {
-      color: red;
-      font-weight: bold;
-    }
-    /* === Boutons réponse === */
-    #response-buttons {
-      position: static;
-      margin-top: 8px;
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      background: none;
-      box-shadow: none;
-      padding: 0;
-      z-index: auto;
-      flex-wrap: nowrap;
-    }
-    #response-buttons button {
-      flex: 0 0 auto;
-      min-width: 140px;
-      max-width: 160px;
-      padding: 6px 10px;
-      font-size: 0.95em;
-      min-height: 32px;
-      line-height: 1.1em;
-      border-radius: 6px;
-      font-weight: bold;
-      border: 3px solid transparent;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    #btnCorrect {
-      background-color: #e6f6e6;
-      border-color: #0b3d0b;
-      color: #0b3d0b;
-    }
-    #btnCorrect:hover {
-      background-color: #d0ead0;
-    }
-    #btnIncorrect {
-      background-color: #f6e6e6;
-      border-color: #8b1c1c;
-      color: #8b1c1c;
-    }
-    #btnIncorrect:hover {
-      background-color: #e9cfcf;
-    }
-    /* === Icônes pour boutons intégrées en texte === */
-    #btnCorrect::before {
-      content: "✔ ";
-      color: #0b3d0b;
-      font-weight: bold;
-    }
-    #btnIncorrect::before {
-      content: "✖ ";
-      color: #8b1c1c;
-      font-weight: bold;
-    }
-    /* === Compteurs === */
-    #counters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-      font-size: 1em;
-      font-weight: 600;
-      justify-content: center;
-    }
-    /* Ligne 1 des compteurs (justes et erreurs) */
-    .counters-line1 {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      justify-content: center;
-      margin-bottom: 6px;
-    }
-    /* Ligne 2 des compteurs (restantes et début/durée) */
-    .counters-line2 {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      justify-content: center;
-    }
-    .counter-box {
-      padding: 8px 14px;
-      border-radius: 5px;
-      color: white;
-      flex: 1 1 120px;
-      text-align: center;
-    }
-    /* Réduire largeur à environ 48% pour deux par ligne */
-    .half-width {
-      flex: 1 1 48%;
-      max-width: 48%;
-    }
-    .correct-box {
-      background-color: #0b3d0b;
-    }
-    .incorrect-box {
-      background-color: #8b1c1c;
-    }
-    .remaining-box {
-      background-color: #505050;
-    }
-    /* === Couleurs texte verset === */
-    .verset-red {
-      color: red;
-      font-weight: bold;
-    }
-    .verset-green {
-      color: green;
-      font-weight: bold;
-    }
-    .verset-blue {
-      color: blue;
-      font-weight: bold;
-    }
-    .verset-yellow {
-      color: orange;
-      font-weight: bold;
-    }
-    .number-blue {
-      color: blue;
-      font-weight: bold;
-    }
-    /* === Responsive pour petits écrans === */
-    @media (max-width: 480px) {
-      body {
-        font-size: 12px;
-        padding-left: 6px;
-        padding-right: 6px;
-      }
-      h1 {
-        font-size: 0.9em;
-        margin-bottom: 3px;
-      }
-      .selectors-container {
-        gap: 8px;
-        margin-bottom: 4px;
-      }
-      .selector-group {
-        gap: 3px;
-      }
-      label, select, input {
-        font-size: 0.85em;
-        padding: 3px 5px;
-        margin-bottom: 3px;
-      }
-      input[type=number] {
-        width: 40px;
-      }
-      #start {
-        width: 55px;
-      }
-      #end {
-        width: 55px;
-      }
-      .range-wrap {
-        margin-bottom: 6px;
-        gap: 6px;
-      }
-      .controls {
-        gap: 6px;
-        margin-bottom: 6px;
-        flex-wrap: nowrap;
-      }
-      .controls button {
-        min-width: 90px;
-        padding: 5px 8px;
-        font-size: 0.85em;
-      }
-      button {
-        min-width: unset;
-        max-width: unset;
-      }
-      .table-wrap {
-        max-height: 80px;
-        margin-bottom: 4px;
-      }
-      .num {
-        padding: 6px 8px;
-        min-width: 32px;
-        font-size: 0.9em;
-      }
-      #ayat-box {
-        max-height: 24em;
-        font-size: 1.2em;
-        padding: 10px 12px 16px 12px;
-        overflow-y: auto;
-        margin-top: 0;
-        line-height: 1.5em;
-      }
-      #verse-text {
-        max-height: 16em;
-        font-size: 1.4em;
-      }
-      #response-buttons {
-        flex-wrap: nowrap;
-      }
-      #response-buttons button {
-        min-width: 110px;
-        max-width: 120px;
-        padding: 5px 8px;
-        font-size: 0.9em;
-      }
-      #counters {
-        font-size: 1em;
-        margin-top: 12px;
-      }
-      /* Adaption des compteurs half-width en responsive */
-      .half-width {
-        flex-basis: 45%;
-        max-width: 45%;
-      }
-      .counters-line1, .counters-line2 {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quiz Versets Coran Avancé</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 10px auto;
+  max-width: 800px;
+  padding: 0 16px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+h1 {
+  font-size: 1.2em;
+  text-align: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.selectors-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.selector-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  direction: ltr;
+}
+.selector-group.rtl-flip {
+  direction: rtl;
+  flex-direction: row-reverse;
+  gap: 6px;
+}
+.range-wrap {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  direction: ltr;
+}
+.range-wrap.rtl-flip {
+  direction: rtl;
+  flex-direction: row-reverse;
+  gap: 12px;
+}
+label {
+  background-color: #a89e6e;
+  padding: 6px 8px;
+  border-radius: 4px;
+  color: #f5f0dc;
+  font-weight: 600;
+  user-select: none;
+  cursor: default;
+}
+label.ltr::after {
+  content: " :";
+  font-weight: 600;
+}
+label.rtl::before {
+  content: " :";
+  font-weight: 600;
+}
+select,
+input[type='number'] {
+  background-color: #f5f0dc;
+  font-family: inherit;
+  color: #5a552a;
+  border: 1px solid #888;
+  font-size: 1em;
+  padding: 4px 6px;
+  border-radius: 4px;
+  user-select: text;
+}
+input[type='number'] {
+  width: 60px;
+}
+#start {
+  width: 75px;
+}
+#end {
+  width: 75px;
+}
+input[type='number']:focus,
+select:focus {
+  border-color: #3a8d3a;
+  box-shadow: 0 0 8px #4caf5080;
+  outline: none;
+  background-color: #e6e0b8;
+}
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+  flex-wrap: nowrap;
+}
+.controls.rtl-reverse {
+  direction: rtl;
+  justify-content: center !important;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+.controls button {
+  flex: 0 0 auto;
+  min-width: 140px;
+  padding: 8px 14px;
+  font-size: 1.1em;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s;
+}
+.controls button:hover {
+  filter: brightness(90%);
+}
+#btnRedistribuer {
+  background-color: #4caf50;
+}
+#btnTrier {
+  background-color: #2196f3;
+}
+#btnToggle {
+  background-color: #ff9800;
+}
+#btnRedistribuer:hover {
+  background-color: #388e3c;
+}
+#btnTrier:hover {
+  background-color: #1976d2;
+}
+#btnToggle:hover {
+  background-color: #ef6c00;
+}
+.table-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  padding: 8px;
+  background: #fafafa;
+  user-select: none;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
+.num {
+  border-radius: 6px;
+  background: #d2f0d2;
+  border: 1px solid #84b784;
+  padding: 8px 14px;
+  cursor: pointer;
+  min-width: 42px;
+  text-align: center;
+  font-size: 1.1em;
+  user-select: none;
+  transition: background-color 0.3s;
+}
+.num.traited.correct {
+  background-color: #0b3d0b;
+  color: #d8f5d8;
+  cursor: default;
+  border-color: #064206;
+  text-decoration: line-through;
+}
+.num.traited.incorrect {
+  background-color: #8b1c1c;
+  color: #f5d8d8;
+  cursor: default;
+  border-color: #5e1212;
+  text-decoration: line-through;
+}
+#ayat-box {
+  max-width: 100%;
+  margin: 0 auto;
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 24px 30px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+  font-size: 1.8em;
+  line-height: 1.65em;
+  direction: rtl;
+  text-align: right;
+  overflow: auto;
+  display: none;
+  box-sizing: border-box;
+  position: static;
+  z-index: 9999;
+  max-height: 28em;
+}
+#verse-header {
+  font-weight: 700;
+  font-size: 1.3em;
+  background: #fff9c4;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  user-select: none;
+}
+#verse-text {
+  font-size: 1.9em;
+  line-height: 1.7em;
+  margin-bottom: 14px;
+  overflow-y: auto;
+  word-break: break-word;
+  user-select: text;
+  white-space: normal;
+}
+.special-red {
+  color: red !important;
+  font-weight: 700;
+}
+.special-green {
+  color: green !important;
+  font-weight: 700;
+}
+.special-yellow {
+  color: orange !important;
+  font-weight: 700;
+}
+.special-blue {
+  color: blue !important;
+  font-weight: 700;
+}
+#response-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 15px;
+  user-select: none;
+  flex-wrap: nowrap;
+}
+#response-buttons button {
+  cursor: pointer;
+  min-width: 140px;
+  font-weight: 700;
+  font-size: 1.15em;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  background-color: #4caf50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s;
+}
+#response-buttons button:hover {
+  filter: brightness(0.85);
+}
+#btnIncorrect {
+  background-color: #d32f2f !important;
+}
+#btnIncorrect:hover {
+  filter: brightness(0.85);
+}
+#btnCorrect::before {
+  content: "✔";
+  color: #a5e6a5;
+  font-weight: 700;
+}
+#btnIncorrect::before {
+  content: "✖";
+  color: #f5a8a8;
+  font-weight: 700;
+}
+.counter-box {
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-align: center;
+  color: white;
+  margin: 4px;
+  user-select: none;
+}
+.counter-correct {
+  background-color: #0b3d0b;
+}
+.counter-incorrect {
+  background-color: #8b1c1c;
+}
+.counter-remaining {
+  background-color: #505050;
+}
+#timer-container {
+  margin-top: 22px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #505050;
+  user-select: none;
+}
+#timer-container div {
+  margin: 6px 0;
+}
+#timer-end {
+  margin-top: 10px;
+  background: #222;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: none;
+}
+</style>
 </head>
 <body>
-  <!-- === Titre principal === -->
-  <h1 id="app-title">اختبار آيات القرآن المتقدم</h1>
-  <!-- === Conteneur flex pour sélecteurs langues et sourate === -->
-  <div class="selectors-container" id="selectors-container">
-    <div class="selector-group rtl-flip language-label" id="language-label-group">
-      <label for="language" id="label-language">Langue</label>
-    </div>
-    <div class="selector-group rtl-flip language-select" id="language-select-group">
-      <select id="language">
-        <option value="ar">العربية</option>
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
-    <div class="selector-group rtl-flip sourah-label" id="sourah-label-group">
-      <label for="sourah" id="label-sourah">Sourate</label>
-    </div>
-    <div class="selector-group rtl-flip sourah-select" id="sourah-select-group">
-      <select id="sourah"></select>
-    </div>
+<h1 id="app-title"></h1>
+<div class="selectors-container" id="selectors">
+  <div class="selector-group rtl-flip language-label" id="language-label"></div>
+  <div class="selector-group rtl-flip language-select">
+    <select id="language">
+      <option value="ar">العربية</option>
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
   </div>
-  <!-- === Plage de versets === -->
-  <div id="range-wrap" class="range-wrap rtl-flip">
-    <label for="start" id="label-start">Début</label>
-    <input type="number" id="start" min="1" />
-    <label for="end" id="label-end">Fin</label>
-    <input type="number" id="end" min="1" />
+  <div class="selector-group rtl-flip sourah-label" id="sourah-label"></div>
+  <div class="selector-group rtl-flip sourah-select">
+    <select id="sourah"></select>
   </div>
-  <!-- === Boutons de contrôle (Redistribuer, Trier, Afficher/Cacher) === -->
-  <div class="controls" id="controls-buttons">
-    <button id="btnRedistribuer">إعادة التوزيع</button>
-    <button id="btnTrier">ترتيب</button>
-    <button id="btnToggleTraites">إظهار / إخفاء</button>
+</div>
+<div id="range-wrap" class="rtl-flip input-group">
+  <label id="start-label" for="start"></label>
+  <input type="number" id="start" min="1" />
+  <label id="end-label" for="end"></label>
+  <input type="number" id="end" min="1" />
+</div>
+<div class="controls rtl-flip" id="controls">
+  <button id="btnRedistribuer"></button>
+  <button id="btnTrier"></button>
+  <button id="btnToggle"></button>
+</div>
+<div class="table-wrap" id="ayahs-container"></div>
+<div id="ayat-box" style="display:none;">
+  <div id="verse-header"></div>
+  <div id="verse-text"></div>
+  <div id="response-buttons">
+    <button id="btnCorrect"></button>
+    <button id="btnIncorrect"></button>
   </div>
-  <!-- === Grille des numéros de versets === -->
-  <div class="table-wrap" id="ayah-numbers"></div>
-  <!-- === Bloc d’affichage du verset sélectionné === -->
-  <div id="ayat-box" style="display:none;">
-    <div id="verse-header"></div>
-    <div id="verse-text"></div>
-    <div id="response-buttons">
-      <button id="btnCorrect">Bonne réponse</button>
-      <button id="btnIncorrect">Mauvaise réponse</button>
-    </div>
+</div>
+<div id="counters" class="rtl-flip">
+  <div class="counter-box counter-correct">
+    <span id="label-correct"></span> <span id="correct-count">0</span>
   </div>
-  <!-- === Compteurs avec deux lignes === -->
-  <div id="counters">
-    <div class="counters-line1">
-      <div class="counter-box correct-box half-width">
-        <span id="label-correctCount">الإجابات الصحيحة :</span> <span id="correct-count">0</span>
-      </div>
-      <div class="counter-box incorrect-box half-width">
-        <span id="label-errorCount">الأخطاء :</span> <span id="error-count">0</span>
-      </div>
-    </div>
-    <div class="counters-line2">
-      <div class="counter-box remaining-box half-width">
-        <span id="label-remainingCount">المتبقية :</span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
-      </div>
-      <div class="counter-box remaining-box half-width" id="end-time-box" style="display:none; font-weight: bold; text-align:center; color:#fff; background: #222; border-radius:5px; padding:6px 12px;">
-        Fin : <span id="end-time-display">--:--:--</span>
-      </div>
-    </div>
+  <div class="counter-box counter-incorrect">
+    <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
   </div>
-  <script>
+  <div class="counter-box counter-remaining">
+    <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
+  </div>
+  <div id="timer-end" style="display:none;">
+    <span>Fin: </span><span id="end-time-display"></span>
+  </div>
+</div>
+<div id="timer-container">
+  <div><strong>Début:</strong> <span id="start-time-display">--:--:--</span></div>
+  <div><strong>Temps écoulé:</strong> <span id="elapsed-time-display">00:00:00</span></div>
+  <div><strong>Fin:</strong> <span id="timer-end-time">--:--:--</span></div>
+</div>
+<script>
 (() => {
   const texts = {
-    fr: {title:"Quiz Versets du Coran Avancé",languageLabel:"Langue",sourateLabel:"Sourate",startLabel:"Début",endLabel:"Fin",redistribuerBtn:"Redistribuer",trierBtn:"Trier",toggleTraitesBtn:"Afficher / Cacher",correctBtn:"Bonne réponse",incorrectBtn:"Mauvaise réponse",correctCountLabel:"Réponses justes",errorCountLabel:"Erreurs",remainingCountLabel:"Restantes",surahText:"Sourate N° : ",ayahText:"Verset N° : "},
-    ar: {title:"اختبار آيات القرآن المتقدم",languageLabel:"اللغة",sourateLabel:"السورة",startLabel:"بداية",endLabel:"نهاية",redistribuerBtn:"إعادة التوزيع",trierBtn:"ترتيب",toggleTraitesBtn:"إظهار / إخفاء",correctBtn:"إجابة صحيحة",incorrectBtn:"إجابة خاطئة",correctCountLabel:"الإجابات الصحيحة",errorCountLabel:"الأخطاء",remainingCountLabel:"المتبقية",surahText:"السورة عدد: ",ayahText:"الآية عدد: "},
-    en: {title:"Advanced Quran Verses Quiz",languageLabel:"Language",sourateLabel:"Surah",startLabel:"Start",endLabel:"End",redistribuerBtn:"Shuffle",trierBtn:"Sort",toggleTraitesBtn:"Show / Hide",correctBtn:"Correct Answer",incorrectBtn:"Wrong Answer",correctCountLabel:"Correct Answers",errorCountLabel:"Errors",remainingCountLabel:"Remaining",surahText:"Surah No.: ",ayahText:"Ayah No.: "},
-    es: {title:"Cuestionario Avanzado de Versos del Corán",languageLabel:"Idioma",sourateLabel:"Sura",startLabel:"Inicio",endLabel:"Fin",redistribuerBtn:"Reordenar",trierBtn:"Ordenar",toggleTraitesBtn:"Mostrar / Ocultar",correctBtn:"Respuesta correcta",incorrectBtn:"Respuesta incorrecta",correctCountLabel:"Respuestas correctas",errorCountLabel:"Errores",remainingCountLabel:"Restantes",surahText:"Sura N°: ",ayahText:"Verso N°: "}
+    fr: {
+      title: "Quiz Versets Coran Avancé",
+      languageLabel: "Langue",
+      sourahLabel: "Sourate",
+      startLabel: "Début",
+      endLabel: "Fin",
+      redistribuer: "Redistribuer",
+      trier: "Trier",
+      toggle: "Afficher / Cacher",
+      correct: "Bonne réponse",
+      incorrect: "Mauvaise réponse",
+      labelCorrect: "Réponses",
+      labelIncorrect: "Erreurs",
+      labelRemaining: "Restantes",
+      surahPrefix: "Sourate",
+      ayahPrefix: "Verset"
+    },
+    ar: {
+      title: "اختبار آيات القرآن المتقدم",
+      languageLabel: "اللغة",
+      sourahLabel: "السورة",
+      startLabel: "بداية",
+      endLabel: "نهاية",
+      redistribuer: "إعادة التوزيع",
+      trier: "ترتيب",
+      toggle: "إظهار / إخفاء",
+      correct: "إجابة صحيحة",
+      incorrect: "إجابة خاطئة",
+      labelCorrect: "الإجابات",
+      labelIncorrect: "الأخطاء",
+      labelRemaining: "المتبقي",
+      surahPrefix: "سورة",
+      ayahPrefix: "آية"
+    },
+    en: {
+      title: "Advanced Quran Quiz",
+      languageLabel: "Language",
+      sourahLabel: "Surah",
+      startLabel: "Start",
+      endLabel: "End",
+      redistribuer: "Shuffle",
+      trier: "Sort",
+      toggle: "Show / Hide",
+      correct: "Correct",
+      incorrect: "Incorrect",
+      labelCorrect: "Correct",
+      labelIncorrect: "Errors",
+      labelRemaining: "Remaining",
+      surahPrefix: "Surah",
+      ayahPrefix: "Ayah"
+    },
+    es: {
+      title: "Quiz Avanzado del Corán",
+      languageLabel: "Idioma",
+      sourahLabel: "Sura",
+      startLabel: "Inicio",
+      endLabel: "Fin",
+      redistribuer: "Barajar",
+      trier: "Ordenar",
+      toggle: "Mostrar / Ocultar",
+      correct: "Correcto",
+      incorrect: "Incorrecto",
+      labelCorrect: "Correctos",
+      labelIncorrect: "Errores",
+      labelRemaining: "Restantes",
+      surahPrefix: "Sura",
+      ayahPrefix: "Verso"
+    }
   };
-
   const SURAHS = [
-    {number:1,name_ar:"الفاتحة",name_fr:"Al-Fatiha",count:7},
-    {number:2,name_ar:"البقرة",name_fr:"Al-Baqara",count:286},
-    {number:3,name_ar:"آل عمران",name_fr:"Al-i-Imran",count:200},
-    {number:4,name_ar:"النساء",name_fr:"An-Nisa",count:176},
-    {number:5,name_ar:"المائدة",name_fr:"Al-Ma'ida",count:120},
-    {number:6,name_ar:"الأنعام",name_fr:"Al-An'am",count:165},
-    {number:7,name_ar:"الأعراف",name_fr:"Al-A'raf",count:206},
-    {number:8,name_ar:"الأنفال",name_fr:"Al-Anfal",count:75},
-    {number:9,name_ar:"التوبة",name_fr:"At-Tawba",count:129},
-    {number:10,name_ar:"يونس",name_fr:"Yunus",count:109},
-    {number:11,name_ar:"هود",name_fr:"Hud",count:123},
-    {number:12,name_ar:"يوسف",name_fr:"Yusuf",count:111},
-    {number:13,name_ar:"الرعد",name_fr:"Ar-Ra'd",count:43},
-    {number:14,name_ar:"إبراهيم",name_fr:"Ibrahim",count:52},
-    {number:15,name_ar:"الحجر",name_fr:"Al-Hijr",count:99},
-    {number:16,name_ar:"النحل",name_fr:"An-Nahl",count:128},
-    {number:17,name_ar:"الإسراء",name_fr:"Al-Isra",count:111},
-    {number:18,name_ar:"الكهف",name_fr:"Al-Kahf",count:110},
-    {number:19,name_ar:"مريم",name_fr:"Maryam",count:98},
-    {number:20,name_ar:"طه",name_fr:"Ta-Ha",count:135},
-    {number:21,name_ar:"الأنبياء",name_fr:"Al-Anbiya",count:112},
-    {number:22,name_ar:"الحج",name_fr:"Al-Hajj",count:78},
-    {number:23,name_ar:"المؤمنون",name_fr:"Al-Mu'minun",count:118},
-    {number:24,name_ar:"النور",name_fr:"An-Nur",count:64},
-    {number:25,name_ar:"الفرقان",name_fr:"Al-Furqan",count:77},
-    {number:26,name_ar:"الشعراء",name_fr:"Ash-Shu'ara",count:227},
-    {number:27,name_ar:"النمل",name_fr:"An-Naml",count:93},
-    {number:28,name_ar:"القصص",name_fr:"Al-Qasas",count:88},
-    {number:29,name_ar:"العنكبوت",name_fr:"Al-Ankabut",count:69},
-    {number:30,name_ar:"الروم",name_fr:"Ar-Rum",count:60},
-    {number:31,name_ar:"لقمان",name_fr:"Luqman",count:34},
-    {number:32,name_ar:"السجدة",name_fr:"As-Sajda",count:30},
-    {number:33,name_ar:"الأحزاب",name_fr:"Al-Ahzab",count:73},
-    {number:34,name_ar:"سبأ",name_fr:"Saba",count:54},
-    {number:35,name_ar:"فاطر",name_fr:"Fatir",count:45},
-    {number:36,name_ar:"يس",name_fr:"Ya-Sin",count:83},
-    {number:37,name_ar:"الصافات",name_fr:"As-Saffat",count:182},
-    {number:38,name_ar:"ص",name_fr:"Sad",count:88},
-    {number:39,name_ar:"الزمر",name_fr:"Az-Zumar",count:75},
-    {number:40,name_ar:"غافر",name_fr:"Ghafir",count:85},
-    {number:41,name_ar:"فصلت",name_fr:"Fussilat",count:54},
-    {number:42,name_ar:"الشورى",name_fr:"Ash-Shura",count:53},
-    {number:43,name_ar:"الزخرف",name_fr:"Az-Zukhruf",count:89},
-    {number:44,name_ar:"الدخان",name_fr:"Ad-Dukhan",count:59},
-    {number:45,name_ar:"الجاثية",name_fr:"Al-Jathiya",count:37},
-    {number:46,name_ar:"الأحقاف",name_fr:"Al-Ahqaf",count:35},
-    {number:47,name_ar:"محمد",name_fr:"Muhammad",count:38},
-    {number:48,name_ar:"الفتح",name_fr:"Al-Fath",count:29},
-    {number:49,name_ar:"الحجرات",name_fr:"Al-Hujurat",count:18},
-    {number:50,name_ar:"ق",name_fr:"Qaf",count:45},
-    {number:51,name_ar:"الذاريات",name_fr:"Adh-Dhariyat",count:60},
-    {number:52,name_ar:"الطور",name_fr:"At-Tur",count:49},
-    {number:53,name_ar:"النجم",name_fr:"An-Najm",count:62},
-    {number:54,name_ar:"القمر",name_fr:"Al-Qamar",count:55},
-    {number:55,name_ar:"الرحمن",name_fr:"Ar-Rahman",count:78},
-    {number:56,name_ar:"الواقعة",name_fr:"Al-Waqia",count:96},
-    {number:57,name_ar:"الحديد",name_fr:"Al-Hadid",count:29},
-    {number:58,name_ar:"المجادلة",name_fr:"Al-Mujadila",count:22},
-    {number:59,name_ar:"الحشر",name_fr:"Al-Hashr",count:24},
-    {number:60,name_ar:"الممتحنة",name_fr:"Al-Mumtahina",count:13},
-    {number:61,name_ar:"الصف",name_fr:"As-Saff",count:14},
-    {number:62,name_ar:"الجمعة",name_fr:"Al-Jumu'a",count:11},
-    {number:63,name_ar:"المنافقون",name_fr:"Al-Munafiqoon",count:11},
-    {number:64,name_ar:"التغابن",name_fr:"At-Taghabun",count:18},
-    {number:65,name_ar:"الطلاق",name_fr:"At-Talaq",count:12},
-    {number:66,name_ar:"التحريم",name_fr:"At-Tahrim",count:12},
-    {number:67,name_ar:"الملك",name_fr:"Al-Mulk",count:30},
-    {number:68,name_ar:"القلم",name_fr:"Al-Qalam",count:52},
-    {number:69,name_ar:"الحاقة",name_fr:"Al-Haqqah",count:52},
-    {number:70,name_ar:"المعارج",name_fr:"Al-Ma'arij",count:44},
-    {number:71,name_ar:"نوح",name_fr:"Nuh",count:28},
-    {number:72,name_ar:"الجن",name_fr:"Al-Jinn",count:28},
-    {number:73,name_ar:"المزّمّل",name_fr:"Al-Muzzammil",count:20},
-    {number:74,name_ar:"المدّثر",name_fr:"Al-Muddaththir",count:56},
-    {number:75,name_ar:"القيامة",name_fr:"Al-Qiyama",count:40},
-    {number:76,name_ar:"الإنسان",name_fr:"Al-Insan",count:31},
-    {number:77,name_ar:"المرسلات",name_fr:"Al-Mursalat",count:50},
-    {number:78,name_ar:"النبأ",name_fr:"An-Naba",count:40},
-    {number:79,name_ar:"النازعات",name_fr:"An-Nazi'at",count:46},
-    {number:80,name_ar:"عبس",name_fr:"Abasa",count:42},
-    {number:81,name_ar:"التكوير",name_fr:"At-Takwir",count:29},
-    {number:82,name_ar:"الإنفطار",name_fr:"Al-Infitar",count:19},
-    {number:83,name_ar:"المطفّفين",name_fr:"Al-Mutaffifin",count:36},
-    {number:84,name_ar:"الإنشقاق",name_fr:"Al-Inshiqaq",count:25},
-    {number:85,name_ar:"البروج",name_fr:"Al-Buruj",count:22},
-    {number:86,name_ar:"الطارق",name_fr:"At-Tariq",count:17},
-    {number:87,name_ar:"الأعلى",name_fr:"Al-A'la",count:19},
-    {number:88,name_ar:"الغاشية",name_fr:"Al-Ghashiya",count:26},
-    {number:89,name_ar:"الفجر",name_fr:"Al-Fajr",count:30},
-    {number:90,name_ar:"البلد",name_fr:"Al-Balad",count:20},
-    {number:91,name_ar:"الشمس",name_fr:"Ash-Shams",count:15},
-    {number:92,name_ar:"الليل",name_fr:"Al-Lail",count:21},
-    {number:93,name_ar:"الضحى",name_fr:"Ad-Dhuha",count:11},
-    {number:94,name_ar:"الإنشراح",name_fr:"Al-Inshirah",count:8},
-    {number:95,name_ar:"التين",name_fr:"At-Tin",count:8},
-    {number:96,name_ar:"العلق",name_fr:"Al-Alaq",count:19},
-    {number:97,name_ar:"القدر",name_fr:"Al-Qadr",count:5},
-    {number:98,name_ar:"البينة",name_fr:"Al-Bayyina",count:8},
-    {number:99,name_ar:"الزلزلة",name_fr:"Az-Zalzala",count:8},
-    {number:100,name_ar:"العاديات",name_fr:"Al-Adiyat",count:11},
-    {number:101,name_ar:"القارعة",name_fr:"Al-Qaria",count:11},
-    {number:102,name_ar:"التكاثر",name_fr:"At-Takathur",count:8},
-    {number:103,name_ar:"العصر",name_fr:"Al-Asr",count:3},
-    {number:104,name_ar:"الهمزة",name_fr:"Al-Humaza",count:9},
-    {number:105,name_ar:"الفيل",name_fr:"Al-Fil",count:5},
-    {number:106,name_ar:"قريش",name_fr:"Quraysh",count:4},
-    {number:107,name_ar:"الماعون",name_fr:"Al-Maun",count:7},
-    {number:108,name_ar:"الكوثر",name_fr:"Al-Kawthar",count:3},
-    {number:109,name_ar:"الكافرون",name_fr:"Al-Kafirun",count:6},
-    {number:110,name_ar:"النصر",name_fr:"An-Nasr",count:3},
-    {number:111,name_ar:"المسد",name_fr:"Al-Masad",count:5},
-    {number:112,name_ar:"الإخلاص",name_fr:"Al-Ikhlas",count:4},
-    {number:113,name_ar:"الفلق",name_fr:"Al-Falaq",count:5},
-    {number:114,name_ar:"الناس",name_fr:"An-Nas",count:6}
+    { number: 1, name_ar: "الفاتحة", name_fr: "Al-Fatiha", count: 7 },
+    { number: 2, name_ar: "البقرة", name_fr: "Al-Baqara", count: 286 },
+    { number: 3, name_ar: "آل عمران", name_fr: "Al-Imran", count: 200 },
+    { number: 4, name_ar: "النساء", name_fr: "An-Nisa", count: 176 },
+    { number: 5, name_ar: "المائدة", name_fr: "Al-Ma'ida", count: 120 },
+    { number: 6, name_ar: "الأنعام", name_fr: "Al-An'am", count: 165 },
+    { number: 7, name_ar: "الأعراف", name_fr: "Al-A'raf", count: 206 },
+    { number: 8, name_ar: "الأنفال", name_fr: "Al-Anfal", count: 75 },
+    { number: 9, name_ar: "التوبة", name_fr: "At-Tawba", count: 129 },
+    { number: 10, name_ar: "يونس", name_fr: "Yunus", count: 109 },
+    { number: 11, name_ar: "هود", name_fr: "Hud", count: 123 },
+    { number: 12, name_ar: "يوسف", name_fr: "Yusuf", count: 111 },
+    { number: 13, name_ar: "الرعد", name_fr: "Ar-Ra'd", count: 43 },
+    { number: 14, name_ar: "إبراهيم", name_fr: "Ibrahim", count: 52 },
+    { number: 15, name_ar: "الحجر", name_fr: "Al-Hijr", count: 99 },
+    { number: 16, name_ar: "النحل", name_fr: "An-Nahl", count: 128 },
+    { number: 17, name_ar: "الإسراء", name_fr: "Al-Isra", count: 111 },
+    { number: 18, name_ar: "الكهف", name_fr: "Al-Kahf", count: 110 },
+    { number: 19, name_ar: "مريم", name_fr: "Maryam", count: 98 },
+    { number: 20, name_ar: "طه", name_fr: "Ta-Ha", count: 135 },
+    { number: 21, name_ar: "الأنبياء", name_fr: "Al-Anbiya", count: 112 },
+    { number: 22, name_ar: "الحج", name_fr: "Al-Hajj", count: 78 },
+    { number: 23, name_ar: "المؤمنون", name_fr: "Al-Mu'minun", count: 118 },
+    { number: 24, name_ar: "النور", name_fr: "An-Nur", count: 64 },
+    { number: 25, name_ar: "الفرقان", name_fr: "Al-Furqan", count: 77 },
+    { number: 26, name_ar: "الشعراء", name_fr: "Ash-Shu'ara", count: 227 },
+    { number: 27, name_ar: "النمل", name_fr: "An-Naml", count: 93 },
+    { number: 28, name_ar: "القصص", name_fr: "Al-Qasas", count: 88 },
+    { number: 29, name_ar: "العنكبوت", name_fr: "Al-Ankabut", count: 69 },
+    { number: 30, name_ar: "الروم", name_fr: "Ar-Rum", count: 60 },
+    { number: 31, name_ar: "لقمان", name_fr: "Luqman", count: 34 },
+    { number: 32, name_ar: "السجدة", name_fr: "As-Sajda", count: 30 },
+    { number: 33, name_ar: "الأحزاب", name_fr: "Al-Ahzab", count: 73 },
+    { number: 34, name_ar: "سبأ", name_fr: "Saba", count: 54 },
+    { number: 35, name_ar: "فاطر", name_fr: "Fatir", count: 45 },
+    { number: 36, name_ar: "يس", name_fr: "Ya-Sin", count: 83 },
+    { number: 37, name_ar: "الصافات", name_fr: "As-Saffat", count: 182 },
+    { number: 38, name_ar: "ص", name_fr: "Sad", count: 88 },
+    { number: 39, name_ar: "الزلزلة", name_fr: "Az-Zalzala", count: 7 },
+    { number: 40, name_ar: "الرحمن", name_fr: "Ar-Rahman", count: 78 },
+    { number: 41, name_ar: "الملك", name_fr: "Al-Mulk", count: 30 },
+    { number: 42, name_ar: "الكافرون", name_fr: "Al-Kafirun", count: 6 },
+    { number: 43, name_ar: "الإخلاص", name_fr: "Al-Ikhlas", count: 4 },
+    { number: 44, name_ar: "الفلق", name_fr: "Al-Falaq", count: 5 },
+    { number: 45, name_ar: "الناس", name_fr: "An-Nas", count: 6 }
   ];
 
-  /* === Variables et DOM === */
-  const STORAGE_KEY = "quranQuizProgress";
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
   const endEl = document.getElementById("end");
-  const ayahContainer = document.getElementById("ayah-numbers");
+  const ayahsContainer = document.getElementById("ayahs-container");
   const ayatBox = document.getElementById("ayat-box");
-  const verseTextEl = document.getElementById("verse-text");
-  const verseHeaderEl = document.getElementById("verse-header");
-  const correctEl = document.getElementById("correct-count");
-  const errorEl = document.getElementById("error-count");
-  const remainingEl = document.getElementById("remaining-count");
-  const totalEl = document.getElementById("total-count");
-  const btnRedistribuer = document.getElementById("btnRedistribuer");
-  const btnTrier = document.getElementById("btnTrier");
-  const btnToggleTraites = document.getElementById("btnToggleTraites");
+  const verseHeader = document.getElementById("verse-header");
+  const verseText = document.getElementById("verse-text");
   const btnCorrect = document.getElementById("btnCorrect");
   const btnIncorrect = document.getElementById("btnIncorrect");
-  const labelTitle = document.getElementById("app-title");
-  const labelLanguage = document.getElementById("label-language");
-  const labelSourate = document.getElementById("label-sourah");
-  const labelStart = document.getElementById("label-start");
-  const labelEnd = document.getElementById("label-end");
-  const labelCorrectCount = document.getElementById("label-correctCount");
-  const labelErrorCount = document.getElementById("label-errorCount");
-  const labelRemainingCount = document.getElementById("label-remainingCount");
-  const selectorsContainer = document.getElementById("selectors-container");
-  const rangeWrap = document.getElementById("range-wrap");
-  const controlsContainer = document.getElementById("controls-buttons");
-  const endTimeBox = document.getElementById("end-time-box");
-  const endDisplay = document.getElementById("end-time-display");
+  const btnRedistribuer = document.getElementById("btnRedistribuer");
+  const btnTrier = document.getElementById("btnTrier");
+  const btnToggle = document.getElementById("btnToggle");
+  const labelCorrect = document.getElementById("label-correct");
+  const labelIncorrect = document.getElementById("label-incorrect");
+  const labelRemaining = document.getElementById("label-remaining");
+  const countCorrect = document.getElementById("correct-count");
+  const countIncorrect = document.getElementById("incorrect-count");
+  const countRemaining = document.getElementById("remaining-count");
+  const countTotal = document.getElementById("total-count");
+  const labelLanguage = document.getElementById("language-label");
+  const labelSourah = document.getElementById("sourah-label");
+  const labelStart = document.getElementById("start-label");
+  const labelEnd = document.getElementById("end-label");
+  const timerBox = document.getElementById("timer-container");
+  const startTimerDisplay = document.getElementById("start-time-display");
+  const elapsedTimerDisplay = document.getElementById("elapsed-time-display");
+  const endTimerDisplay = document.getElementById("timer-end-time");
+  const endTimeBox = document.getElementById("timer-end");
 
-  /* === États et données === */
-  let ayahNumbers = [];
+  let ayahs = [];
   let traitedMap = new Map();
-  let showTreated = true;
   let currentAyah = null;
   let currentSourah = null;
-  let correctCount = 0;
-  let errorCount = 0;
-  let verseCache = new Map();
+  let correctCountValue = 0;
+  let incorrectCountValue = 0;
+  let showTreated = true;
   let startTime = null;
   let endTime = null;
   let elapsedTime = 0;
   let timerInterval = null;
   let lastUpdateTime = null;
+  let verseCache = new Map();
 
-  /* === Minuteur === */
-  const timerBox = document.createElement('div');
-  timerBox.classList.add('counter-box', 'remaining-box');
-  timerBox.style.fontWeight = 'normal';
-  timerBox.style.color = 'white';
-  timerBox.innerHTML = 'Début : <span id="start-time-display">--:--:--</span> &nbsp; Durée : <span id="elapsed-time-display">00:00:00</span>';
-  document.getElementById('counters').appendChild(timerBox);
-  const startDisplay = document.getElementById('start-time-display');
-  const elapsedDisplay = document.getElementById('elapsed-time-display');
-
-  function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSeconds % 60).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-  }
-
-  function updateTimerDisplay() {
-    if (startTime && !endTime) {
-      const now = Date.now();
-      elapsedTime += now - lastUpdateTime;
-      lastUpdateTime = now;
-      elapsedDisplay.textContent = formatTime(elapsedTime);
-    } else if (startTime && endTime) {
-      elapsedDisplay.textContent = formatTime(elapsedTime);
-    }
-  }
-
-  function startTimer() {
-    if (startTime) return;
-    startTime = Date.now();
-    lastUpdateTime = startTime;
-    endTime = null;
-    endTimeBox.style.display = 'none';
-    startDisplay.textContent = new Date(startTime).toLocaleString();
-    elapsedTime = 0;
-    timerInterval = setInterval(() => {
-      if (document.visibilityState === 'visible') updateTimerDisplay();
-    }, 500);
-  }
-
-  function stopTimer() {
-    if (!startTime || endTime) return;
-    clearInterval(timerInterval);
-    timerInterval = null;
-    endTime = Date.now();
-    endTimeBox.style.display = 'block';
-    endDisplay.textContent = new Date(endTime).toLocaleString();
-    updateTimerDisplay();
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (!startTime) return;
-    if (document.visibilityState === 'visible') {
-      lastUpdateTime = Date.now();
-      if (!timerInterval && !endTime) {
-        timerInterval = setInterval(() => {
-          if (document.visibilityState === 'visible') updateTimerDisplay();
-        }, 500);
-      }
-    } else {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-  });
-
-  /* === Correction des labels pour le sens des deux-points === */
-  function adjustLabelColons(lang) {
-    // Remove all ltr or rtl classes from labels
-    labelLanguage.classList.remove('ltr', 'rtl');
-    labelSourate.classList.remove('ltr', 'rtl');
-    labelStart.classList.remove('ltr', 'rtl');
-    labelEnd.classList.remove('ltr', 'rtl');
-
-    // Determine if language is RTL (Arabic)
-    const isRTL = (lang === 'ar');
-
-    // For Arabic, add rtl class; for others add ltr
-    if (isRTL) {
-      labelLanguage.classList.add('rtl');
-      labelSourate.classList.add('rtl');
-      labelStart.classList.add('rtl');
-      labelEnd.classList.add('rtl');
-    } else {
-      labelLanguage.classList.add('ltr');
-      labelSourate.classList.add('ltr');
-      labelStart.classList.add('ltr');
-      labelEnd.classList.add('ltr');
-    }
-  }
-
-  /* === Mises à jour visuelles multilingues et direction === */
-  function updateInterfaceTexts(lang) {
+  function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
-    labelTitle.textContent = t.title;
+    labelCorrect.textContent = t.labelCorrect;
+    labelIncorrect.textContent = t.labelIncorrect;
+    labelRemaining.textContent = t.labelRemaining;
     labelLanguage.textContent = t.languageLabel;
-    labelSourate.textContent = t.sourateLabel;
+    labelSourah.textContent = t.sourahLabel;
     labelStart.textContent = t.startLabel;
     labelEnd.textContent = t.endLabel;
-    btnRedistribuer.textContent = t.redistribuerBtn;
-    btnTrier.textContent = t.trierBtn;
-    btnToggleTraites.textContent = t.toggleTraitesBtn;
-    btnCorrect.textContent = t.correctBtn;
-    btnIncorrect.textContent = t.incorrectBtn;
-    labelCorrectCount.textContent = t.correctCountLabel + " :";
-    labelErrorCount.textContent = t.errorCountLabel + " :";
-    labelRemainingCount.textContent = t.remainingCountLabel + " :";
-
-    adjustLabelColons(lang); // Apply colon direction fix
-
-    // Apply RTL flipping for language = Arabic but center lines horizontally:
-    if (lang === "ar") {
-      // Flip selectors container direction & apply centered flex order for Arabic first row
-      selectorsContainer.style.direction = "rtl";
-      selectorsContainer.style.justifyContent = "center";
-
-      // Remove default rtl-flip classes on groups to avoid conflict
-      const langLabelGrp = document.getElementById("language-label-group");
-      const langSelectGrp = document.getElementById("language-select-group");
-      const sourahLabelGrp = document.getElementById("sourah-label-group");
-      const sourahSelectGrp = document.getElementById("sourah-select-group");
-
-      langLabelGrp.classList.remove("rtl-flip");
-      langSelectGrp.classList.remove("rtl-flip");
-      sourahLabelGrp.classList.remove("rtl-flip");
-      sourahSelectGrp.classList.remove("rtl-flip");
-
-      // Apply flex order and centering for first row in Arabic
-      selectorsContainer.classList.add("rtl-first-row");
-
-      // For range-wrap, apply custom RTL order and centered for second row in Arabic
-      rangeWrap.style.direction = "rtl";
-      rangeWrap.style.justifyContent = "center";
-      rangeWrap.classList.add("rtl-second-row");
-      rangeWrap.classList.remove("rtl-flip");
-
-      // Add rtl-reverse class to controls container to reverse button order and center horizontally
-      controlsContainer.classList.add("rtl-reverse");
-    } else {
-      selectorsContainer.style.direction = "";
-      selectorsContainer.style.justifyContent = "center";
-      const langLabelGrp = document.getElementById("language-label-group");
-      const langSelectGrp = document.getElementById("language-select-group");
-      const sourahLabelGrp = document.getElementById("sourah-label-group");
-      const sourahSelectGrp = document.getElementById("sourah-select-group");
-
-      // Restore rtl-flip classes for non-Arabic
-      langLabelGrp.classList.add("rtl-flip");
-      langSelectGrp.classList.add("rtl-flip");
-      sourahLabelGrp.classList.add("rtl-flip");
-      sourahSelectGrp.classList.add("rtl-flip");
-
-      selectorsContainer.classList.remove("rtl-first-row");
-
-      rangeWrap.style.direction = "";
-      rangeWrap.style.justifyContent = "center";
-      rangeWrap.classList.remove("rtl-second-row");
-      rangeWrap.classList.add("rtl-flip");
-
-      // Remove rtl-reverse class from controls container for non-Arabic
-      controlsContainer.classList.remove("rtl-reverse");
-    }
-    updateVerseHeader();
+    btnRedistribuer.textContent = t.redistribuer;
+    btnTrier.textContent = t.trier;
+    btnToggle.textContent = t.toggle;
+    btnCorrect.textContent = t.correct;
+    btnIncorrect.textContent = t.incorrect;
+    updateDirection(lang);
   }
 
-  /* === Mise à jour de l'en-tête du verset === */
-  function updateVerseHeader() {
-    if (currentSourah !== null && currentAyah !== null) {
-      const t = texts[languageEl.value];
-      verseHeaderEl.innerHTML = `${t.surahText}<span class="number-blue">${currentSourah}</span>, ${t.ayahText}<span class="number-blue">${currentAyah}</span>`;
-    } else {
-      verseHeaderEl.innerHTML = "";
-    }
+  function updateDirection(lang) {
+    let rtl = lang === "ar";
+    let baseDir = rtl ? "rtl" : "ltr";
+    document.documentElement.dir = baseDir;
+    document.getElementById("selectors").style.direction = baseDir;
   }
 
-  /* === Remplit la liste des sourates === */
-  function populateSourates() {
+  function populateSourahOptions() {
     sourahEl.innerHTML = "";
-    SURAHS.forEach(s => {
-      const opt = document.createElement("option");
+    for (const s of SURAHS) {
+      let opt = document.createElement("option");
       opt.value = s.number;
-      opt.text = `${s.number} - ${s.name_ar} (${s.name_fr})`;
+      opt.textContent = `${s.number} - ${s.name_ar} (${s.name_fr})`;
       sourahEl.appendChild(opt);
-    });
+    }
   }
 
-  /* === Mise à jour des limites plage versets === */
-  function updateRange() {
-    const sel = SURAHS.find(s => s.number == sourahEl.value);
-    if (!sel) return;
+  function updateLimits(reinit = true) {
+    const s = SURAHS.find((x) => x.number == sourahEl.value);
+    if (!s) return;
     startEl.min = 1;
-    startEl.max = sel.count;
-    if (parseInt(startEl.value) < 1) startEl.value = 1;
-    if (parseInt(startEl.value) > sel.count) startEl.value = sel.count;
+    startEl.max = s.count;
     endEl.min = 1;
-    endEl.max = sel.count;
-    if (parseInt(endEl.value) < 1) endEl.value = sel.count;
-    if (parseInt(endEl.value) > sel.count) endEl.value = sel.count;
+    endEl.max = s.count;
+    if (reinit) {
+      startEl.value = 1;
+      endEl.value = s.count;
+    } else {
+      if (startEl.value < 1) startEl.value = 1;
+      if (startEl.value > s.count) startEl.value = s.count;
+      if (endEl.value < 1) endEl.value = 1;
+      if (endEl.value > s.count) endEl.value = s.count;
+    }
   }
 
-  /* === Validation des entrées === */
-  function validateInputs() {
-    const sel = SURAHS.find(s => s.number == sourahEl.value);
-    if (!sel) return false;
-    let maxVerset = sel.count;
-    let startVal = parseInt(startEl.value);
-    let endVal = parseInt(endEl.value);
-    if (isNaN(startVal) || startVal < 1) startVal = 1;
-    if (isNaN(endVal) || endVal < 1) endVal = 1;
-    if (startVal > maxVerset) startVal = maxVerset;
-    if (endVal > maxVerset) endVal = maxVerset;
-    if (startVal > endVal) startVal = endVal;
-    startEl.value = startVal;
-    endEl.value = endVal;
+  function validateRange() {
+    let s = SURAHS.find((x) => x.number == sourahEl.value);
+    if (!s) return false;
+    let start = Number(startEl.value);
+    let end = Number(endEl.value);
+    if (isNaN(start) || start < 1) start = 1;
+    if (isNaN(end) || end < 1) end = 1;
+    if (start > s.count) start = s.count;
+    if (end > s.count) end = s.count;
+    if (start > end) start = end;
+    startEl.value = start;
+    endEl.value = end;
     return true;
   }
 
-  /* === Mélange aléatoire versets === */
   function shuffleAyahs() {
-    if (!validateInputs()) return;
-    ayahNumbers = [];
-    for (let i = +startEl.value; i <= +endEl.value; i++) ayahNumbers.push(i);
-    for (let i = ayahNumbers.length - 1; i > 0; i--) {
+    if (!validateRange()) return;
+    ayahs = [];
+    let start = Number(startEl.value);
+    let end = Number(endEl.value);
+    for (let i = start; i <= end; i++) {
+      ayahs.push(i);
+    }
+    for (let i = ayahs.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [ayahNumbers[i], ayahNumbers[j]] = [ayahNumbers[j], ayahNumbers[i]];
+      [ayahs[i], ayahs[j]] = [ayahs[j], ayahs[i]];
     }
     traitedMap.clear();
-    correctCount = 0;
-    errorCount = 0;
+    correctCountValue = 0;
+    incorrectCountValue = 0;
     verseCache.clear();
-    updateCounters();
     currentAyah = null;
     currentSourah = null;
-    ayatBox.style.display = "none";
+    updateCounts();
     renderAyahs();
-    updateVerseHeader();
-    clearProgress();
     saveProgress();
   }
 
-  /* === Tri des versets === */
-  function sortAyahs() {
-    ayahNumbers.sort((a, b) => a - b);
-    renderAyahs();
+  function renderAyahs() {
+    ayahsContainer.innerHTML = "";
+    for (const num of ayahs) {
+      if (traitedMap.has(num) && !showTreated) continue;
+      let div = document.createElement("div");
+      div.textContent = num;
+      div.classList.add("num");
+      if (traitedMap.get(num) === true) div.classList.add("traited", "correct");
+      else if (traitedMap.get(num) === false) div.classList.add("traited", "incorrect");
+      else div.onclick = () => showAyah(num);
+      ayahsContainer.appendChild(div);
+    }
+    updateCounts();
   }
 
-  /* === Affiche/cache versets traités === */
-  function toggleTreated() {
-    showTreated = !showTreated;
-    renderAyahs();
-  }
-
-  /* === Mise à jour compteurs === */
-  function updateCounters() {
-    correctEl.textContent = correctCount;
-    errorEl.textContent = errorCount;
-    totalEl.textContent = ayahNumbers.length;
-    const remaining = ayahNumbers.length - traitedMap.size;
-    remainingEl.textContent = remaining < 0 ? 0 : remaining;
-  }
-
-  /* === Coloration spécifique du texte verset incluant les signes rouges spécifiés sans duplication === */
-  function colorVerseText(text) {
-    if (!text) return "";
-    const specialSigns = ["ۚ","ۗ","ۖ","ۘ","ۛ"];
-    const normalSigns = ["۞","۩"];
-    function escapeHtml(str) {
-      return str.replace(/[&<>\"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
-    let escaped = escapeHtml(text);
-    specialSigns.forEach(sign => {
-      const escSign = escapeHtml(sign);
-      const regex = new RegExp(escSign, "gu");
-      escaped = escaped.replace(regex, match => `<span class="special-red">${match}</span>`);
-    });
-    normalSigns.forEach(sign => {
-      const escSign = escapeHtml(sign);
-      const regex = new RegExp(escSign, "gu");
-      const cssClass = sign === "۞" ? "verset-yellow" : "verset-blue";
-      escaped = escaped.replace(regex, match => `<span class="${cssClass}">${match}</span>`);
-    });
-    const spanRegex = /<span class="[^"]+">.*?<\/span>/g;
-    let spans = [];
-    escaped = escaped.replace(spanRegex, m => {
-      spans.push(m);
-      return `__SPAN_${spans.length - 1}__`;
-    });
-    let parts = escaped.split(/\s+/).filter(Boolean);
-    if(parts.length === 0) return text;
-    function isSpanPlaceholder(s) {
-      return /^__SPAN_\d+__$/.test(s);
-    }
-    if (!isSpanPlaceholder(parts[0])) {
-      parts[0] = `<span class="verset-red">${parts[0]}</span>`;
-    }
-    if (parts.length > 1 && !isSpanPlaceholder(parts[parts.length - 1])) {
-      parts[parts.length - 1] = `<span class="verset-green">${parts[parts.length - 1]}</span>`;
-    }
-    parts = parts.map(p => {
-      if(isSpanPlaceholder(p)) {
-        const idx = parseInt(p.match(/\d+/)[0], 10);
-        return spans[idx];
-      }
-      return p;
-    });
-    return parts.join(" ");
+  function updateCounts() {
+    correctCountValue = [...traitedMap.values()].filter((v) => v === true).length;
+    incorrectCountValue = [...traitedMap.values()].filter((v) => v === false).length;
+    countCorrect.textContent = correctCountValue;
+    countIncorrect.textContent = incorrectCountValue;
+    countRemaining.textContent = ayahs.length - traitedMap.size;
+    countTotal.textContent = ayahs.length;
   }
 
   function showAyah(num) {
+    if (!num) return;
     currentAyah = num;
     currentSourah = sourahEl.value;
     ayatBox.style.display = "block";
     const lang = languageEl.value;
-    const cacheKey = `${currentSourah}:${num}:${lang}`;
-    if (verseCache.has(cacheKey)) {
-      verseTextEl.innerHTML = verseCache.get(cacheKey);
-      updateVerseHeader();
+    const key = `${currentSourah}:${currentAyah}:${lang}`;
+    if (verseCache.has(key)) {
+      verseText.innerHTML = verseCache.get(key);
+      updateHeader();
       return;
     }
-    verseTextEl.innerHTML = "Chargement du verset...";
-    fetch(`https://api.alquran.cloud/v1/ayah/${currentSourah}:${num}/ar.alafasy`)
-      .then(res => res.json())
-      .then(data => {
+    verseText.textContent = "Chargement...";
+    fetch(`https://api.alquran.cloud/v1/ayah/${currentSourah}:${currentAyah}/ar.alafasy`)
+      .then((res) => res.json())
+      .then((data) => {
         if (data.code === 200 && data.data && data.data.text) {
-          let verseText = data.data.text;
+          let txt = data.data.text;
           const bismillah = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
-          if (num === 1 && verseText.startsWith(bismillah)) {
-            verseText = verseText.slice(bismillah.length).trim();
+          if (currentAyah === 1 && txt.startsWith(bismillah)) {
+            txt = txt.slice(bismillah.length).trim();
           }
-          const colored = colorVerseText(verseText);
-          verseTextEl.innerHTML = `<div>${colored}</div>`;
-          verseCache.set(cacheKey, verseTextEl.innerHTML);
-          updateVerseHeader();
+          let colored = colorVerseText(txt);
+          verseText.innerHTML = `<div>${colored}</div>`;
+          verseCache.set(key, verseText.innerHTML);
+          updateHeader();
         } else {
-          verseTextEl.innerHTML = "Erreur lors du chargement du verset.";
+          verseText.textContent = "Erreur lors du chargement du verset.";
         }
       })
       .catch(() => {
-        verseTextEl.innerHTML = "Erreur lors du chargement du verset.";
+        verseText.textContent = "Erreur lors du chargement du verset.";
       });
-    if (!startTime) {
-      startTimer();
-      saveProgress();
+    if (!startTime) startTimer();
+    saveProgress();
+  }
+
+  function updateHeader() {
+    if (currentSourah && currentAyah) {
+      const t = texts[languageEl.value];
+      verseHeader.innerHTML = `${t.surahPrefix} ${currentSourah}, ${t.ayahPrefix} ${currentAyah}`;
+    } else {
+      verseHeader.textContent = "";
     }
   }
 
-  function registerResponse(isCorrect) {
-    if (currentAyah === null) return;
+  // Correction fiable du premier mot rouge, sans affecter le symbole ۞
+  function colorVerseText(text) {
+    if (!text) return "";
+    const specialSigns = ["ۚ", "ۗ", "ۖ", "ۘ", "ۛ"];
+    const normalSigns = ["۞", "۩"];
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&apos;',
+      }[m]));
+    }
+
+    // Echapper html
+    let escaped = escapeHtml(text);
+
+    // Extraire et retirer les symboles ۞ en début, en les plaçant en premier
+    let symbolYellowSpan = '';
+    const symbolReg = new RegExp(escapeHtml("۞"), 'g');
+    const hasSymbol = symbolReg.test(escaped);
+    if (hasSymbol) {
+      symbolYellowSpan = '<span class="special-yellow">۞</span> ';
+      escaped = escaped.replace(symbolReg, '');
+    }
+
+    // Colorer les autres signes spéciaux en rouge
+    for (const s of specialSigns) {
+      const esc = escapeHtml(s);
+      escaped = escaped.replace(new RegExp(esc, 'gu'), `<span class="special-red">${esc}</span>`);
+    }
+
+    // Colorer le reste des signes normaux (sauf ۞) en bleu
+    for (const s of normalSigns) {
+      if (s === "۞") continue;
+      const esc = escapeHtml(s);
+      escaped = escaped.replace(new RegExp(esc, 'gu'), `<span class="special-blue">${esc}</span>`);
+    }
+
+    // Construire DOM pour nettoyage
+    const tmpDiv = document.createElement('div');
+    tmpDiv.innerHTML = escaped;
+    // Retirer balises spéciales pour obtenir texte propre
+    for (const sp of tmpDiv.querySelectorAll('span.special-red, span.special-yellow, span.special-blue')) {
+      sp.replaceWith(document.createTextNode(sp.textContent));
+    }
+    const cleanText = tmpDiv.textContent.trim();
+    if (!cleanText) return symbolYellowSpan + escaped;
+
+    // Diviser en mots
+    const plainWords = cleanText.split(/\s+/);
+    const tokens = escaped.split(/(\s+)/);
+
+    let firstIdx = -1;
+    let lastIdx = -1;
+    let wordCounter = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      const plainToken = tokens[i].replace(/<[^>]+>/g, '').trim();
+      if (plainToken === '') continue;
+      if (wordCounter >= plainWords.length) break;
+      if (tokens[i].includes(plainWords[wordCounter])) {
+        if (firstIdx === -1) firstIdx = i;
+        lastIdx = i;
+        wordCounter++;
+      }
+    }
+
+    // Appliquer rouge au premier mot, vert au dernier
+    if (firstIdx !== -1) {
+      tokens[firstIdx] = `<span style="color:red;font-weight:700;">${tokens[firstIdx]}</span>`;
+    }
+    if (lastIdx !== -1 && lastIdx !== firstIdx) {
+      tokens[lastIdx] = `<span style="color:green;font-weight:700;">${tokens[lastIdx]}</span>`;
+    }
+
+    return symbolYellowSpan + tokens.join('');
+  }
+
+  function registerAnswer(correct) {
+    if (currentAyah == null) return;
     if (!traitedMap.has(currentAyah)) {
-      traitedMap.set(currentAyah, isCorrect);
-      if (isCorrect) correctCount++;
-      else errorCount++;
-      updateCounters();
+      traitedMap.set(currentAyah, correct);
+      if (correct) correctCountValue++;
+      else incorrectCountValue++;
+      updateCounts();
       renderAyahs();
       ayatBox.style.display = "none";
       currentAyah = null;
       currentSourah = null;
-      updateVerseHeader();
-      if (traitedMap.size === ayahNumbers.length) {
-        stopTimer();
-        saveProgress();
-      } else {
-        saveProgress();
-      }
+      updateHeader();
+      if (traitedMap.size === ayahs.length) stopTimer();
+      saveProgress();
     }
   }
-
-  function renderAyahs() {
-    ayahContainer.innerHTML = "";
-    ayahNumbers.forEach(num => {
-      const status = traitedMap.get(num);
-      if (status !== undefined && !showTreated) return;
-      const div = document.createElement("div");
-      div.classList.add("num");
-      if (status === true) div.classList.add("traited", "correct");
-      else if (status === false) div.classList.add("traited", "incorrect");
-      div.innerText = num;
-      if (status === undefined) div.onclick = () => showAyah(num);
-      ayahContainer.appendChild(div);
-    });
-    updateCounters();
+  function toggleTreated() {
+    showTreated = !showTreated;
+    renderAyahs();
   }
-
-  populateSourates();
-  const defaultLang = "ar";
-  languageEl.value = defaultLang;
-  updateInterfaceTexts(defaultLang);
-  if (!loadProgress()) shuffleAyahs();
-
-  languageEl.addEventListener("change", e => updateInterfaceTexts(e.target.value));
-  sourahEl.addEventListener("change", () => {
-    updateRange();
-    shuffleAyahs();
-  });
-  startEl.addEventListener("input", validateInputs);
-  endEl.addEventListener("input", validateInputs);
-  startEl.addEventListener("change", () => shuffleAyahs());
-  endEl.addEventListener("change", () => shuffleAyahs());
-  btnRedistribuer.onclick = shuffleAyahs;
-  btnTrier.onclick = sortAyahs;
-  btnToggleTraites.onclick = toggleTreated;
-  btnCorrect.onclick = () => registerResponse(true);
-  btnIncorrect.onclick = () => registerResponse(false);
-
-  /* === Sauvegarde / Chargement progression === */
+  function sortAyahs() {
+    ayahs.sort((a, b) => a - b);
+    renderAyahs();
+  }
   function saveProgress() {
     const data = {
       sourah: sourahEl.value,
       start: startEl.value,
       end: endEl.value,
-      ayahNumbers,
-      traited: Array.from(traitedMap.entries()),
-      correctCount,
-      errorCount,
+      ayahs,
+      treated: Array.from(traitedMap.entries()),
+      correct: correctCountValue,
+      incorrect: incorrectCountValue,
       startTime,
       elapsedTime,
-      endTime
+      endTime,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem("quizProgress", JSON.stringify(data));
   }
   function loadProgress() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
+    const str = localStorage.getItem("quizProgress");
+    if (!str) return false;
     try {
-      const data = JSON.parse(raw);
-      sourahEl.value = data.sourah;
-      startEl.value = data.start;
-      endEl.value = data.end;
-      ayahNumbers = Array.isArray(data.ayahNumbers) ? data.ayahNumbers : [];
-      traitedMap = new Map(data.traited || []);
-      correctCount = data.correctCount || 0;
-      errorCount = data.errorCount || 0;
+      const data = JSON.parse(str);
+      sourahEl.value = data.sourah || sourahEl.value;
+      startEl.value = data.start || startEl.value;
+      endEl.value = data.end || endEl.value;
+      ayahs = Array.isArray(data.ayahs) ? data.ayahs : [];
+      traitedMap = new Map(data.treated || []);
+      correctCountValue = data.correct || 0;
+      incorrectCountValue = data.incorrect || 0;
       startTime = data.startTime || null;
       elapsedTime = data.elapsedTime || 0;
       endTime = data.endTime || null;
-      updateRange();
+      updateLimits(false);
       renderAyahs();
-      updateCounters();
+      updateCounts();
       if (startTime) {
-        startDisplay.textContent = new Date(startTime).toLocaleString();
-        if (document.visibilityState === 'visible' && !endTime) {
-          lastUpdateTime = Date.now();
-          timerInterval = setInterval(() => {
-            if (document.visibilityState === 'visible') updateTimerDisplay();
-          }, 500);
-        }
+        lastUpdateTime = Date.now();
+        timerInterval = setInterval(() => updateElapsedTime(), 500);
       }
       if (endTime) {
-        endTimeBox.style.display = 'block';
-        endDisplay.textContent = new Date(endTime).toLocaleString();
+        endTimeBox.style.display = "block";
+        document.getElementById("end-time-display").textContent = new Date(endTime).toLocaleString();
+        endTimerDisplay.textContent = new Date(endTime).toLocaleString();
       }
-      updateVerseHeader();
+      updateHeader();
+      setTexts(languageEl.value);
       return true;
     } catch {
       return false;
     }
   }
-
-  /* === Réinitialise progression === */
   function clearProgress() {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem("quizProgress");
+    ayahs = [];
+    traitedMap.clear();
+    correctCountValue = 0;
+    incorrectCountValue = 0;
     startTime = null;
-    endTime = null;
     elapsedTime = 0;
+    endTime = null;
     clearInterval(timerInterval);
     timerInterval = null;
-    startDisplay.textContent = "--:--:--";
-    elapsedDisplay.textContent = "00:00:00";
-    endTimeBox.style.display = 'none';
-    endDisplay.textContent = "--:--:--";
+    currentAyah = null;
+    currentSourah = null;
+    ayatBox.style.display = "none";
+    updateCounts();
+    renderAyahs();
+    updateHeader();
+    startTimerDisplay.textContent = "--:--:--";
+    elapsedTimerDisplay.textContent = "00:00:00";
+    endTimerDisplay.textContent = "--:--:--";
+    endTimeBox.style.display = "none";
+  }
+  function updateElapsedTime() {
+    if (!startTime) return;
+    const now = Date.now();
+    elapsedTime += now - lastUpdateTime;
+    lastUpdateTime = now;
+    elapsedTimerDisplay.textContent = formatTime(elapsedTime);
+  }
+  function formatTime(ms) {
+    ms = Math.max(0, ms);
+    const sec = Math.floor(ms / 1000);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  }
+  function startTimer() {
+    if (startTime) return;
+    startTime = Date.now();
+    lastUpdateTime = startTime;
+    elapsedTime = 0;
+    timerInterval = setInterval(() => updateElapsedTime(), 500);
+    startTimerDisplay.textContent = new Date(startTime).toLocaleString();
+    endTimeBox.style.display = "none";
+    endTimerDisplay.textContent = "--:--:--";
+  }
+  function stopTimer() {
+    if (!startTime || endTime) return;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    endTime = Date.now();
+    endTimeBox.style.display = "block";
+    document.getElementById("end-time-display").textContent = new Date(endTime).toLocaleString();
+    endTimerDisplay.textContent = new Date(endTime).toLocaleString();
   }
 
-})();
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(registration => {
-          console.log('Service Worker enregistré avec succès:', registration.scope);
-        })
-        .catch(error => {
-          console.log('Erreur d’enregistrement du Service Worker:', error);
-        });
-    });
-  }
-</script>
-<script>
-  let wakeLock = null;
-  async function requestWakeLock() {
-    if ('wakeLock' in navigator) {
-      try {
-        wakeLock = await navigator.wakeLock.request('screen');
-        wakeLock.addEventListener('release', () => { console.log('Wake Lock released'); });
-        console.log('Wake Lock is active');
-      } catch (err) {
-        console.error(`Erreur de Wake Lock : ${err.name}, ${err.message}`);
-      }
-    } else {
-      console.log('Wake Lock API non supportée sur ce navigateur.');
-    }
-  }
-  window.addEventListener('load', () => { requestWakeLock(); });
-  document.addEventListener('visibilitychange', () => {
-    if (wakeLock !== null && document.visibilityState === 'visible') {
-      requestWakeLock();
+  languageEl.addEventListener("change", () => {
+    setTexts(languageEl.value);
+    saveProgress();
+  });
+  sourahEl.addEventListener("change", () => {
+    updateLimits(true);
+    shuffleAyahs();
+  });
+  startEl.addEventListener("input", () => {
+    if (validateRange()) shuffleAyahs();
+  });
+  endEl.addEventListener("input", () => {
+    if (validateRange()) shuffleAyahs();
+  });
+  btnRedistribuer.addEventListener("click", shuffleAyahs);
+  btnTrier.addEventListener("click", sortAyahs);
+  btnToggle.addEventListener("click", () => {
+    showTreated = !showTreated;
+    renderAyahs();
+  });
+  btnCorrect.addEventListener("click", () => registerAnswer(true));
+  btnIncorrect.addEventListener("click", () => registerAnswer(false));
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTexts(languageEl.value);
+    populateSourahOptions();
+    if (!loadProgress()) {
+      sourahEl.value = 1;
+      updateLimits(true);
+      shuffleAyahs();
     }
   });
+})();
 </script>
 </body>
 </html>
