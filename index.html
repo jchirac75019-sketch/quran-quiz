@@ -24,6 +24,12 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent sleep on supported mobile browsers */
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: contain;
+  background-attachment: fixed;
 }
 h1 {
   font-weight: 700;
@@ -63,8 +69,8 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 75px;
-  max-width: 18vw;
+  min-width: 60px;
+  max-width: 14vw;
   flex-shrink: 1;
   padding: 0 4px;
   white-space: normal;
@@ -92,7 +98,7 @@ h1 {
   font-size: 0.95em;
   padding: 6px 8px;
   border-radius: 10px;
-  min-width: 60px;
+  min-width: 56px;
   max-width: 100%;
   cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
@@ -492,7 +498,7 @@ h1 {
   <div class="selector-wrapper" id="language-wrapper">
     <div class="selector-label" id="language-label" aria-live="polite" aria-atomic="true"></div>
     <div class="language-select">
-      <select id="language" aria-labelledby="language-label" name="language">
+      <select id="language" aria-labelledby="language-label" name="language" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <option value="ar" data-ar-label="العربية">العربية</option>
         <option value="fr" data-ar-label="الفرنسية">Français</option>
         <option value="en" data-ar-label="الإنجليزية">English</option>
@@ -503,17 +509,17 @@ h1 {
   <div class="selector-wrapper" id="sourah-wrapper">
     <div class="selector-label" id="sourah-label" aria-live="polite" aria-atomic="true"></div>
     <div class="sourah-select">
-      <select id="sourah" aria-labelledby="sourah-label" name="sourah"></select>
+      <select id="sourah" aria-labelledby="sourah-label" name="sourah" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></select>
     </div>
   </div>
   <div class="selector-wrapper range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
     <div class="range-input-group">
       <label class="selector-label" id="start-label" for="start" aria-live="polite" aria-atomic="true"></label>
-      <input type="number" id="start" min="1" aria-labelledby="start-label" autocomplete="off"/>
+      <input type="number" id="start" min="1" aria-labelledby="start-label" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     </div>
     <div class="range-input-group">
       <label class="selector-label" id="end-label" for="end" aria-live="polite" aria-atomic="true"></label>
-      <input type="number" id="end" min="1" aria-labelledby="end-label" autocomplete="off"/>
+      <input type="number" id="end" min="1" aria-labelledby="end-label" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     </div>
   </div>
   <div class="controls" id="controls" style="margin: 0; flex-grow: 0;">
@@ -552,6 +558,8 @@ h1 {
 </div>
 <script>
 (() => {
+  const STORAGE_KEY = 'quranQuizState_v1';
+
   const texts = {
     ar: {
       title: "اختبار آيات القرآن المتقدم",
@@ -635,10 +643,13 @@ h1 {
     }
   };
   const SURAHS = [
-    { number:1,names:{ar:"الفاتحة",fr:"Al-Fatiha",en:"Al-Fatiha",es:"Al-Fatiha"},count:7 },
-    { number:2,names:{ar:"البقرة",fr:"Al-Baqara",en:"Al-Baqara",es:"Al-Baqara"},count:286 }
+    { number:1, names:{ar:"الفاتحة",fr:"Al-Fatiha",en:"Al-Fatiha",es:"Al-Fatiha"}, count:7 },
+    { number:2, names:{ar:"البقرة",fr:"Al-Baqara",en:"Al-Baqara",es:"Al-Baqara"}, count:286 },
+    { number:7, names:{ar:"الأعراف",fr:"Al-A'raf",en:"Al-A'raf",es:"Al-A'raf"}, count:206 },
+    { number:95, names:{ar:"التين",fr:"At-Tin",en:"At-Tin",es:"At-Tin"}, count:8 }
   ];
   const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
+
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
@@ -668,6 +679,7 @@ h1 {
   const timerEndDisplay = document.getElementById("timer-end-time");
   const timerEndBox = document.getElementById("timer-end");
   const endTimeDisplay = document.getElementById("end-time-display");
+
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -683,6 +695,79 @@ h1 {
   let verseCache = new Map();
   let selectedNumDiv = null;
   let pageVisible = true;
+
+  // Save state to local storage
+  function saveState() {
+    const state = {
+      ayahs,
+      traitedMap: Array.from(traitedMap.entries()),
+      currentAyah,
+      currentSourah,
+      correctCountValue,
+      incorrectCountValue,
+      showTreated,
+      startTime,
+      endTime,
+      elapsedTime,
+      selectedNumIndex: selectedNumDiv ? [...ayahsContainer.children].indexOf(selectedNumDiv) : null,
+      language: languageEl.value,
+      sourah: sourahEl.value,
+      start: startEl.value,
+      end: endEl.value
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  // Load state from local storage
+  function loadState() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return false;
+    try {
+      const state = JSON.parse(saved);
+      if(state.language) languageEl.value = state.language;
+      if(state.sourah) sourahEl.value = state.sourah;
+      setTexts(languageEl.value);
+      updateLanguageFilterLabels(languageEl.value);
+      populateSourahOptions();
+      updateLimits(false);
+
+      if(state.start) startEl.value = state.start;
+      if(state.end) endEl.value = state.end;
+
+      if(Array.isArray(state.traitedMap)) {
+        traitedMap = new Map(state.traitedMap);
+      } else {
+        traitedMap = new Map();
+      }
+      ayahs = Array.isArray(state.ayahs) ? state.ayahs : [];
+      correctCountValue = state.correctCountValue || 0;
+      incorrectCountValue = state.incorrectCountValue || 0;
+      showTreated = typeof state.showTreated === "boolean" ? state.showTreated : true;
+      startTime = state.startTime || null;
+      endTime = state.endTime || null;
+      elapsedTime = state.elapsedTime || 0;
+
+      updateCounts();
+      renderAyahs();
+
+      if(state.selectedNumIndex !== null && state.selectedNumIndex >= 0 && state.selectedNumIndex < ayahsContainer.children.length) {
+        setSelectedNum(ayahsContainer.children[state.selectedNumIndex]);
+        if(currentAyah === null && ayahs[state.selectedNumIndex] !== undefined) {
+          showAyah(ayahs[state.selectedNumIndex]);
+        }
+      }
+
+      if (startTime && !endTime) {
+        startTimer(true);
+      } else {
+        stopTimer(true);
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
@@ -713,7 +798,14 @@ h1 {
     if(timerEndLabel) {
       timerEndLabel.textContent = t.timerEnd + ' ';
     }
+    // Buttons aria-labels update
+    btnCorrect.setAttribute('aria-label', t.correct);
+    btnIncorrect.setAttribute('aria-label', t.incorrect);
+    btnRedistribuer.setAttribute('aria-label', t.redistribuer);
+    btnTrier.setAttribute('aria-label', t.trier);
+    btnToggle.setAttribute('aria-label', t.toggle);
   }
+
   function updateDirection(lang) {
     const rtl = lang === "ar";
     document.documentElement.dir = rtl ? "rtl" : "ltr";
@@ -739,6 +831,7 @@ h1 {
       document.getElementById('controls').classList.remove('rtl-flip');
     }
   }
+
   function updateLanguageFilterLabels(lang) {
     if(lang === 'ar') {
       const options = languageEl.querySelectorAll('option');
@@ -755,6 +848,7 @@ h1 {
       languageEl.options[3].textContent = 'Español';
     }
   }
+
   function populateSourahOptions() {
     sourahEl.innerHTML = '';
     const lang = languageEl.value;
@@ -770,6 +864,7 @@ h1 {
       sourahEl.appendChild(opt);
     }
   }
+
   function updateLimits(reinit = true) {
     const s = SURAHS.find(x => x.number == sourahEl.value);
     if (!s) return;
@@ -785,6 +880,7 @@ h1 {
       if (endEl.value > s.count) endEl.value = s.count;
     }
   }
+
   function validateRange() {
     let s = SURAHS.find(x => x.number == sourahEl.value);
     if (!s) return false;
@@ -799,7 +895,8 @@ h1 {
     endEl.value = end;
     return true;
   }
-  function shuffleAyahs() {
+
+  function shuffleAyahs(save = true) {
     if (!validateRange()) return;
     ayahs = [];
     let start = Number(startEl.value);
@@ -822,7 +919,9 @@ h1 {
     resetTimer(true);
     clearVerseDetails();
     clearSelectedNum();
+    if(save) saveState();
   }
+
   function renderAyahs() {
     ayahsContainer.innerHTML = '';
     for (const num of ayahs) {
@@ -846,18 +945,24 @@ h1 {
     }
     updateCounts();
     checkIfCompleteStopTimer();
+    saveState();
   }
+
   function setSelectedNum(div) {
     if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
     selectedNumDiv = div;
     if (selectedNumDiv) selectedNumDiv.classList.add('selected');
+    saveState();
   }
+
   function clearSelectedNum() {
     if (selectedNumDiv) {
       selectedNumDiv.classList.remove('selected');
       selectedNumDiv = null;
+      saveState();
     }
   }
+
   function updateCounts() {
     correctCountValue = [...traitedMap.values()].filter(v => v === true).length;
     incorrectCountValue = [...traitedMap.values()].filter(v => v === false).length;
@@ -866,9 +971,11 @@ h1 {
     countRemaining.textContent = ayahs.length - traitedMap.size;
     countTotal.textContent = ayahs.length;
   }
+
   function checkIfCompleteStopTimer() {
     if (traitedMap.size === ayahs.length && ayahs.length > 0) stopTimer();
   }
+
   async function fetchVerseWithFallback(surah, ayah, lang) {
     const key = `${surah}:${ayah}:${lang}`;
     if (verseCache.has(key)) return verseCache.get(key);
@@ -878,6 +985,7 @@ h1 {
     try { return await fetchPrimary(); }
     catch (e) { throw new Error('Verse fetch failed'); }
   }
+
   async function showAyah(num) {
     if (!num) return;
     currentAyah = num;
@@ -906,6 +1014,7 @@ h1 {
     }
     if (!startTime) startTimer();
   }
+
   function updateHeader() {
     if (currentSourah && currentAyah) {
       const lang = languageEl.value;
@@ -915,6 +1024,7 @@ h1 {
       verseHeader.textContent = '';
     }
   }
+
   function colorVerseText(text) {
     if (!text) return '';
     const specialSigns = ["ۚ", "ۗ", "ۖ", "ۘ", "ۛ"];
@@ -972,6 +1082,7 @@ h1 {
       tokens[lastIdx] = `<span class="special-green">${tokens[lastIdx]}</span>`;
     return symbolYellowSpan + tokens.join('') + (endSymbol ? " " + endSymbol : '');
   }
+
   function registerAnswer(correct) {
     if (currentAyah == null) return;
     if (!traitedMap.has(currentAyah)) {
@@ -986,41 +1097,52 @@ h1 {
       clearVerseDetails();
       checkIfCompleteStopTimer();
       clearSelectedNum();
+      saveState();
     }
   }
+
   function toggleTreated() {
     showTreated = !showTreated;
     renderAyahs();
+    saveState();
   }
+
   function sortAyahs() {
     ayahs.sort((a, b) => a - b);
     renderAyahs();
+    saveState();
   }
+
   function resetTimer(resetElapsed) {
     clearInterval(timerInterval);
     timerInterval = null;
+    if(resetElapsed) elapsedTime = 0;
     startTime = null;
     endTime = null;
     lastUpdateTime = null;
     pageVisible = true;
-    if (resetElapsed) elapsedTime = 0;
     timerStartDisplay.textContent = '--:--:--';
     timerElapsedDisplay.textContent = '00:00:00';
     endTimeDisplay.textContent = '--:--:--';
     timerEndBox.style.display = 'none';
+    saveState();
   }
-  function startTimer() {
-    if (startTime) return;
-    startTime = Date.now();
-    lastUpdateTime = startTime;
-    elapsedTime = 0;
+
+  function startTimer(resume=false) {
+    if (startTime && !resume) return;
+    if(!startTime) startTime = Date.now() - elapsedTime;
+    lastUpdateTime = Date.now();
+    elapsedTime = resume ? elapsedTime : 0;
     pageVisible = true;
-    timerInterval = setInterval(() => updateElapsedTime(), 500);
+    if (!timerInterval) {
+      timerInterval = setInterval(() => updateElapsedTime(), 500);
+    }
     timerStartDisplay.textContent = new Date(startTime).toLocaleString();
     timerEndBox.style.display = 'none';
-    timerEndDisplay.textContent = '--:--:--';
+    saveState();
   }
-  function stopTimer() {
+
+  function stopTimer(manualStop) {
     if (!startTime || endTime) return;
     clearInterval(timerInterval);
     timerInterval = null;
@@ -1028,27 +1150,29 @@ h1 {
     timerEndBox.style.display = 'block';
     endTimeDisplay.textContent = new Date(endTime).toLocaleString();
     timerEndDisplay.textContent = new Date(endTime).toLocaleString();
+    saveState();
   }
+
   function resumeTimer() {
     if (traitedMap.size === ayahs.length) return;
     if (!pageVisible) return;
     if (!startTime) {
-      startTime = Date.now() - elapsedTime;
-      lastUpdateTime = Date.now();
-      timerInterval = setInterval(() => updateElapsedTime(), 500);
-      timerStartDisplay.textContent = new Date(startTime).toLocaleString();
+      startTimer();
     } else if (!timerInterval) {
       lastUpdateTime = Date.now();
       timerInterval = setInterval(() => updateElapsedTime(), 500);
     }
   }
+
   function updateElapsedTime() {
     if (!startTime || !pageVisible) return;
     const now = Date.now();
     elapsedTime += now - lastUpdateTime;
     lastUpdateTime = now;
     timerElapsedDisplay.textContent = formatTime(elapsedTime);
+    saveState();
   }
+
   function formatTime(ms) {
     ms = Math.max(0, ms);
     const sec = Math.floor(ms / 1000);
@@ -1057,6 +1181,7 @@ h1 {
     const s = sec % 60;
     return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   }
+
   function clearVerseDetails() {
     currentAyah = null;
     currentSourah = null;
@@ -1065,19 +1190,26 @@ h1 {
     verseText.textContent = '';
     clearSelectedNum();
   }
+
+  // Keep track of tab visibility to pause/resume timer
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
       clearInterval(timerInterval);
       timerInterval = null;
+      // On tab exit, stop timer
+      if(startTime && !endTime)
+        stopTimer(true);
     } else {
       pageVisible = true;
+      // On return, resume timer only if quiz not complete and has started before
       if (startTime && !endTime && traitedMap.size < ayahs.length) {
         lastUpdateTime = Date.now();
         timerInterval = setInterval(() => updateElapsedTime(), 500);
       }
     }
   });
+
   languageEl.addEventListener('change', () => {
     const lang = languageEl.value;
     setTexts(lang);
@@ -1087,29 +1219,75 @@ h1 {
     shuffleAyahs();
     resetTimer(true);
     clearVerseDetails();
+    saveState();
   });
+
   sourahEl.addEventListener('change', () => {
     updateLimits(true);
     shuffleAyahs();
     resetTimer(true);
     clearVerseDetails();
     clearSelectedNum();
+    saveState();
   });
+
   startEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
+
   endEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
+
   btnRedistribuer.addEventListener('click', () => { shuffleAyahs(); resetTimer(true); });
+
   btnTrier.addEventListener('click', sortAyahs);
+
   btnToggle.addEventListener('click', toggleTreated);
+
   btnCorrect.addEventListener('click', () => registerAnswer(true));
+
   btnIncorrect.addEventListener('click', () => registerAnswer(false));
+
+  window.addEventListener('beforeunload', () => {
+    // Stop timer when leaving page (close, reload)
+    if (startTime && !endTime) {
+      stopTimer(true);
+    }
+    saveState();
+  });
+
+  // Prevent device from sleeping: Use Wake Lock API if supported
+  let wakeLock = null;
+  async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => {
+          // Try to acquire again after release
+          requestWakeLock();
+        });
+      } catch (err) {
+        // Fail silently, no wake lock
+      }
+    }
+  }
+  requestWakeLock();
+
+  // Fallback: keep focus on body to reduce sleep on iOS Safari
+  document.body.addEventListener('touchstart', () => {
+    if (!wakeLock) {
+      requestWakeLock();
+    }
+  });
+
+  // Initialize app state on DOM load, try to load saved state first
   document.addEventListener('DOMContentLoaded', () => {
-    languageEl.value = 'ar'; // Default Arabic
-    setTexts('ar');
-    updateLanguageFilterLabels('ar');
-    populateSourahOptions();
-    sourahEl.value = '1';
-    updateLimits(true);
-    shuffleAyahs();
+    if(!loadState()) {
+      languageEl.value = 'ar'; // Default Arabic
+      setTexts('ar');
+      updateLanguageFilterLabels('ar');
+      populateSourahOptions();
+      sourahEl.value = '1';
+      updateLimits(true);
+      shuffleAyahs();
+    }
   });
 })();
 </script>
