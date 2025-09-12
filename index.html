@@ -24,7 +24,6 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent sleep on supported mobile browsers */
   -webkit-user-select:none;
   -webkit-touch-callout:none;
   -webkit-tap-highlight-color: transparent;
@@ -61,24 +60,39 @@ h1 {
   overflow-x: auto;
   white-space: nowrap;
 }
+/* RTL from before */
 .rtl {
   direction: rtl !important;
   text-align: right !important;
 }
-/* Force equal width for language and sourah selectors, same as Arabic selection */
+/* Equal width for Arabic */
 .selector-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 60px; /* equal as in Arabic */
-  max-width: 14vw;  /* equal as in Arabic */
+  min-width: 60px;
+  max-width: 14vw;
   flex-shrink: 1;
   padding: 0 4px;
   white-space: normal;
 }
+/* Adjust widths and font-sizes for non-Arabic languages */
+.selector-wrapper.non-arabic {
+  min-width: 50px; /* slightly smaller */
+  max-width: 9vw;   /* reduced width */
+}
+.selector-wrapper.non-arabic .selector-label {
+  font-size: 0.55em; /* reduced font size */
+  white-space: nowrap;
+}
+.selector-wrapper.non-arabic select {
+  font-size: 0.75em !important; /* reduced font size */
+  min-width: 42px;
+  padding: 4px 6px;
+}
+/* Keep Arabic default font size and widths */
 .selector-label {
   font-weight: 700;
-  font-size: 0.7em;
   color: #5a552a;
   margin-bottom: 4px;
   white-space: nowrap;
@@ -99,7 +113,7 @@ h1 {
   font-size: 0.95em;
   padding: 6px 8px;
   border-radius: 10px;
-  min-width: 56px; /* forced as in Arabic */
+  min-width: 56px;
   max-width: 100%;
   cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
@@ -423,6 +437,9 @@ h1 {
     max-width: 32vw;
     min-width: 70px;
   }
+  .selector-wrapper.non-arabic {
+    max-width: 28vw;
+  }
   .range-wrap {
     max-width: 140px;
   }
@@ -473,9 +490,8 @@ h1 {
   .filters-container {
     max-width: 720px;
   }
-  .table-wrap {
-    max-height: 220px;
-    max-width: 720px;
+  .selector-wrapper.non-arabic {
+    max-width: 9vw;
   }
   #ayat-box {
     max-height: 38em;
@@ -560,7 +576,6 @@ h1 {
 <script>
 (() => {
   const STORAGE_KEY = 'quranQuizState_v1';
-
   const texts = {
     ar: {
       title: "اختبار آيات القرآن المتقدم",
@@ -650,7 +665,6 @@ h1 {
     { number:95, names:{ar:"التين",fr:"At-Tin",en:"At-Tin",es:"At-Tin"}, count:8 }
   ];
   const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
-
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
@@ -680,7 +694,6 @@ h1 {
   const timerEndDisplay = document.getElementById("timer-end-time");
   const timerEndBox = document.getElementById("timer-end");
   const endTimeDisplay = document.getElementById("end-time-display");
-
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -696,7 +709,9 @@ h1 {
   let verseCache = new Map();
   let selectedNumDiv = null;
   let pageVisible = true;
+  let wasPageHidden = false; // Track if page was hidden to avoid reset on return
 
+  // Save app state
   function saveState() {
     const state = {
       ayahs,
@@ -718,6 +733,7 @@ h1 {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
+  // Load app state
   function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return false;
@@ -729,10 +745,8 @@ h1 {
       updateLanguageFilterLabels(languageEl.value);
       populateSourahOptions();
       updateLimits(false);
-
       if(state.start) startEl.value = state.start;
       if(state.end) endEl.value = state.end;
-
       if(Array.isArray(state.traitedMap)) {
         traitedMap = new Map(state.traitedMap);
       } else {
@@ -745,17 +759,15 @@ h1 {
       startTime = state.startTime || null;
       endTime = state.endTime || null;
       elapsedTime = state.elapsedTime || 0;
-
       updateCounts();
       renderAyahs();
-
       if(state.selectedNumIndex !== null && state.selectedNumIndex >= 0 && state.selectedNumIndex < ayahsContainer.children.length) {
         setSelectedNum(ayahsContainer.children[state.selectedNumIndex], false);
         if(currentAyah === null && ayahs[state.selectedNumIndex] !== undefined) {
           showAyah(ayahs[state.selectedNumIndex]);
         }
       }
-
+      // Avoid resetting timer on page visibility changes
       if (startTime && !endTime) {
         startTimer(true);
       } else {
@@ -767,6 +779,7 @@ h1 {
     }
   }
 
+  // Set all static texts for selected lang
   function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
@@ -804,9 +817,21 @@ h1 {
     btnToggle.setAttribute('aria-label', t.toggle);
   }
 
+  // Update document direction and class based on lang
   function updateDirection(lang) {
     const rtl = lang === "ar";
     document.documentElement.dir = rtl ? "rtl" : "ltr";
+    // Adjust selector wrappers width and font-size based on language
+    const wrappers = [document.getElementById('language-wrapper'), document.getElementById('sourah-wrapper')];
+    if (rtl) {
+      wrappers.forEach(w => {
+        w.classList.remove('non-arabic');
+      });
+    } else {
+      wrappers.forEach(w => {
+        w.classList.add('non-arabic');
+      });
+    }
     if(rtl){
       document.body.classList.add('rtl');
       labelStart.parentElement.classList.add('rtl-flip');
@@ -830,6 +855,7 @@ h1 {
     }
   }
 
+  // Update language select option text for Arabic label if in Arabic lang
   function updateLanguageFilterLabels(lang) {
     if(lang === 'ar') {
       const options = languageEl.querySelectorAll('option');
@@ -847,6 +873,7 @@ h1 {
     }
   }
 
+  // Populate sourah select options with filtered surahs (only 4 for now)
   function populateSourahOptions() {
     sourahEl.innerHTML = '';
     const lang = languageEl.value;
@@ -863,6 +890,7 @@ h1 {
     }
   }
 
+  // Update start/end input min/max values based on sourah
   function updateLimits(reinit = true) {
     const s = SURAHS.find(x => x.number == sourahEl.value);
     if (!s) return;
@@ -879,6 +907,7 @@ h1 {
     }
   }
 
+  // Validate start/end range inputs
   function validateRange() {
     let s = SURAHS.find(x => x.number == sourahEl.value);
     if (!s) return false;
@@ -894,7 +923,7 @@ h1 {
     return true;
   }
 
-  // Shuffle and prepare ayahs array
+  // Shuffle ayahs according to start/end inputs
   function shuffleAyahs(save = true) {
     if (!validateRange()) return;
     ayahs = [];
@@ -915,7 +944,7 @@ h1 {
     currentSourah = null;
     updateCounts();
     renderAyahs();
-    resetTimer(true);
+    resetTimer(false);
     clearVerseDetails();
     clearSelectedNum(false);
     if(save) saveState();
@@ -928,7 +957,7 @@ h1 {
       let div = document.createElement('div');
       div.textContent = num;
       div.classList.add('num');
-      div.tabIndex = 0; // Enable keyboard focus
+      div.tabIndex = 0;
       if (traitedMap.get(num) === true) div.classList.add('traited', 'correct');
       else if (traitedMap.get(num) === false) div.classList.add('traited', 'incorrect');
       else {
@@ -950,13 +979,12 @@ h1 {
     saveState();
   }
 
-  // Set selected number element and optionally display the ayah
+  // Set selected number element and optionally show ayah
   function setSelectedNum(div, showAyahFlag = true) {
     if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
     selectedNumDiv = div;
     if (selectedNumDiv) selectedNumDiv.classList.add('selected');
     if(showAyahFlag && selectedNumDiv) {
-      // Check range before showing ayah
       const ayahNum = Number(selectedNumDiv.textContent);
       const surahNo = Number(sourahEl.value);
       const surahData = SURAHS.find(s => s.number === surahNo);
@@ -979,7 +1007,6 @@ h1 {
     }
   }
 
-  // Update counters display
   function updateCounts() {
     correctCountValue = [...traitedMap.values()].filter(v => v === true).length;
     incorrectCountValue = [...traitedMap.values()].filter(v => v === false).length;
@@ -993,7 +1020,6 @@ h1 {
     if (traitedMap.size === ayahs.length && ayahs.length > 0) stopTimer();
   }
 
-  // API fetch with verse range validation
   async function fetchVerseWithFallback(surah, ayah, lang) {
     const surahData = SURAHS.find(s => s.number == surah);
     if (!surahData || ayah < 1 || ayah > surahData.count) {
@@ -1149,6 +1175,7 @@ h1 {
     endTime = null;
     lastUpdateTime = null;
     pageVisible = true;
+    wasPageHidden = false; // reset hidden state on reset timer
     timerStartDisplay.textContent = '--:--:--';
     timerElapsedDisplay.textContent = '00:00:00';
     endTimeDisplay.textContent = '--:--:--';
@@ -1157,11 +1184,12 @@ h1 {
   }
 
   function startTimer(resume=false) {
-    if (startTime && !resume) return;
+    if(startTime && !resume) return;
     if(!startTime) startTime = Date.now() - elapsedTime;
     lastUpdateTime = Date.now();
-    elapsedTime = resume ? elapsedTime : 0;
+    if(!resume) elapsedTime = 0;
     pageVisible = true;
+    wasPageHidden = false;
     if (!timerInterval) {
       timerInterval = setInterval(() => updateElapsedTime(), 500);
     }
@@ -1186,7 +1214,7 @@ h1 {
     if (!pageVisible) return;
     if (!startTime) {
       startTimer();
-    } else if (!timerInterval) {
+    } else if (!timerInterval && !wasPageHidden) {
       lastUpdateTime = Date.now();
       timerInterval = setInterval(() => updateElapsedTime(), 500);
     }
@@ -1219,7 +1247,7 @@ h1 {
     clearSelectedNum(false);
   }
 
-  // Keyboard navigation adapted to correct vertical movement (same as previous fix)
+  // Keyboard navigation for grid vertical/horizontal movement
   function handleKeyNavigation(e) {
     if (!selectedNumDiv) return;
     const key = e.key;
@@ -1227,26 +1255,17 @@ h1 {
     if (children.length === 0) return;
     const index = children.indexOf(selectedNumDiv);
     if (index === -1) return;
-
     if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(key)) return;
-
     e.preventDefault();
-
     let newIndex = index;
-
     const elementTops = children.map(c => c.offsetTop);
     const currentRowTop = selectedNumDiv.offsetTop;
-
     const indexesSameRow = children
       .map((c, i) => (elementTops[i] === currentRowTop ? i : -1))
       .filter(i => i !== -1);
-
     const colIndex = indexesSameRow.indexOf(index);
-
     const uniqueRowTops = [...new Set(elementTops)].sort((a,b) => a-b);
-
     const currentRowNumber = uniqueRowTops.indexOf(currentRowTop);
-
     switch(key) {
       case 'ArrowRight':
         if (index < children.length -1) newIndex = index +1;
@@ -1285,25 +1304,27 @@ h1 {
         break;
       }
     }
-
     if(newIndex !== index) {
       setSelectedNum(children[newIndex]);
       children[newIndex].focus();
     }
   }
 
+  // Handle page visibility changes to pause timer but NOT reset elapsed on resume
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
+      wasPageHidden = true;
       clearInterval(timerInterval);
       timerInterval = null;
-      if(startTime && !endTime)
-        stopTimer(true);
+      // Do NOT call stopTimer here to prevent timer reset on visibility change
     } else {
       pageVisible = true;
-      if (startTime && !endTime && traitedMap.size < ayahs.length) {
+      // Only resume timer if quiz incomplete and timer was running before hiding
+      if (startTime && !endTime && traitedMap.size < ayahs.length && wasPageHidden) {
         lastUpdateTime = Date.now();
         timerInterval = setInterval(() => updateElapsedTime(), 500);
+        wasPageHidden = false; // Reset flag on resume
       }
     }
   });
@@ -1330,17 +1351,11 @@ h1 {
   });
 
   startEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
-
   endEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
-
   btnRedistribuer.addEventListener('click', () => { shuffleAyahs(); resetTimer(true); });
-
   btnTrier.addEventListener('click', sortAyahs);
-
   btnToggle.addEventListener('click', toggleTreated);
-
   btnCorrect.addEventListener('click', () => registerAnswer(true));
-
   btnIncorrect.addEventListener('click', () => registerAnswer(false));
 
   window.addEventListener('beforeunload', () => {
@@ -1350,7 +1365,7 @@ h1 {
     saveState();
   });
 
-  // Improved wake lock handling for better screen awake prevention
+  // Robust Wake Lock implementation for screen awake prevention
   let wakeLock = null;
   async function requestWakeLock() {
     if ('wakeLock' in navigator) {
@@ -1360,20 +1375,14 @@ h1 {
           requestWakeLock();
         });
       } catch (err) {
-        // Fallback retry in 15s if fails
         setTimeout(requestWakeLock, 15000);
       }
     }
   }
-  // Request wake lock asap
   requestWakeLock();
-
-  // Retry wake lock on any user interaction as fallback
   ['visibilitychange', 'click', 'touchstart', 'keydown'].forEach(evt => {
     document.addEventListener(evt, () => {
-      if (!wakeLock) {
-        requestWakeLock();
-      }
+      if (!wakeLock) requestWakeLock();
     });
   });
 
@@ -1386,9 +1395,10 @@ h1 {
     }
   });
 
+  // Initialize app on DOM load with state loaded or defaults
   document.addEventListener('DOMContentLoaded', () => {
     if(!loadState()) {
-      languageEl.value = 'ar'; // Default Arabic
+      languageEl.value = 'ar';
       setTexts('ar');
       updateLanguageFilterLabels('ar');
       populateSourahOptions();
