@@ -65,12 +65,13 @@ h1 {
   direction: rtl !important;
   text-align: right !important;
 }
+/* Force equal width for language and sourah selectors, same as Arabic selection */
 .selector-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 60px;
-  max-width: 14vw;
+  min-width: 60px; /* equal as in Arabic */
+  max-width: 14vw;  /* equal as in Arabic */
   flex-shrink: 1;
   padding: 0 4px;
   white-space: normal;
@@ -98,7 +99,7 @@ h1 {
   font-size: 0.95em;
   padding: 6px 8px;
   border-radius: 10px;
-  min-width: 56px;
+  min-width: 56px; /* forced as in Arabic */
   max-width: 100%;
   cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
@@ -696,7 +697,6 @@ h1 {
   let selectedNumDiv = null;
   let pageVisible = true;
 
-  // Save state to local storage
   function saveState() {
     const state = {
       ayahs,
@@ -718,7 +718,6 @@ h1 {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  // Load state from local storage
   function loadState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return false;
@@ -751,7 +750,7 @@ h1 {
       renderAyahs();
 
       if(state.selectedNumIndex !== null && state.selectedNumIndex >= 0 && state.selectedNumIndex < ayahsContainer.children.length) {
-        setSelectedNum(ayahsContainer.children[state.selectedNumIndex]);
+        setSelectedNum(ayahsContainer.children[state.selectedNumIndex], false);
         if(currentAyah === null && ayahs[state.selectedNumIndex] !== undefined) {
           showAyah(ayahs[state.selectedNumIndex]);
         }
@@ -798,7 +797,6 @@ h1 {
     if(timerEndLabel) {
       timerEndLabel.textContent = t.timerEnd + ' ';
     }
-    // Buttons aria-labels update
     btnCorrect.setAttribute('aria-label', t.correct);
     btnIncorrect.setAttribute('aria-label', t.incorrect);
     btnRedistribuer.setAttribute('aria-label', t.redistribuer);
@@ -896,6 +894,7 @@ h1 {
     return true;
   }
 
+  // Shuffle and prepare ayahs array
   function shuffleAyahs(save = true) {
     if (!validateRange()) return;
     ayahs = [];
@@ -918,7 +917,7 @@ h1 {
     renderAyahs();
     resetTimer(true);
     clearVerseDetails();
-    clearSelectedNum();
+    clearSelectedNum(false);
     if(save) saveState();
   }
 
@@ -929,6 +928,7 @@ h1 {
       let div = document.createElement('div');
       div.textContent = num;
       div.classList.add('num');
+      div.tabIndex = 0; // Enable keyboard focus
       if (traitedMap.get(num) === true) div.classList.add('traited', 'correct');
       else if (traitedMap.get(num) === false) div.classList.add('traited', 'incorrect');
       else {
@@ -936,9 +936,11 @@ h1 {
           showAyah(num);
           resumeTimer();
           setSelectedNum(div);
+          div.focus();
         };
         div.ontouchstart = () => {
           setSelectedNum(div);
+          div.focus();
         };
       }
       ayahsContainer.appendChild(div);
@@ -948,21 +950,36 @@ h1 {
     saveState();
   }
 
-  function setSelectedNum(div) {
+  // Set selected number element and optionally display the ayah
+  function setSelectedNum(div, showAyahFlag = true) {
     if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
     selectedNumDiv = div;
     if (selectedNumDiv) selectedNumDiv.classList.add('selected');
+    if(showAyahFlag && selectedNumDiv) {
+      // Check range before showing ayah
+      const ayahNum = Number(selectedNumDiv.textContent);
+      const surahNo = Number(sourahEl.value);
+      const surahData = SURAHS.find(s => s.number === surahNo);
+      if (surahData && ayahNum >=1 && ayahNum <= surahData.count) {
+        showAyah(ayahNum);
+        resumeTimer();
+      } else {
+        verseText.textContent = 'Verset hors limites.';
+        verseHeader.textContent = '';
+      }
+    }
     saveState();
   }
 
-  function clearSelectedNum() {
+  function clearSelectedNum(save = true) {
     if (selectedNumDiv) {
       selectedNumDiv.classList.remove('selected');
       selectedNumDiv = null;
-      saveState();
+      if(save) saveState();
     }
   }
 
+  // Update counters display
   function updateCounts() {
     correctCountValue = [...traitedMap.values()].filter(v => v === true).length;
     incorrectCountValue = [...traitedMap.values()].filter(v => v === false).length;
@@ -976,7 +993,12 @@ h1 {
     if (traitedMap.size === ayahs.length && ayahs.length > 0) stopTimer();
   }
 
+  // API fetch with verse range validation
   async function fetchVerseWithFallback(surah, ayah, lang) {
+    const surahData = SURAHS.find(s => s.number == surah);
+    if (!surahData || ayah < 1 || ayah > surahData.count) {
+      throw new Error('Verse number out of range');
+    }
     const key = `${surah}:${ayah}:${lang}`;
     if (verseCache.has(key)) return verseCache.get(key);
     const fetchPrimary = () => fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/ar.alafasy`)
@@ -988,10 +1010,16 @@ h1 {
 
   async function showAyah(num) {
     if (!num) return;
+    const surahNo = Number(sourahEl.value);
+    const surahData = SURAHS.find(s => s.number == surahNo);
+    if (!surahData || num < 1 || num > surahData.count) {
+      verseText.textContent = 'Verset hors limites.';
+      verseHeader.textContent = '';
+      return;
+    }
     currentAyah = num;
     currentSourah = sourahEl.value;
     ayatBox.style.display = 'block';
-    const surahNo = Number(currentSourah);
     const key = `${currentSourah}:${currentAyah}:ar`;
     if (verseCache.has(key)) {
       verseText.innerHTML = verseCache.get(key);
@@ -1188,21 +1216,91 @@ h1 {
     ayatBox.style.display = 'none';
     verseHeader.textContent = '';
     verseText.textContent = '';
-    clearSelectedNum();
+    clearSelectedNum(false);
   }
 
-  // Keep track of tab visibility to pause/resume timer
+  // Keyboard navigation adapted to correct vertical movement (same as previous fix)
+  function handleKeyNavigation(e) {
+    if (!selectedNumDiv) return;
+    const key = e.key;
+    const children = [...ayahsContainer.children];
+    if (children.length === 0) return;
+    const index = children.indexOf(selectedNumDiv);
+    if (index === -1) return;
+
+    if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(key)) return;
+
+    e.preventDefault();
+
+    let newIndex = index;
+
+    const elementTops = children.map(c => c.offsetTop);
+    const currentRowTop = selectedNumDiv.offsetTop;
+
+    const indexesSameRow = children
+      .map((c, i) => (elementTops[i] === currentRowTop ? i : -1))
+      .filter(i => i !== -1);
+
+    const colIndex = indexesSameRow.indexOf(index);
+
+    const uniqueRowTops = [...new Set(elementTops)].sort((a,b) => a-b);
+
+    const currentRowNumber = uniqueRowTops.indexOf(currentRowTop);
+
+    switch(key) {
+      case 'ArrowRight':
+        if (index < children.length -1) newIndex = index +1;
+        break;
+      case 'ArrowLeft':
+        if (index > 0) newIndex = index -1;
+        break;
+      case 'ArrowDown': {
+        const nextRowNumber = currentRowNumber + 1;
+        if (nextRowNumber < uniqueRowTops.length) {
+          const nextRowTop = uniqueRowTops[nextRowNumber];
+          const nextRowIndexes = children
+            .map((c, i) => (elementTops[i] === nextRowTop ? i : -1))
+            .filter(i => i !== -1);
+          if (colIndex < nextRowIndexes.length) {
+            newIndex = nextRowIndexes[colIndex];
+          } else {
+            newIndex = nextRowIndexes[nextRowIndexes.length -1];
+          }
+        }
+        break;
+      }
+      case 'ArrowUp': {
+        const prevRowNumber = currentRowNumber - 1;
+        if (prevRowNumber >= 0) {
+          const prevRowTop = uniqueRowTops[prevRowNumber];
+          const prevRowIndexes = children
+            .map((c, i) => (elementTops[i] === prevRowTop ? i : -1))
+            .filter(i => i !== -1);
+          if (colIndex < prevRowIndexes.length) {
+            newIndex = prevRowIndexes[colIndex];
+          } else {
+            newIndex = prevRowIndexes[prevRowIndexes.length -1];
+          }
+        }
+        break;
+      }
+    }
+
+    if(newIndex !== index) {
+      setSelectedNum(children[newIndex]);
+      children[newIndex].focus();
+    }
+  }
+
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
       clearInterval(timerInterval);
       timerInterval = null;
-      // On tab exit, stop timer
       if(startTime && !endTime)
         stopTimer(true);
     } else {
       pageVisible = true;
-      // On return, resume timer only if quiz not complete and has started before
       if (startTime && !endTime && traitedMap.size < ayahs.length) {
         lastUpdateTime = Date.now();
         timerInterval = setInterval(() => updateElapsedTime(), 500);
@@ -1227,7 +1325,7 @@ h1 {
     shuffleAyahs();
     resetTimer(true);
     clearVerseDetails();
-    clearSelectedNum();
+    clearSelectedNum(false);
     saveState();
   });
 
@@ -1246,38 +1344,48 @@ h1 {
   btnIncorrect.addEventListener('click', () => registerAnswer(false));
 
   window.addEventListener('beforeunload', () => {
-    // Stop timer when leaving page (close, reload)
     if (startTime && !endTime) {
       stopTimer(true);
     }
     saveState();
   });
 
-  // Prevent device from sleeping: Use Wake Lock API if supported
+  // Improved wake lock handling for better screen awake prevention
   let wakeLock = null;
   async function requestWakeLock() {
     if ('wakeLock' in navigator) {
       try {
         wakeLock = await navigator.wakeLock.request('screen');
         wakeLock.addEventListener('release', () => {
-          // Try to acquire again after release
           requestWakeLock();
         });
       } catch (err) {
-        // Fail silently, no wake lock
+        // Fallback retry in 15s if fails
+        setTimeout(requestWakeLock, 15000);
       }
     }
   }
+  // Request wake lock asap
   requestWakeLock();
 
-  // Fallback: keep focus on body to reduce sleep on iOS Safari
-  document.body.addEventListener('touchstart', () => {
-    if (!wakeLock) {
-      requestWakeLock();
+  // Retry wake lock on any user interaction as fallback
+  ['visibilitychange', 'click', 'touchstart', 'keydown'].forEach(evt => {
+    document.addEventListener(evt, () => {
+      if (!wakeLock) {
+        requestWakeLock();
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if(['ArrowRight','ArrowLeft','ArrowDown','ArrowUp'].includes(e.key)) {
+      const focused = document.activeElement;
+      if (ayahsContainer.contains(focused) || focused.classList.contains('num') || selectedNumDiv) {
+        handleKeyNavigation(e);
+      }
     }
   });
 
-  // Initialize app state on DOM load, try to load saved state first
   document.addEventListener('DOMContentLoaded', () => {
     if(!loadState()) {
       languageEl.value = 'ar'; // Default Arabic
