@@ -6,29 +6,39 @@
 <title>Quiz Versets Coran Avancé</title>
 <style>
 * { box-sizing: border-box; }
-body {
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   font-family: Arial, sans-serif;
-  margin: 14px auto 8px;
-  padding: 0 4vw 20px;
-  font-size: 16px;
   background: #f9fafb;
   color: #333;
-  max-width: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  max-width: 100vw;
   min-width: 280px;
+  padding: 1em 4vw 1.5em;
+  font-size: 16px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 h1 {
   font-weight: 700;
   font-size: 1.4em;
   text-align: center;
-  margin: 8px 0 14px 0;
+  margin: 0.5em 0 1em;
   color: #222;
+  flex-shrink: 0;
 }
 .filters-container {
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 12px;
+  margin-bottom: 1em;
   width: 95%;
   max-width: 650px;
   margin-left: auto;
@@ -71,15 +81,26 @@ h1 {
   text-transform: uppercase;
 }
 .language-select select, .sourah-select select, .range-wrap input[type='number'] {
-  background-color: #f5f0dc; color: #5a552a; border: 2px solid #a89e6e; font-size: 0.95em;
-  padding: 6px 10px; border-radius: 10px; min-width: 76px; max-width: 100%; cursor: pointer;
+  background-color: #f5f0dc;
+  color: #5a552a;
+  border: 2px solid #a89e6e;
+  font-size: 0.95em;
+  padding: 6px 10px;
+  border-radius: 10px;
+  min-width: 76px;
+  max-width: 100%;
+  cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
   flex-shrink: 1;
   transition: border-color 0.3s ease;
   font-weight: 600;
 }
-.language-select select:hover, .sourah-select select:hover, .range-wrap input[type='number']:hover,
-.language-select select:focus, .sourah-select select:focus, .range-wrap input[type='number']:focus {
+.language-select select:hover,
+.sourah-select select:hover,
+.range-wrap input[type='number']:hover,
+.language-select select:focus,
+.sourah-select select:focus,
+.range-wrap input[type='number']:focus {
   border-color: #7a7039;
   outline: none;
 }
@@ -104,7 +125,8 @@ h1 {
   max-width: 90px;
   gap: 4px;
 }
-#start-label, #end-label {
+#start-label,
+#end-label {
   background-color: #a89e6e;
   padding: 4px 8px;
   border-radius: 10px;
@@ -132,6 +154,7 @@ h1 {
   max-width: 510px;
   margin-left: auto;
   margin-right: auto;
+  flex-shrink: 0;
 }
 .controls button {
   flex: 1 1 30%;
@@ -150,24 +173,31 @@ h1 {
 .controls button:hover {
   filter: brightness(110%);
 }
-#btnRedistribuer { background-color: #4caf50; }
-#btnTrier { background-color: #2196f3; }
-#btnToggle { background-color: #ff9800; }
+#btnRedistribuer {
+  background-color: #4caf50;
+}
+#btnTrier {
+  background-color: #2196f3;
+}
+#btnToggle {
+  background-color: #ff9800;
+}
 .table-wrap {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   max-height: 150px;
-  max-width: 100%;
+  max-width: 95vw;
   overflow-y: auto;
   border-radius: 14px;
   border: 1.5px solid #ccc;
   padding: 10px 10px;
   background: #fff;
   user-select: none;
-  margin-bottom: 10px;
+  margin: 0 auto 10px;
   box-shadow: 0 4px 18px rgb(0 0 0 / 0.07);
   justify-content: center;
+  flex-shrink: 1;
 }
 .num {
   border-radius: 14px;
@@ -186,7 +216,10 @@ h1 {
   align-items: center;
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
-.num:hover { background-color: #b6deb7; transform: scale(1.07); }
+.num:hover {
+  background-color: #b6deb7;
+  transform: scale(1.07);
+}
 .num.selected {
   background-color: #8bc34a;
   color: #fff;
@@ -209,7 +242,7 @@ h1 {
   text-decoration: line-through;
 }
 #ayat-box {
-  max-width: 100%;
+  max-width: 95vw;
   margin: 0 auto;
   background: #f5f5f5;
   border-radius: 16px;
@@ -219,13 +252,15 @@ h1 {
   line-height: 1.55em;
   direction: rtl;
   text-align: right;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
   position: static;
   z-index: 9999;
   max-height: 28em;
   user-select: text;
   display: none;
+  flex-shrink: 1;
 }
 #verse-header {
   font-weight: 700;
@@ -243,10 +278,22 @@ h1 {
   overflow-y: auto;
   word-break: break-word;
 }
-.special-red { color: red !important; font-weight: 700; }
-.special-green { color: green !important; font-weight: 700; }
-.special-yellow { color: orange !important; font-weight: 700; }
-.special-blue { color: blue !important; font-weight: 700; }
+.special-red {
+  color: red !important;
+  font-weight: 700;
+}
+.special-green {
+  color: green !important;
+  font-weight: 700;
+}
+.special-yellow {
+  color: orange !important;
+  font-weight: 700;
+}
+.special-blue {
+  color: blue !important;
+  font-weight: 700;
+}
 #response-buttons {
   display: flex;
   justify-content: center;
@@ -277,9 +324,19 @@ h1 {
 #response-buttons button:hover {
   filter: brightness(110%);
 }
-#btnIncorrect { background-color: #d32f2f !important; }
-#btnCorrect::before { content: "✔"; color: #a5e6a5; font-weight: 700; }
-#btnIncorrect::before { content: "✖"; color: #f5a8a8; font-weight: 700; }
+#btnIncorrect {
+  background-color: #d32f2f !important;
+}
+#btnCorrect::before {
+  content: "✔";
+  color: #a5e6a5;
+  font-weight: 700;
+}
+#btnIncorrect::before {
+  content: "✖";
+  color: #f5a8a8;
+  font-weight: 700;
+}
 .counter-box {
   padding: 14px 26px;
   border-radius: 16px;
@@ -290,10 +347,17 @@ h1 {
   user-select: none;
   font-size: 1.06em;
   min-width: 92px;
+  flex-shrink: 0;
 }
-.counter-correct { background-color: #0b3d0b; }
-.counter-incorrect { background-color: #8b1c1c; }
-.counter-remaining { background-color: #505050; }
+.counter-correct {
+  background-color: #0b3d0b;
+}
+.counter-incorrect {
+  background-color: #8b1c1c;
+}
+.counter-remaining {
+  background-color: #505050;
+}
 #timer-container {
   margin-top: 28px;
   text-align: center;
@@ -302,8 +366,11 @@ h1 {
   color: #606060;
   user-select: none;
   letter-spacing: 0.035em;
+  flex-shrink: 0;
 }
-#timer-container div { margin: 8px 0; }
+#timer-container div {
+  margin: 8px 0;
+}
 #timer-end {
   margin-top: 16px;
   background: #222;
@@ -315,6 +382,88 @@ h1 {
   font-size: 1.16em;
   box-shadow: 0 5px 20px #000000dc;
   user-select: none;
+  min-width: 280px;
+  margin: 0 auto 0 auto;
+  flex-shrink: 0;
+}
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  body {
+    font-size: 14px;
+    padding: 1em 3vw 1.2em;
+  }
+  .filters-container {
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    padding: 10px 2vw;
+  }
+  .selector-wrapper {
+    min-width: 45%;
+    max-width: 100%;
+    padding: 0 2px;
+  }
+  .range-wrap {
+    max-width: 100%;
+    gap: 6px;
+    padding: 6px 10px;
+  }
+  .controls {
+    max-width: 100%;
+    justify-content: space-around;
+  }
+  .controls button {
+    min-width: 90px;
+    flex: 1 1 45%;
+    margin-bottom: 6px;
+  }
+  .table-wrap {
+    max-height: 120px;
+    max-width: 100vw;
+    padding: 8px 8px;
+    overflow-x: auto;
+  }
+  #ayat-box {
+    max-height: 22em;
+    padding: 14px 16px;
+    font-size: 1.1em;
+  }
+  #response-buttons {
+    max-width: 100%;
+  }
+  .counter-box {
+    min-width: 80px;
+    padding: 10px 16px;
+    font-size: 1em;
+  }
+  #timer-container {
+    font-size: 1em;
+    margin-top: 16px;
+  }
+}
+@media (min-width: 1024px) {
+  body {
+    font-size: 17px;
+    padding: 1.5em 6vw 1.5em;
+  }
+  .filters-container {
+    max-width: 720px;
+  }
+  .table-wrap {
+    max-height: 180px;
+    max-width: 720px;
+  }
+  #ayat-box {
+    max-height: 30em;
+    font-size: 1.25em;
+  }
+  .counter-box {
+    font-size: 1.1em;
+    min-width: 110px;
+  }
+  #timer-container {
+    font-size: 1.2em;
+    margin-top: 30px;
+  }
 }
 </style>
 </head>
@@ -466,16 +615,11 @@ h1 {
       timerEnd: "Fin:"
     }
   };
-
   const SURAHS = [
     { number:1,names:{ar:"الفاتحة",fr:"Al-Fatiha",en:"Al-Fatiha",es:"Al-Fatiha"},count:7 },
-    { number:2,names:{ar:"البقرة",fr:"Al-Baqara",en:"Al-Baqara",es:"Al-Baqara"},count:286 },
-    { number:7,names:{ar:"الأعراف",fr:"Al-A’raf",en:"Al-A’raf",es:"Al-A’raf"},count:206 },
-    { number:95,names:{ar:"التين",fr:"At-Tin",en:"At-Tin",es:"At-Tin"},count:8 }
+    { number:2,names:{ar:"البقرة",fr:"Al-Baqara",en:"Al-Baqara",es:"Al-Baqara"},count:286 }
   ];
-
   const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
-
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
@@ -505,7 +649,6 @@ h1 {
   const timerEndDisplay = document.getElementById("timer-end-time");
   const timerEndBox = document.getElementById("timer-end");
   const endTimeDisplay = document.getElementById("end-time-display");
-
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -521,8 +664,6 @@ h1 {
   let verseCache = new Map();
   let selectedNumDiv = null;
   let pageVisible = true;
-
-
   function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
@@ -540,7 +681,6 @@ h1 {
     labelIncorrect.textContent = t.labelIncorrect;
     labelRemaining.textContent = t.labelRemaining;
     updateDirection(lang);
-
     // Update the timer labels
     const timerContainer = document.getElementById('timer-container');
     if (timerContainer) {
@@ -556,7 +696,6 @@ h1 {
       timerEndLabel.textContent = t.timerEnd + ' ';
     }
   }
-
   function updateDirection(lang) {
     const rtl = lang === "ar";
     document.documentElement.dir = rtl ? "rtl" : "ltr";
@@ -582,7 +721,6 @@ h1 {
       document.getElementById('controls').classList.remove('rtl-flip');
     }
   }
-
   function updateLanguageFilterLabels(lang) {
     if(lang === 'ar') {
       const options = languageEl.querySelectorAll('option');
@@ -599,7 +737,6 @@ h1 {
       languageEl.options[3].textContent = 'Español';
     }
   }
-
   function populateSourahOptions() {
     sourahEl.innerHTML = '';
     const lang = languageEl.value;
@@ -615,7 +752,6 @@ h1 {
       sourahEl.appendChild(opt);
     }
   }
-
   function updateLimits(reinit = true) {
     const s = SURAHS.find(x => x.number == sourahEl.value);
     if (!s) return;
@@ -631,7 +767,6 @@ h1 {
       if (endEl.value > s.count) endEl.value = s.count;
     }
   }
-
   function validateRange() {
     let s = SURAHS.find(x => x.number == sourahEl.value);
     if (!s) return false;
@@ -646,7 +781,6 @@ h1 {
     endEl.value = end;
     return true;
   }
-
   function shuffleAyahs() {
     if (!validateRange()) return;
     ayahs = [];
@@ -671,7 +805,6 @@ h1 {
     clearVerseDetails();
     clearSelectedNum();
   }
-
   function renderAyahs() {
     ayahsContainer.innerHTML = '';
     for (const num of ayahs) {
@@ -696,20 +829,17 @@ h1 {
     updateCounts();
     checkIfCompleteStopTimer();
   }
-
   function setSelectedNum(div) {
     if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
     selectedNumDiv = div;
     if (selectedNumDiv) selectedNumDiv.classList.add('selected');
   }
-
   function clearSelectedNum() {
     if (selectedNumDiv) {
       selectedNumDiv.classList.remove('selected');
       selectedNumDiv = null;
     }
   }
-
   function updateCounts() {
     correctCountValue = [...traitedMap.values()].filter(v => v === true).length;
     incorrectCountValue = [...traitedMap.values()].filter(v => v === false).length;
@@ -718,11 +848,9 @@ h1 {
     countRemaining.textContent = ayahs.length - traitedMap.size;
     countTotal.textContent = ayahs.length;
   }
-
   function checkIfCompleteStopTimer() {
     if (traitedMap.size === ayahs.length && ayahs.length > 0) stopTimer();
   }
-
   async function fetchVerseWithFallback(surah, ayah, lang) {
     const key = `${surah}:${ayah}:${lang}`;
     if (verseCache.has(key)) return verseCache.get(key);
@@ -732,7 +860,6 @@ h1 {
     try { return await fetchPrimary(); }
     catch (e) { throw new Error('Verse fetch failed'); }
   }
-
   async function showAyah(num) {
     if (!num) return;
     currentAyah = num;
@@ -753,10 +880,6 @@ h1 {
         const bismillahRegex = /^بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ\s*/u;
         if (bismillahRegex.test(txt)) txt = txt.replace(bismillahRegex, '').trim();
       }
-      // Special At-Tin override
-      if (surahNo === 95 && num === 1) {
-        txt = "وَٱلتِّينِ وَٱلزَّيْتُونِ";
-      }
       let colored = colorVerseText(txt);
       verseText.innerHTML = `<div>${colored}</div>`;
       verseCache.set(key, verseText.innerHTML);
@@ -766,7 +889,6 @@ h1 {
     }
     if (!startTime) startTimer();
   }
-
   function updateHeader() {
     if (currentSourah && currentAyah) {
       const lang = languageEl.value;
@@ -776,7 +898,6 @@ h1 {
       verseHeader.textContent = '';
     }
   }
-
   function colorVerseText(text) {
     if (!text) return '';
     const specialSigns = ["ۚ", "ۗ", "ۖ", "ۘ", "ۛ"];
@@ -834,7 +955,6 @@ h1 {
       tokens[lastIdx] = `<span class="special-green">${tokens[lastIdx]}</span>`;
     return symbolYellowSpan + tokens.join('') + (endSymbol ? " " + endSymbol : '');
   }
-
   function registerAnswer(correct) {
     if (currentAyah == null) return;
     if (!traitedMap.has(currentAyah)) {
@@ -851,17 +971,14 @@ h1 {
       clearSelectedNum();
     }
   }
-
   function toggleTreated() {
     showTreated = !showTreated;
     renderAyahs();
   }
-
   function sortAyahs() {
     ayahs.sort((a, b) => a - b);
     renderAyahs();
   }
-
   function resetTimer(resetElapsed) {
     clearInterval(timerInterval);
     timerInterval = null;
@@ -875,7 +992,6 @@ h1 {
     endTimeDisplay.textContent = '--:--:--';
     timerEndBox.style.display = 'none';
   }
-
   function startTimer() {
     if (startTime) return;
     startTime = Date.now();
@@ -887,7 +1003,6 @@ h1 {
     timerEndBox.style.display = 'none';
     timerEndDisplay.textContent = '--:--:--';
   }
-
   function stopTimer() {
     if (!startTime || endTime) return;
     clearInterval(timerInterval);
@@ -897,7 +1012,6 @@ h1 {
     endTimeDisplay.textContent = new Date(endTime).toLocaleString();
     timerEndDisplay.textContent = new Date(endTime).toLocaleString();
   }
-
   function resumeTimer() {
     if (traitedMap.size === ayahs.length) return;
     if (!pageVisible) return;
@@ -911,7 +1025,6 @@ h1 {
       timerInterval = setInterval(() => updateElapsedTime(), 500);
     }
   }
-
   function updateElapsedTime() {
     if (!startTime || !pageVisible) return;
     const now = Date.now();
@@ -919,7 +1032,6 @@ h1 {
     lastUpdateTime = now;
     timerElapsedDisplay.textContent = formatTime(elapsedTime);
   }
-
   function formatTime(ms) {
     ms = Math.max(0, ms);
     const sec = Math.floor(ms / 1000);
@@ -928,7 +1040,6 @@ h1 {
     const s = sec % 60;
     return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   }
-
   function clearVerseDetails() {
     currentAyah = null;
     currentSourah = null;
@@ -937,7 +1048,6 @@ h1 {
     verseText.textContent = '';
     clearSelectedNum();
   }
-
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
@@ -951,7 +1061,6 @@ h1 {
       }
     }
   });
-
   languageEl.addEventListener('change', () => {
     const lang = languageEl.value;
     setTexts(lang);
@@ -962,7 +1071,6 @@ h1 {
     resetTimer(true);
     clearVerseDetails();
   });
-
   sourahEl.addEventListener('change', () => {
     updateLimits(true);
     shuffleAyahs();
@@ -970,7 +1078,6 @@ h1 {
     clearVerseDetails();
     clearSelectedNum();
   });
-
   startEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
   endEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
   btnRedistribuer.addEventListener('click', () => { shuffleAyahs(); resetTimer(true); });
@@ -978,7 +1085,6 @@ h1 {
   btnToggle.addEventListener('click', toggleTreated);
   btnCorrect.addEventListener('click', () => registerAnswer(true));
   btnIncorrect.addEventListener('click', () => registerAnswer(false));
-
   document.addEventListener('DOMContentLoaded', () => {
     languageEl.value = 'ar'; // Default Arabic
     setTexts('ar');
