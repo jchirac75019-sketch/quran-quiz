@@ -24,195 +24,395 @@ h1 {
   color: #222;
 }
 .filters-container {
-  display: flex; flex-wrap: nowrap; /* Force single line */
+  display: flex;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 1.2rem; margin-bottom: 10px; width: 95%; max-width: 650px;
-  margin-left: auto; margin-right: auto; align-items: center;
-  background: #fff; padding: 12px 2vw; border-radius: 12px;
-  box-shadow: 0 3px 15px rgb(0 0 0 / 0.08); user-select: none;
-  /* Prevent wrapping and force child shrinking if needed */
+  gap: 1rem;
+  margin-bottom: 12px;
+  width: 95%;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: flex-start;
+  background: #fff;
+  padding: 12px 1.5vw;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgb(0 0 0 / 0.08);
+  user-select: none;
   overflow-x: auto;
 }
-.selector-group {
-  display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 48vw; justify-content: center;
-  background: #fefde9; border: 2px solid #a89e6e; border-radius: 10px;
-  padding: 6px 12px; font-weight: 600; color: #5a552a; font-size: 1em;
-  cursor: default; box-sizing: border-box;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  flex-shrink: 1; /* Let items shrink to keep single line */
+.selector-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+  max-width: 48vw;
+  flex-shrink: 1;
+  padding: 0 4px;
 }
-.language-label, .sourah-label {
-  background-color: #a89e6e; padding: 8px 10px; border-radius: 10px;
-  color: #f5f0dc; font-weight: 700; cursor: default; display: flex; align-items: center;
-  justify-content: center; margin: 0; box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
-  font-size: 1em; letter-spacing: 0.03em; max-width: 30vw;
-  overflow: hidden; text-overflow: ellipsis;
-  flex-shrink: 1; /* Allow shrinking */
+.selector-label {
+  font-weight: 700;
+  font-size: 0.7em;
+  color: #5a552a;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+  background-color: #a89e6e;
+  padding: 3px 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
+  line-height: 1.1em;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 .language-select select, .sourah-select select, .range-wrap input[type='number'] {
-  background-color: #f5f0dc; color: #5a552a; border: 2px solid #a89e6e; font-size: 1em;
-  padding: 7px 12px; border-radius: 10px; min-width: 90px; max-width: 75vw; cursor: pointer;
+  background-color: #f5f0dc; color: #5a552a; border: 2px solid #a89e6e; font-size: 0.95em;
+  padding: 6px 10px; border-radius: 10px; min-width: 80px; max-width: 100%; cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
   flex-shrink: 1;
+  transition: border-color 0.3s ease;
+  font-weight: 600;
+}
+.language-select select:hover, .sourah-select select:hover, .range-wrap input[type='number']:hover,
+.language-select select:focus, .sourah-select select:focus, .range-wrap input[type='number']:focus {
+  border-color: #7a7039;
+  outline: none;
 }
 .range-wrap {
-  display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: nowrap;
-  margin-bottom: 14px; width: 95%; max-width: 210px; margin-left: auto; margin-right: auto;
-  background: #fff; border-radius: 14px; padding: 8px 2vw; box-shadow: 0 4px 18px rgb(0 0 0 / 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 180px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 6px 16px;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 0.12);
+  flex-shrink: 1;
+  flex-direction: row;
+}
+.range-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 70px;
+  max-width: 90px;
+  gap: 4px;
 }
 #start-label, #end-label {
-  background-color: #a89e6e; padding: 8px 10px; border-radius: 10px;
-  color: #f5f0dc; font-weight: 700; cursor: default; font-size: 1em;
+  background-color: #a89e6e;
+  padding: 4px 8px;
+  border-radius: 10px;
+  color: #f5f0dc;
+  font-weight: 700;
+  cursor: default;
+  font-size: 0.7em;
   box-shadow: 0 2px 12px rgb(0 0 0 / 0.18);
+  user-select: none;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 100%;
+  text-align: center;
+  line-height: 1.2em;
 }
-label.ltr::after { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
-label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
 .controls {
-  display: flex; gap: 12px; justify-content: center; margin-top: 20px; margin-bottom: 12px;
-  flex-wrap: wrap; width: 95%; max-width: 510px; margin-left: auto; margin-right: auto;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  width: 95%;
+  max-width: 510px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .controls button {
-  flex: 0 0 auto; min-width: 136px; padding: 10px 16px; font-size: 1.07em;
-  border-radius: 14px; color: white; font-weight: 700; cursor: pointer; border: none;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.28); letter-spacing: 0.03em;
+  flex: 1 1 30%;
+  min-width: 110px;
+  padding: 9px 12px;
+  font-size: 1em;
+  border-radius: 14px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.28);
+  letter-spacing: 0.03em;
+  transition: background-color 0.3s ease;
+}
+.controls button:hover {
+  filter: brightness(110%);
 }
 #btnRedistribuer { background-color: #4caf50; }
 #btnTrier { background-color: #2196f3; }
 #btnToggle { background-color: #ff9800; }
 .table-wrap {
-  display: flex; flex-wrap: wrap; gap: 8px; max-height: 150px; max-width: 100%; overflow-y: auto;
-  border-radius: 14px; border: 1.5px solid #ccc; padding: 10px 10px; background: #fff; user-select: none; margin-bottom: 10px;
-  box-shadow: 0 4px 18px rgb(0 0 0 / 0.07); justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 150px;
+  max-width: 100%;
+  overflow-y: auto;
+  border-radius: 14px;
+  border: 1.5px solid #ccc;
+  padding: 10px 10px;
+  background: #fff;
+  user-select: none;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 18px rgb(0 0 0 / 0.07);
+  justify-content: center;
 }
 .num {
-  border-radius: 14px; background: #d2f0d2; border: 1.8px solid #84b784; cursor: pointer; width: 42px; height: 42px;
-  text-align: center; font-size: 1.1em; user-select: none; box-shadow: 0 2px 6px rgb(0 0 0 / 0.13); font-weight: 700;
-  display: flex; justify-content: center; align-items: center;
+  border-radius: 14px;
+  background: #d2f0d2;
+  border: 1.8px solid #84b784;
+  cursor: pointer;
+  width: 42px;
+  height: 42px;
+  text-align: center;
+  font-size: 1.1em;
+  user-select: none;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.13);
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease, transform 0.15s ease;
 }
 .num:hover { background-color: #b6deb7; transform: scale(1.07); }
 .num.traited.correct {
-  background-color: #0b3d0b; color: #d8f5d8; cursor: default; border-color: #064206; text-decoration: line-through;
+  background-color: #0b3d0b;
+  color: #d8f5d8;
+  cursor: default;
+  border-color: #064206;
+  text-decoration: line-through;
 }
 .num.traited.incorrect {
-  background-color: #8b1c1c; color: #f5d8d8; cursor: default; border-color: #5e1212; text-decoration: line-through;
+  background-color: #8b1c1c;
+  color: #f5d8d8;
+  cursor: default;
+  border-color: #5e1212;
+  text-decoration: line-through;
 }
 #ayat-box {
-  max-width: 100%; margin: 0 auto; background: #f5f5f5;
-  border-radius: 16px; padding: 18px 22px; box-shadow: 0 10px 30px rgb(0 0 0 / 0.14);
-  font-size: 1.18em; line-height: 1.55em; direction: rtl; text-align: right; overflow: auto;
-  box-sizing: border-box; position: static; z-index: 9999; max-height: 28em; user-select: text;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #f5f5f5;
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.14);
+  font-size: 1.18em;
+  line-height: 1.55em;
+  direction: rtl;
+  text-align: right;
+  overflow: auto;
+  box-sizing: border-box;
+  position: static;
+  z-index: 9999;
+  max-height: 28em;
+  user-select: text;
   display: none;
 }
 #verse-header {
-  font-weight: 700; font-size: 1.07em; background: #fff9c4;
-  padding: 10px 16px; border-radius: 12px; margin-bottom: 16px;
+  font-weight: 700;
+  font-size: 1.07em;
+  background: #fff9c4;
+  padding: 10px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
   box-shadow: inset 0 1px 4px #d2ca5fbb;
 }
 #verse-text {
-  font-size: 1.24em; line-height: 1.5em; margin-bottom: 18px;
-  overflow-y: auto; word-break: break-word;
+  font-size: 1.24em;
+  line-height: 1.5em;
+  margin-bottom: 18px;
+  overflow-y: auto;
+  word-break: break-word;
 }
 .special-red { color: red !important; font-weight: 700; }
 .special-green { color: green !important; font-weight: 700; }
 .special-yellow { color: orange !important; font-weight: 700; }
 .special-blue { color: blue !important; font-weight: 700; }
 #response-buttons {
-  display: flex; justify-content: center; gap: 24px; margin-top: 18px; user-select: none;
-  flex-wrap: nowrap; max-width: 480px; margin-left: auto; margin-right: auto;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 18px;
+  user-select: none;
+  flex-wrap: nowrap;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
 }
 #response-buttons button {
-  cursor: pointer; flex: 1 1 48%; font-weight: 700; font-size: 1.09em; padding: 11px 18px; border: none;
-  border-radius: 16px; color: white; background-color: #4caf50;
-  display: flex; justify-content: center; align-items: center; gap: 10px;
+  cursor: pointer;
+  flex: 1 1 48%;
+  font-weight: 700;
+  font-size: 1.09em;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 16px;
+  color: white;
+  background-color: #4caf50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.2s ease;
+}
+#response-buttons button:hover {
+  filter: brightness(110%);
 }
 #btnIncorrect { background-color: #d32f2f !important; }
 #btnCorrect::before { content: "✔"; color: #a5e6a5; font-weight: 700; }
 #btnIncorrect::before { content: "✖"; color: #f5a8a8; font-weight: 700; }
 .counter-box {
-  padding: 14px 26px; border-radius: 16px; font-weight: 700;
-  text-align: center; color: white; margin: 4px; user-select: none;
-  font-size: 1.06em; min-width: 92px;
+  padding: 14px 26px;
+  border-radius: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: white;
+  margin: 4px;
+  user-select: none;
+  font-size: 1.06em;
+  min-width: 92px;
 }
 .counter-correct { background-color: #0b3d0b; }
 .counter-incorrect { background-color: #8b1c1c; }
 .counter-remaining { background-color: #505050; }
 #timer-container {
-  margin-top: 28px; text-align: center;
-  font-weight: 700; font-size: 1.16em; color: #606060; user-select: none;
+  margin-top: 28px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.16em;
+  color: #606060;
+  user-select: none;
   letter-spacing: 0.035em;
 }
 #timer-container div { margin: 8px 0; }
 #timer-end {
-  margin-top: 16px; background: #222; color: white;
-  padding: 14px 20px; border-radius: 14px; display: none;
-  text-align: center; font-size: 1.16em;
-  box-shadow: 0 5px 20px #000000dc; user-select: none;
+  margin-top: 16px;
+  background: #222;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 14px;
+  display: none;
+  text-align: center;
+  font-size: 1.16em;
+  box-shadow: 0 5px 20px #000000dc;
+  user-select: none;
 }
 @media (max-width: 480px) {
   body { padding: 0 4vw 18px; font-size: 15px; }
-  .filters-container { gap: 0.7rem; padding: 6px 3vw; }
-  /* Allow wrap on small screens */
   .filters-container {
-    flex-wrap: wrap !important;
+    gap: 0.6rem;
+    padding: 6px 3vw;
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
-  .selector-group { max-width: 45%; font-size: 0.9em; padding: 5px 8px; white-space: normal; }
-  .language-label, .sourah-label { max-width: 40%; font-size: 0.9em; padding: 6px 8px; white-space: normal; }
-  #start-label, #end-label { min-width: 60px; max-width: 33vw; font-size: 0.9em; padding: 6px 10px; }
-  .language-select select, .sourah-select select, .range-wrap input[type='number'] { min-width: 80px; max-width: 45vw; font-size: 0.9em; padding: 6px 10px; }
-  .range-wrap { max-width: 180px; padding: 6px 3vw; gap: 8px; margin-bottom: 12px; }
-  .controls { max-width: 100%; gap: 10px; }
-  .controls button { min-width: 96px; padding: 7px 10px; font-size: 1em; }
+  .selector-wrapper {
+    min-width: 70px;
+    max-width: 22vw;
+    padding: 0 2px;
+  }
+  .selector-label {
+    font-size: 0.65em;
+    padding: 3px 6px;
+    letter-spacing: 0.02em;
+  }
+  .language-select select, .sourah-select select, .range-wrap input[type='number'] {
+    min-width: 60px;
+    max-width: 100%;
+    font-size: 0.85em;
+    padding: 5px 8px;
+  }
+  .range-wrap {
+    max-width: 130px;
+    padding: 5px 12px;
+    gap: 6px;
+  }
+  .range-input-group {
+    min-width: 55px;
+    max-width: 65px;
+    gap: 3px;
+  }
+  #start-label, #end-label {
+    font-size: 0.65em;
+    padding: 2px 6px;
+    letter-spacing: 0.02em;
+  }
+  .controls {
+    max-width: 100%;
+    gap: 8px;
+  }
+  .controls button {
+    flex: 1 1 30%;
+    min-width: 90px;
+    padding: 7px 10px;
+    font-size: 0.9em;
+  }
   .table-wrap { max-height: 115px; gap: 6px; padding: 8px 10px; }
-  .num { width: 32px; height: 32px; font-size: 0.98em; }
-  #ayat-box { font-size: 1em; padding: 14px 10px; max-height: 23em; }
-  #verse-header { font-size: 0.93em; padding: 7px 8px; margin-bottom: 11px; }
-  #verse-text { font-size: 1em; margin-bottom: 10px; }
-  #response-buttons { max-width: 100%; gap: 13px; }
-  #response-buttons button { font-size: 0.93em; padding: 7px 10px; }
-  .counter-box { padding: 8px 11px; min-width: 66px; font-size: 1em; }
-  #timer-container { font-size: 0.96em; margin-top: 13px; }
-  #timer-end { font-size: 0.93em; padding: 8px 11px; margin-top: 10px; }
+  .num { width: 30px; height: 30px; font-size: 0.9em; }
+  #ayat-box { font-size: 0.95em; padding: 12px 10px; max-height: 20em; }
+  #verse-header { font-size: 0.9em; padding: 7px 8px; margin-bottom: 10px; }
+  #verse-text { font-size: 0.95em; margin-bottom: 10px; }
+  #response-buttons { max-width: 100%; gap: 12px; }
+  #response-buttons button { font-size: 0.9em; padding: 7px 10px; }
+  .counter-box { padding: 8px 11px; min-width: 56px; font-size: 0.9em; }
+  #timer-container { font-size: 0.90em; margin-top: 12px; }
+  #timer-end { font-size: 0.9em; padding: 8px 11px; margin-top: 8px; }
 }
 </style>
 </head>
 <body>
 <h1 id="app-title"></h1>
-<div class="filters-container" id="selectors">
-  <div class="selector-group rtl-flip language-label" id="language-label"></div>
-  <div class="selector-group rtl-flip language-select">
-    <select id="language" >
-      <option value="ar" selected>العربية</option>
-      <option value="fr">Français</option>
-      <option value="en">English</option>
-      <option value="es">Español</option>
-    </select>
+<div class="filters-container" id="selectors" role="region" aria-label="Filtres du quiz">
+  <div class="selector-wrapper rtl-flip" id="language-wrapper">
+    <div class="selector-label" id="language-label" aria-live="polite" aria-atomic="true"></div>
+    <div class="language-select">
+      <select id="language" aria-labelledby="language-label" name="language">
+        <option value="ar" selected>العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
   </div>
-  <div class="selector-group rtl-flip sourah-label" id="sourah-label"></div>
-  <div class="selector-group rtl-flip sourah-select">
-    <select id="sourah"></select>
+  <div class="selector-wrapper rtl-flip" id="sourah-wrapper">
+    <div class="selector-label" id="sourah-label" aria-live="polite" aria-atomic="true"></div>
+    <div class="sourah-select">
+      <select id="sourah" aria-labelledby="sourah-label" name="sourah"></select>
+    </div>
   </div>
-</div>
-<div id="range-wrap" class="rtl-flip input-group range-wrap">
-  <label id="start-label" for="start"></label>
-  <input type="number" id="start" min="1" />
-  <label id="end-label" for="end"></label>
-  <input type="number" id="end" min="1" />
+  <div class="selector-wrapper rtl-flip range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
+    <div class="range-input-group">
+      <label class="selector-label" id="start-label" for="start" aria-live="polite" aria-atomic="true"></label>
+      <input type="number" id="start" min="1" aria-labelledby="start-label" />
+    </div>
+    <div class="range-input-group">
+      <label class="selector-label" id="end-label" for="end" aria-live="polite" aria-atomic="true"></label>
+      <input type="number" id="end" min="1" aria-labelledby="end-label" />
+    </div>
+  </div>
 </div>
 <div class="controls rtl-flip" id="controls">
-  <button id="btnRedistribuer"></button>
-  <button id="btnTrier"></button>
-  <button id="btnToggle"></button>
+  <button id="btnRedistribuer" type="button"></button>
+  <button id="btnTrier" type="button"></button>
+  <button id="btnToggle" type="button"></button>
 </div>
-<div class="table-wrap" id="ayahs-container"></div>
-<div id="ayat-box" style="display:none;">
+<div class="table-wrap" id="ayahs-container" role="region" aria-label="Liste des versets"></div>
+<div id="ayat-box" style="display:none;" role="region" aria-live="polite" aria-atomic="true">
   <div id="verse-header"></div>
   <div id="verse-text"></div>
-  <div id="response-buttons">
-    <button id="btnCorrect"></button>
-    <button id="btnIncorrect"></button>
+  <div id="response-buttons" role="group" aria-label="Réponses">
+    <button id="btnCorrect" type="button"></button>
+    <button id="btnIncorrect" type="button"></button>
   </div>
 </div>
-<div id="counters" class="rtl-flip" style="display:flex; justify-content:center; gap:12px; margin-bottom:12px;">
+<div id="counters" class="rtl-flip" style="display:flex; justify-content:center; gap:12px; margin-bottom:12px;" aria-live="polite" aria-atomic="true">
   <div class="counter-box counter-correct" style="flex:1; margin:0;">
     <span id="label-correct"></span> <span id="correct-count">0</span>
   </div>
@@ -226,7 +426,7 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
     <span>Fin: </span><span id="end-time-display"></span>
   </div>
 </div>
-<div id="timer-container">
+<div id="timer-container" aria-live="polite" aria-atomic="true">
   <div><strong>Début:</strong> <span id="start-time-display">--:--:--</span></div>
   <div><strong>Temps écoulé:</strong> <span id="elapsed-time-display">00:00:00</span></div>
   <div><strong>Fin:</strong> <span id="timer-end-time">--:--:--</span></div>
@@ -310,7 +510,6 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
     { number: 95, name_ar: "التين", name_fr: "At-Tin", count: 8 }
   ];
   const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
-
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
@@ -340,7 +539,6 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
   const elapsedTimerDisplay = document.getElementById("elapsed-time-display");
   const endTimerDisplay = document.getElementById("timer-end-time");
   const endTimeBox = document.getElementById("timer-end");
-
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -355,7 +553,6 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
   let lastUpdateTime = null;
   let verseCache = new Map();
   let pageVisible = true;
-
   function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
@@ -378,21 +575,6 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
     let baseDir = rtl ? "rtl" : "ltr";
     document.documentElement.dir = baseDir;
     document.getElementById("selectors").style.direction = baseDir;
-    const rangeWrap = document.getElementById("range-wrap");
-    while(rangeWrap.firstChild) rangeWrap.removeChild(rangeWrap.firstChild);
-    if(rtl) {
-      rangeWrap.classList.add("rtl-flip");
-      rangeWrap.appendChild(labelStart);
-      rangeWrap.appendChild(startEl);
-      rangeWrap.appendChild(labelEnd);
-      rangeWrap.appendChild(endEl);
-    } else {
-      rangeWrap.classList.remove("rtl-flip");
-      rangeWrap.appendChild(labelStart);
-      rangeWrap.appendChild(startEl);
-      rangeWrap.appendChild(labelEnd);
-      rangeWrap.appendChild(endEl);
-    }
   }
   function populateSourahOptions() {
     sourahEl.innerHTML = "";
@@ -699,7 +881,7 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
     timerInterval=null;
     currentAyah=null;
     currentSourah=null;
-    ayatBox.style.display="none";
+    ayatBox.style.display = "none";
     updateCounts();
     renderAyahs();
     updateHeader();
@@ -797,7 +979,7 @@ label.rtl::before { content: " :"; font-weight: 700; letter-spacing: 0.05em; }
   endEl.addEventListener("input", ()=>{ if(validateRange()) shuffleAyahs(); });
   btnRedistribuer.addEventListener("click", ()=>{ shuffleAyahs(); resetTimer(true); });
   btnTrier.addEventListener("click", sortAyahs);
-  btnToggle.addEventListener("click", ()=>{ showTreated = !showTreated; renderAyahs(); });
+  btnToggle.addEventListener("click", toggleTreated);
   btnCorrect.addEventListener("click", ()=> registerAnswer(true));
   btnIncorrect.addEventListener("click", ()=> registerAnswer(false));
   document.addEventListener("DOMContentLoaded", ()=>{
