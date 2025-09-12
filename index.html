@@ -503,11 +503,12 @@ h1 {
       ayahPrefix: "Verso"
     }
   };
+  // Limited sourah list for testing with multilingual names keyed by lang
   const SURAHS = [
-    { number: 1, name_ar: "الفاتحة", name_fr: "Al-Fatiha", count: 7 },
-    { number: 2, name_ar: "البقرة", name_fr: "Al-Baqara", count: 286 },
-    { number: 7, name_ar: "الأعراف", name_fr: "Al-A’raf", count: 206 },
-    { number: 95, name_ar: "التين", name_fr: "At-Tin", count: 8 }
+    { number: 1, names: {ar: "الفاتحة", fr: "Al-Fatiha", en: "Al-Fatiha", es: "Al-Fatiha"}, count: 7 },
+    { number: 2, names: {ar: "البقرة", fr: "Al-Baqara", en: "Al-Baqara", es: "Al-Baqara"}, count: 286 },
+    { number: 7, names: {ar: "الأعراف", fr: "Al-A’raf", en: "Al-A’raf", es: "Al-A’raf"}, count: 206 },
+    { number: 95, names: {ar: "التين", fr: "At-Tin", en: "At-Tin", es: "At-Tin"}, count: 8 }
   ];
   const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
   const languageEl = document.getElementById("language");
@@ -553,6 +554,7 @@ h1 {
   let lastUpdateTime = null;
   let verseCache = new Map();
   let pageVisible = true;
+  
   function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
@@ -578,10 +580,18 @@ h1 {
   }
   function populateSourahOptions() {
     sourahEl.innerHTML = "";
+    const lang = languageEl.value;
     for(const s of SURAHS){
       let opt = document.createElement("option");
       opt.value = s.number;
-      opt.textContent = `${s.number} - ${s.name_ar} (${s.name_fr})`;
+      if(lang === "ar"){
+        // Only Arabic names with number
+        opt.textContent = `${s.number} - ${s.names.ar}`;
+      } else {
+        // Use name corresponding to the selected language if exists, else fallback to French
+        const name = s.names[lang] || s.names.fr || s.names.ar;
+        opt.textContent = `${s.number} - ${name}`;
+      }
       sourahEl.appendChild(opt);
     }
   }
@@ -967,6 +977,11 @@ h1 {
   });
   languageEl.addEventListener("change",()=>{
     setTexts(languageEl.value);
+    populateSourahOptions(); // Refresh options on language change with correct naming logic
+    updateLimits(true);
+    shuffleAyahs();
+    resetTimer(true);
+    clearVerseDetails();
     saveProgress();
   });
   sourahEl.addEventListener("change",()=>{
