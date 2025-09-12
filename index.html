@@ -63,8 +63,8 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 85px;
-  max-width: 20vw;
+  min-width: 75px;
+  max-width: 18vw;
   flex-shrink: 1;
   padding: 0 4px;
   white-space: normal;
@@ -92,7 +92,7 @@ h1 {
   font-size: 0.95em;
   padding: 6px 8px;
   border-radius: 10px;
-  min-width: 65px;
+  min-width: 60px;
   max-width: 100%;
   cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
@@ -156,9 +156,9 @@ h1 {
   justify-content: flex-start;
   margin-top: 0;
   margin-bottom: 1em;
-  width: 95%;
-  max-width: 650px;
-  margin-left: auto;
+  width: auto;
+  max-width: 290px;
+  margin-left: 0.5em;
   margin-right: auto;
   flex-shrink: 0;
   white-space: nowrap;
@@ -197,7 +197,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-height: 190px;
+  max-height: 200px;
   max-width: 95vw;
   overflow-y: auto;
   border-radius: 14px;
@@ -268,7 +268,7 @@ h1 {
   box-sizing: border-box;
   position: static;
   z-index: 9999;
-  max-height: 36em;
+  max-height: 38em;
   user-select: text;
   display: none;
   flex-shrink: 1;
@@ -361,7 +361,7 @@ h1 {
   color: white;
   margin: 2px;
   user-select: none;
-  font-size: 0.95em;
+  font-size: 0.86em;
   min-width: 90px;
   flex-shrink: 0;
 }
@@ -375,8 +375,8 @@ h1 {
   background-color: #505050;
 }
 #timer-container {
-  margin-top: 8px;
-  margin-bottom: 10px;
+  margin-top: 12px;
+  margin-bottom: 12px;
   text-align: center;
   font-weight: 700;
   font-size: 1.05em;
@@ -384,20 +384,9 @@ h1 {
   user-select: none;
   letter-spacing: 0.035em;
   flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: nowrap;
-  white-space: nowrap;
 }
 #timer-container div {
-  margin: 0;
-  padding: 0 8px;
-  border-left: 1.5px solid #bbb;
-  line-height: 1.1em;
-}
-#timer-container div:first-child {
-  border-left: none;
+  margin: 8px 0;
 }
 #timer-end {
   margin-top: 16px;
@@ -424,7 +413,7 @@ h1 {
     max-width: 100% !important;
   }
   .selector-wrapper {
-    max-width: 25vw;
+    max-width: 32vw;
     min-width: 70px;
   }
   .range-wrap {
@@ -432,6 +421,7 @@ h1 {
   }
   .controls {
     max-width: 100% !important;
+    margin-left: 0.25em;
   }
   .controls button {
     min-width: 60px !important;
@@ -460,7 +450,7 @@ h1 {
   .counter-box {
     min-width: 75px;
     padding: 7px 12px;
-    font-size: 0.9em;
+    font-size: 0.8em;
   }
   #timer-container {
     font-size: 0.95em;
@@ -485,11 +475,11 @@ h1 {
     font-size: 1.3em;
   }
   .counter-box {
-    font-size: 1.06em;
+    font-size: 1em;
     min-width: 110px;
   }
   #timer-container {
-    font-size: 1.2em;
+    font-size: 1.1em;
     margin-top: 12px;
     margin-bottom: 12px;
   }
@@ -541,23 +531,21 @@ h1 {
     <button id="btnIncorrect" type="button"></button>
   </div>
 </div>
-<div style="display:flex; justify-content:center; gap:8px; align-items:center; flex-wrap: nowrap; max-width: 95vw; margin: 10px auto 8px;" aria-live="polite" aria-atomic="true" id="counters-timer-container">
-  <div id="counters" style="display:flex; gap:8px; margin:0; flex-shrink: 1;">
-    <div class="counter-box counter-correct" style="min-width: 90px; padding: 8px 16px; margin: 0;">
-      <span id="label-correct"></span> <span id="correct-count">0</span>
-    </div>
-    <div class="counter-box counter-incorrect" style="min-width: 90px; padding: 8px 16px; margin: 0;">
-      <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
-    </div>
-    <div class="counter-box counter-remaining" style="min-width: 120px; padding: 8px 14px; margin: 0; text-align: center;">
-      <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
-    </div>
+<div id="counters" style="display:flex; justify-content:center; gap:12px; margin-bottom:8px;" aria-live="polite" aria-atomic="true">
+  <div class="counter-box counter-correct" style="flex:1; margin:0;">
+    <span id="label-correct"></span> <span id="correct-count">0</span>
   </div>
-  <div id="timer-container" aria-live="polite" aria-atomic="true" style="flex-grow: 0; white-space: nowrap;">
-    <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
-    <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
-    <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
+  <div class="counter-box counter-incorrect" style="flex:1; margin:0;">
+    <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
   </div>
+  <div class="counter-box counter-remaining" style="flex:none; margin:0; min-width:144px; text-align:center;">
+    <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
+  </div>
+</div>
+<div id="timer-container" aria-live="polite" aria-atomic="true" style="max-width: 520px; margin: 0 auto 12px auto;">
+  <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
+  <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
+  <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
 </div>
 <div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0 auto 0 auto;">
   <span></span><span id="end-time-display"></span>
