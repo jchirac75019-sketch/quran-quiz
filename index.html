@@ -41,12 +41,16 @@ h1 {
   user-select: none;
   overflow-x: auto;
 }
+.rtl {
+  direction: rtl !important;
+  text-align: right !important;
+}
 .selector-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 110px;
-  max-width: 48vw;
+  min-width: 100px;
+  max-width: 40vw;
   flex-shrink: 1;
   padding: 0 4px;
 }
@@ -68,7 +72,7 @@ h1 {
 }
 .language-select select, .sourah-select select, .range-wrap input[type='number'] {
   background-color: #f5f0dc; color: #5a552a; border: 2px solid #a89e6e; font-size: 0.95em;
-  padding: 6px 10px; border-radius: 10px; min-width: 80px; max-width: 100%; cursor: pointer;
+  padding: 6px 10px; border-radius: 10px; min-width: 76px; max-width: 100%; cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
   flex-shrink: 1;
   transition: border-color 0.3s ease;
@@ -183,6 +187,13 @@ h1 {
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
 .num:hover { background-color: #b6deb7; transform: scale(1.07); }
+.num.selected {
+  background-color: #8bc34a;
+  color: #fff;
+  border-color: #558b2f;
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+}
 .num.traited.correct {
   background-color: #0b3d0b;
   color: #d8f5d8;
@@ -305,89 +316,29 @@ h1 {
   box-shadow: 0 5px 20px #000000dc;
   user-select: none;
 }
-@media (max-width: 480px) {
-  body { padding: 0 4vw 18px; font-size: 15px; }
-  .filters-container {
-    gap: 0.6rem;
-    padding: 6px 3vw;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-  }
-  .selector-wrapper {
-    min-width: 70px;
-    max-width: 22vw;
-    padding: 0 2px;
-  }
-  .selector-label {
-    font-size: 0.65em;
-    padding: 3px 6px;
-    letter-spacing: 0.02em;
-  }
-  .language-select select, .sourah-select select, .range-wrap input[type='number'] {
-    min-width: 60px;
-    max-width: 100%;
-    font-size: 0.85em;
-    padding: 5px 8px;
-  }
-  .range-wrap {
-    max-width: 130px;
-    padding: 5px 12px;
-    gap: 6px;
-  }
-  .range-input-group {
-    min-width: 55px;
-    max-width: 65px;
-    gap: 3px;
-  }
-  #start-label, #end-label {
-    font-size: 0.65em;
-    padding: 2px 6px;
-    letter-spacing: 0.02em;
-  }
-  .controls {
-    max-width: 100%;
-    gap: 8px;
-  }
-  .controls button {
-    flex: 1 1 30%;
-    min-width: 90px;
-    padding: 7px 10px;
-    font-size: 0.9em;
-  }
-  .table-wrap { max-height: 115px; gap: 6px; padding: 8px 10px; }
-  .num { width: 30px; height: 30px; font-size: 0.9em; }
-  #ayat-box { font-size: 0.95em; padding: 12px 10px; max-height: 20em; }
-  #verse-header { font-size: 0.9em; padding: 7px 8px; margin-bottom: 10px; }
-  #verse-text { font-size: 0.95em; margin-bottom: 10px; }
-  #response-buttons { max-width: 100%; gap: 12px; }
-  #response-buttons button { font-size: 0.9em; padding: 7px 10px; }
-  .counter-box { padding: 8px 11px; min-width: 56px; font-size: 0.9em; }
-  #timer-container { font-size: 0.90em; margin-top: 12px; }
-  #timer-end { font-size: 0.9em; padding: 8px 11px; margin-top: 8px; }
-}
 </style>
 </head>
 <body>
 <h1 id="app-title"></h1>
-<div class="filters-container" id="selectors" role="region" aria-label="Filtres du quiz">
-  <div class="selector-wrapper rtl-flip" id="language-wrapper">
+<div class="filters-container" id="selectors" role="region" aria-label="">
+  <div class="selector-wrapper" id="language-wrapper">
     <div class="selector-label" id="language-label" aria-live="polite" aria-atomic="true"></div>
     <div class="language-select">
       <select id="language" aria-labelledby="language-label" name="language">
-        <option value="ar" selected>العربية</option>
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-        <option value="es">Español</option>
+        <option value="ar" data-ar-label="العربية">العربية</option>
+        <option value="fr" data-ar-label="الفرنسية">Français</option>
+        <option value="en" data-ar-label="الإنجليزية">English</option>
+        <option value="es" data-ar-label="الإسبانية">Español</option>
       </select>
     </div>
   </div>
-  <div class="selector-wrapper rtl-flip" id="sourah-wrapper">
+  <div class="selector-wrapper" id="sourah-wrapper">
     <div class="selector-label" id="sourah-label" aria-live="polite" aria-atomic="true"></div>
     <div class="sourah-select">
       <select id="sourah" aria-labelledby="sourah-label" name="sourah"></select>
     </div>
   </div>
-  <div class="selector-wrapper rtl-flip range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
+  <div class="selector-wrapper range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
     <div class="range-input-group">
       <label class="selector-label" id="start-label" for="start" aria-live="polite" aria-atomic="true"></label>
       <input type="number" id="start" min="1" aria-labelledby="start-label" />
@@ -398,21 +349,21 @@ h1 {
     </div>
   </div>
 </div>
-<div class="controls rtl-flip" id="controls">
+<div class="controls" id="controls">
   <button id="btnRedistribuer" type="button"></button>
   <button id="btnTrier" type="button"></button>
   <button id="btnToggle" type="button"></button>
 </div>
-<div class="table-wrap" id="ayahs-container" role="region" aria-label="Liste des versets"></div>
+<div class="table-wrap" id="ayahs-container" role="region" aria-label=""></div>
 <div id="ayat-box" style="display:none;" role="region" aria-live="polite" aria-atomic="true">
   <div id="verse-header"></div>
   <div id="verse-text"></div>
-  <div id="response-buttons" role="group" aria-label="Réponses">
+  <div id="response-buttons" role="group" aria-label="">
     <button id="btnCorrect" type="button"></button>
     <button id="btnIncorrect" type="button"></button>
   </div>
 </div>
-<div id="counters" class="rtl-flip" style="display:flex; justify-content:center; gap:12px; margin-bottom:12px;" aria-live="polite" aria-atomic="true">
+<div id="counters" style="display:flex; justify-content:center; gap:12px; margin-bottom:12px;" aria-live="polite" aria-atomic="true">
   <div class="counter-box counter-correct" style="flex:1; margin:0;">
     <span id="label-correct"></span> <span id="correct-count">0</span>
   </div>
@@ -423,34 +374,17 @@ h1 {
     <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
   </div>
   <div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0;">
-    <span>Fin: </span><span id="end-time-display"></span>
+    <span></span><span id="end-time-display"></span>
   </div>
 </div>
 <div id="timer-container" aria-live="polite" aria-atomic="true">
-  <div><strong>Début:</strong> <span id="start-time-display">--:--:--</span></div>
-  <div><strong>Temps écoulé:</strong> <span id="elapsed-time-display">00:00:00</span></div>
-  <div><strong>Fin:</strong> <span id="timer-end-time">--:--:--</span></div>
+  <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
+  <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
+  <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
 </div>
 <script>
 (() => {
   const texts = {
-    fr: {
-      title: "Quiz Versets Coran Avancé",
-      languageLabel: "Langue",
-      sourahLabel: "Sourate",
-      startLabel: "Début",
-      endLabel: "Fin",
-      redistribuer: "Redistribuer",
-      trier: "Trier",
-      toggle: "Afficher / Cacher",
-      correct: "Bonne réponse",
-      incorrect: "Mauvaise réponse",
-      labelCorrect: "Réponses",
-      labelIncorrect: "Erreurs",
-      labelRemaining: "Restantes",
-      surahPrefix: "Sourate",
-      ayahPrefix: "Verset"
-    },
     ar: {
       title: "اختبار آيات القرآن المتقدم",
       languageLabel: "اللغة",
@@ -466,7 +400,30 @@ h1 {
       labelIncorrect: "الأخطاء",
       labelRemaining: "المتبقي",
       surahPrefix: "سورة",
-      ayahPrefix: "آية"
+      ayahPrefix: "آية",
+      timerStart: "البداية:",
+      timerElapsed: "الوقت المنقضي:",
+      timerEnd: "النهاية:"
+    },
+    fr: {
+      title: "Quiz Versets Coran Avancé",
+      languageLabel: "Langue",
+      sourahLabel: "Sourate",
+      startLabel: "Début",
+      endLabel: "Fin",
+      redistribuer: "Redistribuer",
+      trier: "Trier",
+      toggle: "Afficher / Cacher",
+      correct: "Bonne réponse",
+      incorrect: "Mauvaise réponse",
+      labelCorrect: "Réponses",
+      labelIncorrect: "Erreurs",
+      labelRemaining: "Restantes",
+      surahPrefix: "Sourate",
+      ayahPrefix: "Verset",
+      timerStart: "Début:",
+      timerElapsed: "Temps écoulé:",
+      timerEnd: "Fin:"
     },
     en: {
       title: "Advanced Quran Quiz",
@@ -483,7 +440,10 @@ h1 {
       labelIncorrect: "Errors",
       labelRemaining: "Remaining",
       surahPrefix: "Surah",
-      ayahPrefix: "Ayah"
+      ayahPrefix: "Ayah",
+      timerStart: "Start:",
+      timerElapsed: "Elapsed:",
+      timerEnd: "End:"
     },
     es: {
       title: "Quiz Avanzado del Corán",
@@ -500,17 +460,22 @@ h1 {
       labelIncorrect: "Errores",
       labelRemaining: "Restantes",
       surahPrefix: "Sura",
-      ayahPrefix: "Verso"
+      ayahPrefix: "Verso",
+      timerStart: "Inicio:",
+      timerElapsed: "Transcurrido:",
+      timerEnd: "Fin:"
     }
   };
-  // Limited sourah list for testing with multilingual names keyed by lang
+
   const SURAHS = [
-    { number: 1, names: {ar: "الفاتحة", fr: "Al-Fatiha", en: "Al-Fatiha", es: "Al-Fatiha"}, count: 7 },
-    { number: 2, names: {ar: "البقرة", fr: "Al-Baqara", en: "Al-Baqara", es: "Al-Baqara"}, count: 286 },
-    { number: 7, names: {ar: "الأعراف", fr: "Al-A’raf", en: "Al-A’raf", es: "Al-A’raf"}, count: 206 },
-    { number: 95, names: {ar: "التين", fr: "At-Tin", en: "At-Tin", es: "At-Tin"}, count: 8 }
+    { number:1,names:{ar:"الفاتحة",fr:"Al-Fatiha",en:"Al-Fatiha",es:"Al-Fatiha"},count:7 },
+    { number:2,names:{ar:"البقرة",fr:"Al-Baqara",en:"Al-Baqara",es:"Al-Baqara"},count:286 },
+    { number:7,names:{ar:"الأعراف",fr:"Al-A’raf",en:"Al-A’raf",es:"Al-A’raf"},count:206 },
+    { number:95,names:{ar:"التين",fr:"At-Tin",en:"At-Tin",es:"At-Tin"},count:8 }
   ];
+
   const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
+
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
@@ -524,22 +489,23 @@ h1 {
   const btnRedistribuer = document.getElementById("btnRedistribuer");
   const btnTrier = document.getElementById("btnTrier");
   const btnToggle = document.getElementById("btnToggle");
-  const labelCorrect = document.getElementById("label-correct");
-  const labelIncorrect = document.getElementById("label-incorrect");
-  const labelRemaining = document.getElementById("label-remaining");
   const countCorrect = document.getElementById("correct-count");
   const countIncorrect = document.getElementById("incorrect-count");
   const countRemaining = document.getElementById("remaining-count");
   const countTotal = document.getElementById("total-count");
+  const labelCorrect = countCorrect.previousElementSibling;
+  const labelIncorrect = countIncorrect.previousElementSibling;
+  const labelRemaining = countRemaining.previousElementSibling;
   const labelLanguage = document.getElementById("language-label");
   const labelSourah = document.getElementById("sourah-label");
   const labelStart = document.getElementById("start-label");
   const labelEnd = document.getElementById("end-label");
-  const timerBox = document.getElementById("timer-container");
-  const startTimerDisplay = document.getElementById("start-time-display");
-  const elapsedTimerDisplay = document.getElementById("elapsed-time-display");
-  const endTimerDisplay = document.getElementById("timer-end-time");
-  const endTimeBox = document.getElementById("timer-end");
+  const timerStartDisplay = document.getElementById("start-time-display");
+  const timerElapsedDisplay = document.getElementById("elapsed-time-display");
+  const timerEndDisplay = document.getElementById("timer-end-time");
+  const timerEndBox = document.getElementById("timer-end");
+  const endTimeDisplay = document.getElementById("end-time-display");
+
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -553,14 +519,14 @@ h1 {
   let timerInterval = null;
   let lastUpdateTime = null;
   let verseCache = new Map();
+  let selectedNumDiv = null;
   let pageVisible = true;
-  
+
+
   function setTexts(lang) {
     const t = texts[lang];
     document.title = t.title;
-    labelCorrect.textContent = t.labelCorrect;
-    labelIncorrect.textContent = t.labelIncorrect;
-    labelRemaining.textContent = t.labelRemaining;
+    document.getElementById("app-title").textContent = t.title;
     labelLanguage.textContent = t.languageLabel;
     labelSourah.textContent = t.sourahLabel;
     labelStart.textContent = t.startLabel;
@@ -570,70 +536,127 @@ h1 {
     btnToggle.textContent = t.toggle;
     btnCorrect.textContent = t.correct;
     btnIncorrect.textContent = t.incorrect;
+    labelCorrect.textContent = t.labelCorrect;
+    labelIncorrect.textContent = t.labelIncorrect;
+    labelRemaining.textContent = t.labelRemaining;
     updateDirection(lang);
+
+    // Update the timer labels
+    const timerContainer = document.getElementById('timer-container');
+    if (timerContainer) {
+      let children = timerContainer.children;
+      if(children.length >= 3) {
+        children[0].querySelector('strong').textContent = t.timerStart;
+        children[1].querySelector('strong').textContent = t.timerElapsed;
+        children[2].querySelector('strong').textContent = t.timerEnd;
+      }
+    }
+    const timerEndLabel = document.querySelector('#timer-end > span:first-child');
+    if(timerEndLabel) {
+      timerEndLabel.textContent = t.timerEnd + ' ';
+    }
   }
+
   function updateDirection(lang) {
-    let rtl = lang === "ar";
-    let baseDir = rtl ? "rtl" : "ltr";
-    document.documentElement.dir = baseDir;
-    document.getElementById("selectors").style.direction = baseDir;
+    const rtl = lang === "ar";
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+    if(rtl){
+      document.body.classList.add('rtl');
+      labelStart.parentElement.classList.add('rtl-flip');
+      labelEnd.parentElement.classList.add('rtl-flip');
+      document.getElementById('selectors').classList.add('rtl-flip');
+      document.getElementById('ayahs-container').classList.add('rtl-flip');
+      document.getElementById('ayat-box').classList.add('rtl-flip');
+      document.getElementById('counters').classList.add('rtl-flip');
+      document.getElementById('timer-container').classList.add('rtl-flip');
+      document.getElementById('controls').classList.add('rtl-flip');
+    } else {
+      document.body.classList.remove('rtl');
+      labelStart.parentElement.classList.remove('rtl-flip');
+      labelEnd.parentElement.classList.remove('rtl-flip');
+      document.getElementById('selectors').classList.remove('rtl-flip');
+      document.getElementById('ayahs-container').classList.remove('rtl-flip');
+      document.getElementById('ayat-box').classList.remove('rtl-flip');
+      document.getElementById('counters').classList.remove('rtl-flip');
+      document.getElementById('timer-container').classList.remove('rtl-flip');
+      document.getElementById('controls').classList.remove('rtl-flip');
+    }
   }
+
+  function updateLanguageFilterLabels(lang) {
+    if(lang === 'ar') {
+      const options = languageEl.querySelectorAll('option');
+      options.forEach(opt => {
+        const arLabel = opt.getAttribute('data-ar-label');
+        if(arLabel) {
+          opt.textContent = arLabel;
+        }
+      });
+    } else {
+      languageEl.options[0].textContent = 'العربية';
+      languageEl.options[1].textContent = 'Français';
+      languageEl.options[2].textContent = 'English';
+      languageEl.options[3].textContent = 'Español';
+    }
+  }
+
   function populateSourahOptions() {
-    sourahEl.innerHTML = "";
+    sourahEl.innerHTML = '';
     const lang = languageEl.value;
-    for(const s of SURAHS){
-      let opt = document.createElement("option");
+    for (const s of SURAHS) {
+      const opt = document.createElement('option');
       opt.value = s.number;
-      if(lang === "ar"){
-        // Only Arabic names with number
+      if (lang === 'ar') {
         opt.textContent = `${s.number} - ${s.names.ar}`;
       } else {
-        // Use name corresponding to the selected language if exists, else fallback to French
         const name = s.names[lang] || s.names.fr || s.names.ar;
         opt.textContent = `${s.number} - ${name}`;
       }
       sourahEl.appendChild(opt);
     }
   }
-  function updateLimits(reinit=true){
-    const s = SURAHS.find(x=>x.number==sourahEl.value);
-    if(!s) return;
+
+  function updateLimits(reinit = true) {
+    const s = SURAHS.find(x => x.number == sourahEl.value);
+    if (!s) return;
     startEl.min = 1; startEl.max = s.count;
     endEl.min = 1; endEl.max = s.count;
-    if(reinit){
+    if (reinit) {
       startEl.value = 1;
       endEl.value = s.count;
     } else {
-      if(startEl.value < 1) startEl.value=1;
-      if(startEl.value > s.count) startEl.value=s.count;
-      if(endEl.value < 1) endEl.value=1;
-      if(endEl.value > s.count) endEl.value=s.count;
+      if (startEl.value < 1) startEl.value = 1;
+      if (startEl.value > s.count) startEl.value = s.count;
+      if (endEl.value < 1) endEl.value = 1;
+      if (endEl.value > s.count) endEl.value = s.count;
     }
   }
+
   function validateRange() {
     let s = SURAHS.find(x => x.number == sourahEl.value);
-    if(!s) return false;
+    if (!s) return false;
     let start = Number(startEl.value);
     let end = Number(endEl.value);
-    if(isNaN(start) || start < 1) start = 1;
-    if(isNaN(end) || end < 1) end = 1;
-    if(start > s.count) start = s.count;
-    if(end > s.count) end = s.count;
-    if(start > end) start = end;
+    if (isNaN(start) || start < 1) start = 1;
+    if (isNaN(end) || end < 1) end = 1;
+    if (start > s.count) start = s.count;
+    if (end > s.count) end = s.count;
+    if (start > end) start = end;
     startEl.value = start;
     endEl.value = end;
     return true;
   }
+
   function shuffleAyahs() {
-    if(!validateRange()) return;
+    if (!validateRange()) return;
     ayahs = [];
     let start = Number(startEl.value);
     let end = Number(endEl.value);
-    for(let i=start;i<=end;i++) {
+    for (let i = start; i <= end; i++) {
       ayahs.push(i);
     }
-    for(let i=ayahs.length-1;i>0;i--) {
-      let j = Math.floor(Math.random()*(i+1));
+    for (let i = ayahs.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
       [ayahs[i], ayahs[j]] = [ayahs[j], ayahs[i]];
     }
     traitedMap.clear();
@@ -645,366 +668,325 @@ h1 {
     updateCounts();
     renderAyahs();
     resetTimer(true);
-    saveProgress();
     clearVerseDetails();
+    clearSelectedNum();
   }
+
   function renderAyahs() {
-    ayahsContainer.innerHTML = "";
-    for(const num of ayahs){
-      if(traitedMap.has(num) && !showTreated) continue;
-      let div = document.createElement("div");
+    ayahsContainer.innerHTML = '';
+    for (const num of ayahs) {
+      if (traitedMap.has(num) && !showTreated) continue;
+      let div = document.createElement('div');
       div.textContent = num;
-      div.classList.add("num");
-      if(traitedMap.get(num)===true) div.classList.add("traited","correct");
-      else if(traitedMap.get(num)===false) div.classList.add("traited","incorrect");
-      else div.onclick = () => {
-        showAyah(num);
-        resumeTimer();
-      };
+      div.classList.add('num');
+      if (traitedMap.get(num) === true) div.classList.add('traited', 'correct');
+      else if (traitedMap.get(num) === false) div.classList.add('traited', 'incorrect');
+      else {
+        div.onclick = () => {
+          showAyah(num);
+          resumeTimer();
+          setSelectedNum(div);
+        };
+        div.ontouchstart = () => {
+          setSelectedNum(div);
+        };
+      }
       ayahsContainer.appendChild(div);
     }
     updateCounts();
     checkIfCompleteStopTimer();
   }
+
+  function setSelectedNum(div) {
+    if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
+    selectedNumDiv = div;
+    if (selectedNumDiv) selectedNumDiv.classList.add('selected');
+  }
+
+  function clearSelectedNum() {
+    if (selectedNumDiv) {
+      selectedNumDiv.classList.remove('selected');
+      selectedNumDiv = null;
+    }
+  }
+
   function updateCounts() {
-    correctCountValue = [...traitedMap.values()].filter(v=>v===true).length;
-    incorrectCountValue = [...traitedMap.values()].filter(v=>v===false).length;
+    correctCountValue = [...traitedMap.values()].filter(v => v === true).length;
+    incorrectCountValue = [...traitedMap.values()].filter(v => v === false).length;
     countCorrect.textContent = correctCountValue;
     countIncorrect.textContent = incorrectCountValue;
     countRemaining.textContent = ayahs.length - traitedMap.size;
     countTotal.textContent = ayahs.length;
   }
+
   function checkIfCompleteStopTimer() {
-    if(traitedMap.size === ayahs.length && ayahs.length > 0){
-      stopTimer();
-    }
+    if (traitedMap.size === ayahs.length && ayahs.length > 0) stopTimer();
   }
+
   async function fetchVerseWithFallback(surah, ayah, lang) {
     const key = `${surah}:${ayah}:${lang}`;
-    if(verseCache.has(key)) return verseCache.get(key);
-    const fetchPrimary = () => fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/${lang}.hafs`)
+    if (verseCache.has(key)) return verseCache.get(key);
+    const fetchPrimary = () => fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/ar.alafasy`)
       .then(res => { if (!res.ok) throw new Error('Primary source response not ok'); return res.json(); })
       .then(data => { if(data.code === 200 && data.data && data.data.text) return data.data.text.trim(); throw new Error('Primary source data missing or invalid'); });
-    const fetchAlt1 = () => fetch(`https://alquran-api.pages.dev/api/v2/ayah/${surah}/${ayah}`)
-      .then(res => { if (!res.ok) throw new Error('Alt1 response not ok'); return res.json(); })
-      .then(data => { if(data && data.text) return data.text.trim(); throw new Error('Alt1 data missing or invalid'); });
-    const fetchAlt2 = () => fetch(`https://tanzil.net/api/ayah/${surah}/${ayah}`)
-      .then(res => { if (!res.ok) throw new Error('Alt2 response not ok'); return res.text(); })
-      .then(text => { let trimmed = text.trim(); if(trimmed.length > 0) return trimmed; throw new Error('Alt2 data empty'); });
     try { return await fetchPrimary(); }
-    catch (e) {
-      try { return await fetchAlt1(); }
-      catch (e1) {
-        try { return await fetchAlt2(); }
-        catch (e2) { throw new Error('All sources failed'); }
-      }
-    }
+    catch (e) { throw new Error('Verse fetch failed'); }
   }
+
   async function showAyah(num) {
-    if(!num) return;
+    if (!num) return;
     currentAyah = num;
     currentSourah = sourahEl.value;
-    ayatBox.style.display = "block";
-    const lang = languageEl.value;
+    ayatBox.style.display = 'block';
     const surahNo = Number(currentSourah);
-    const key = `${currentSourah}:${currentAyah}:${lang}`;
-    if(verseCache.has(key)){
+    const key = `${currentSourah}:${currentAyah}:ar`;
+    if (verseCache.has(key)) {
       verseText.innerHTML = verseCache.get(key);
       updateHeader();
       return;
     }
-    verseText.textContent = "Chargement...";
+    verseText.textContent = 'Chargement...';
     try {
-      let txt = await fetchVerseWithFallback(currentSourah, currentAyah, lang);
-      if(surahNo === 1 && num === 1) {
-      } else if(surahNo === 9) {
-      } else if(surahNo === 95 && num === 1) {
-        if(txt.startsWith(BISMILLAH)){
-          txt = txt.slice(BISMILLAH.length).trim();
-        }
+      let txt = await fetchVerseWithFallback(currentSourah, currentAyah, 'ar');
+      // Remove Bismillah only for verse 1 if sourah != 1
+      if (num === 1 && surahNo !== 1) {
+        const bismillahRegex = /^بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ\s*/u;
+        if (bismillahRegex.test(txt)) txt = txt.replace(bismillahRegex, '').trim();
+      }
+      // Special At-Tin override
+      if (surahNo === 95 && num === 1) {
         txt = "وَٱلتِّينِ وَٱلزَّيْتُونِ";
-      } else if(num === 1){
-        if(txt.startsWith(BISMILLAH)){
-          txt = txt.slice(BISMILLAH.length).trim();
-        }
       }
       let colored = colorVerseText(txt);
       verseText.innerHTML = `<div>${colored}</div>`;
       verseCache.set(key, verseText.innerHTML);
       updateHeader();
-    } catch (error) {
-      verseText.textContent = "Erreur lors du chargement du verset.";
+    } catch {
+      verseText.textContent = 'Erreur lors du chargement du verset.';
     }
-    if(!startTime) startTimer();
-    saveProgress();
+    if (!startTime) startTimer();
   }
-  function clearVerseDetails(){
-    currentAyah = null;
-    currentSourah = null;
-    ayatBox.style.display = "none";
-    verseHeader.textContent = "";
-    verseText.textContent = "";
-  }
-  function updateHeader(){
-    if(currentSourah && currentAyah){
-      const t = texts[languageEl.value];
+
+  function updateHeader() {
+    if (currentSourah && currentAyah) {
+      const lang = languageEl.value;
+      const t = texts[lang] || texts.fr;
       verseHeader.innerHTML = `${t.surahPrefix} ${currentSourah}, ${t.ayahPrefix} ${currentAyah}`;
     } else {
-      verseHeader.textContent = "";
+      verseHeader.textContent = '';
     }
   }
-  function colorVerseText(text){
-    if(!text) return "";
+
+  function colorVerseText(text) {
+    if (!text) return '';
     const specialSigns = ["ۚ", "ۗ", "ۖ", "ۘ", "ۛ"];
     const normalSigns = ["۞", "۩"];
-    function escapeHtml(str){
-      return str.replace(/[&<>"']/g,m=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&apos;'})[m])
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[m]);
     }
     let escaped = escapeHtml(text);
     let symbolYellowSpan = '';
     const symbolReg = new RegExp(escapeHtml("۞"), 'g');
-    if(symbolReg.test(escaped)){
+    if (symbolReg.test(escaped)) {
       symbolYellowSpan = '<span class="special-yellow">۞</span> ';
-      escaped = escaped.replace(symbolReg,'');
+      escaped = escaped.replace(symbolReg, '');
     }
-    for(const s of specialSigns){
+    for (const s of specialSigns) {
       const esc = escapeHtml(s);
-      escaped = escaped.replace(new RegExp(esc,'gu'), `<span class="special-red">${esc}</span>`);
+      escaped = escaped.replace(new RegExp(esc, 'gu'), `<span class="special-red">${esc}</span>`);
     }
-    for(const s of normalSigns){
-      if(s==="۞") continue;
+    for (const s of normalSigns) {
+      if (s === "۞") continue;
       const esc = escapeHtml(s);
-      escaped = escaped.replace(new RegExp(esc,'gu'), `<span class="special-blue">${esc}</span>`);
+      escaped = escaped.replace(new RegExp(esc, 'gu'), `<span class="special-blue">${esc}</span>`);
     }
     let match = escaped.match(/(<span class="special-blue">۩<\/span>)$/);
     let endSymbol = "";
-    if(match){
-      escaped = escaped.replace(/(<span class="special-blue">۩<\/span>)$/,"").trim();
+    if (match) {
+      escaped = escaped.replace(/(<span class="special-blue">۩<\/span>)$/, "").trim();
       endSymbol = match[1];
     }
     const tmpDiv = document.createElement('div');
     tmpDiv.innerHTML = escaped;
-    for(const sp of tmpDiv.querySelectorAll('span.special-red, span.special-yellow, span.special-blue')){
-      sp.replaceWith(document.createTextNode(sp.textContent))
+    for (const sp of tmpDiv.querySelectorAll('span.special-red, span.special-yellow, span.special-blue')) {
+      sp.replaceWith(document.createTextNode(sp.textContent));
     }
     const cleanText = tmpDiv.textContent.trim();
-    if(!cleanText) return symbolYellowSpan+escaped+(endSymbol?(" "+endSymbol):"");
+    if (!cleanText) return symbolYellowSpan + escaped + (endSymbol ? " " + endSymbol : '');
     const plainWords = cleanText.split(/\s+/);
     const tokens = escaped.split(/(\s+)/);
     let firstIdx = -1;
     let lastIdx = -1;
-    let wordCounter=0;
-    for(let i=0; i<tokens.length; i++){
-      const plainToken = tokens[i].replace(/<[^>]+>/g,'').trim();
-      if(plainToken === '') continue;
-      if(wordCounter >= plainWords.length) break;
-      if(tokens[i].includes(plainWords[wordCounter])){
-        if(firstIdx===-1) firstIdx=i;
-        lastIdx=i;
+    let wordCounter = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      const plainToken = tokens[i].replace(/<[^>]+>/g, '').trim();
+      if (plainToken === '') continue;
+      if (wordCounter >= plainWords.length) break;
+      if (tokens[i].includes(plainWords[wordCounter])) {
+        if (firstIdx === -1) firstIdx = i;
+        lastIdx = i;
         wordCounter++;
       }
     }
-    if(firstIdx!==-1)
-      tokens[firstIdx] = `<span style="color:red;font-weight:700;">${tokens[firstIdx]}</span>`;
-    if(lastIdx!==-1 && lastIdx!==firstIdx)
-      tokens[lastIdx] = `<span style="color:green;font-weight:700;">${tokens[lastIdx]}</span>`;
-    return symbolYellowSpan + tokens.join('') + (endSymbol ? (" "+endSymbol) : "");
+    if (firstIdx !== -1)
+      tokens[firstIdx] = `<span class="special-red">${tokens[firstIdx]}</span>`;
+    if (lastIdx !== -1 && lastIdx !== firstIdx)
+      tokens[lastIdx] = `<span class="special-green">${tokens[lastIdx]}</span>`;
+    return symbolYellowSpan + tokens.join('') + (endSymbol ? " " + endSymbol : '');
   }
-  function registerAnswer(correct){
-    if(currentAyah==null) return;
-    if(!traitedMap.has(currentAyah)){
-      traitedMap.set(currentAyah,correct);
-      if(correct) correctCountValue++;
+
+  function registerAnswer(correct) {
+    if (currentAyah == null) return;
+    if (!traitedMap.has(currentAyah)) {
+      traitedMap.set(currentAyah, correct);
+      if (correct) correctCountValue++;
       else incorrectCountValue++;
       updateCounts();
       renderAyahs();
-      ayatBox.style.display="none";
-      currentAyah=null;
-      currentSourah=null;
-      updateHeader();
-      saveProgress();
+      ayatBox.style.display = 'none';
+      currentAyah = null;
+      currentSourah = null;
+      clearVerseDetails();
       checkIfCompleteStopTimer();
+      clearSelectedNum();
     }
   }
-  function toggleTreated(){
+
+  function toggleTreated() {
     showTreated = !showTreated;
     renderAyahs();
   }
-  function sortAyahs(){
-    ayahs.sort((a,b)=>a-b);
+
+  function sortAyahs() {
+    ayahs.sort((a, b) => a - b);
     renderAyahs();
   }
-  function saveProgress(){
-    const data = {
-      sourah:sourahEl.value, start:startEl.value, end:endEl.value,
-      ayahs, treated: Array.from(traitedMap.entries()),
-      correct: correctCountValue, incorrect: incorrectCountValue,
-      startTime, elapsedTime, endTime
-    };
-    localStorage.setItem("quizProgress", JSON.stringify(data));
+
+  function resetTimer(resetElapsed) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    startTime = null;
+    endTime = null;
+    lastUpdateTime = null;
+    pageVisible = true;
+    if (resetElapsed) elapsedTime = 0;
+    timerStartDisplay.textContent = '--:--:--';
+    timerElapsedDisplay.textContent = '00:00:00';
+    endTimeDisplay.textContent = '--:--:--';
+    timerEndBox.style.display = 'none';
   }
-  function loadProgress(){
-    const str = localStorage.getItem("quizProgress");
-    if(!str) return false;
-    try{
-      const data = JSON.parse(str);
-      sourahEl.value = data.sourah || sourahEl.value;
-      startEl.value = data.start || startEl.value;
-      endEl.value = data.end || endEl.value;
-      ayahs = Array.isArray(data.ayahs) ? data.ayahs : [];
-      traitedMap = new Map(data.treated || []);
-      correctCountValue = data.correct || 0;
-      incorrectCountValue = data.incorrect || 0;
-      startTime = data.startTime || null;
-      elapsedTime = data.elapsedTime || 0;
-      endTime = data.endTime || null;
-      updateLimits(false);
-      renderAyahs();
-      updateCounts();
-      if(startTime && !endTime){
-        lastUpdateTime = Date.now();
-        timerInterval = setInterval(()=>updateElapsedTime(),500);
-      }
-      if(endTime){
-        endTimeBox.style.display = "block";
-        document.getElementById("end-time-display").textContent = new Date(endTime).toLocaleString();
-        endTimerDisplay.textContent = new Date(endTime).toLocaleString();
-      }
-      updateHeader();
-      setTexts(languageEl.value);
-      checkIfCompleteStopTimer();
-      return true;
-    }catch{
-      return false;
+
+  function startTimer() {
+    if (startTime) return;
+    startTime = Date.now();
+    lastUpdateTime = startTime;
+    elapsedTime = 0;
+    pageVisible = true;
+    timerInterval = setInterval(() => updateElapsedTime(), 500);
+    timerStartDisplay.textContent = new Date(startTime).toLocaleString();
+    timerEndBox.style.display = 'none';
+    timerEndDisplay.textContent = '--:--:--';
+  }
+
+  function stopTimer() {
+    if (!startTime || endTime) return;
+    clearInterval(timerInterval);
+    timerInterval = null;
+    endTime = Date.now();
+    timerEndBox.style.display = 'block';
+    endTimeDisplay.textContent = new Date(endTime).toLocaleString();
+    timerEndDisplay.textContent = new Date(endTime).toLocaleString();
+  }
+
+  function resumeTimer() {
+    if (traitedMap.size === ayahs.length) return;
+    if (!pageVisible) return;
+    if (!startTime) {
+      startTime = Date.now() - elapsedTime;
+      lastUpdateTime = Date.now();
+      timerInterval = setInterval(() => updateElapsedTime(), 500);
+      timerStartDisplay.textContent = new Date(startTime).toLocaleString();
+    } else if (!timerInterval) {
+      lastUpdateTime = Date.now();
+      timerInterval = setInterval(() => updateElapsedTime(), 500);
     }
   }
-  function clearProgress(){
-    localStorage.removeItem("quizProgress");
-    ayahs = [];
-    traitedMap.clear();
-    correctCountValue=0;
-    incorrectCountValue=0;
-    startTime=null;
-    elapsedTime=0;
-    endTime=null;
-    clearInterval(timerInterval);
-    timerInterval=null;
-    currentAyah=null;
-    currentSourah=null;
-    ayatBox.style.display = "none";
-    updateCounts();
-    renderAyahs();
-    updateHeader();
-    startTimerDisplay.textContent="--:--:--";
-    elapsedTimerDisplay.textContent="00:00:00";
-    endTimerDisplay.textContent="--:--:--";
-    endTimeBox.style.display="none";
-  }
-  function updateElapsedTime(){
-    if(!startTime || !pageVisible) return;
+
+  function updateElapsedTime() {
+    if (!startTime || !pageVisible) return;
     const now = Date.now();
     elapsedTime += now - lastUpdateTime;
     lastUpdateTime = now;
-    elapsedTimerDisplay.textContent = formatTime(elapsedTime);
+    timerElapsedDisplay.textContent = formatTime(elapsedTime);
   }
-  function formatTime(ms){
+
+  function formatTime(ms) {
     ms = Math.max(0, ms);
     const sec = Math.floor(ms / 1000);
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
     const s = sec % 60;
-    return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   }
-  function startTimer(){
-    if(startTime) return;
-    startTime = Date.now();
-    lastUpdateTime = startTime;
-    elapsedTime = 0;
-    pageVisible = true;
-    timerInterval = setInterval(()=>updateElapsedTime(),500);
-    startTimerDisplay.textContent = new Date(startTime).toLocaleString();
-    endTimeBox.style.display = "none";
-    endTimerDisplay.textContent = "--:--:--";
+
+  function clearVerseDetails() {
+    currentAyah = null;
+    currentSourah = null;
+    ayatBox.style.display = 'none';
+    verseHeader.textContent = '';
+    verseText.textContent = '';
+    clearSelectedNum();
   }
-  function stopTimer(){
-    if(!startTime || endTime) return;
-    clearInterval(timerInterval);
-    timerInterval=null;
-    endTime = Date.now();
-    endTimeBox.style.display = "block";
-    document.getElementById("end-time-display").textContent = new Date(endTime).toLocaleString();
-    endTimerDisplay.textContent = new Date(endTime).toLocaleString();
-  }
-  function resetTimer(resetElapsed){
-    clearInterval(timerInterval);
-    timerInterval=null;
-    startTime=null;
-    endTime=null;
-    lastUpdateTime=null;
-    pageVisible=true;
-    if(resetElapsed)
-      elapsedTime=0;
-    startTimerDisplay.textContent="--:--:--";
-    elapsedTimerDisplay.textContent="00:00:00";
-    endTimerDisplay.textContent="--:--:--";
-    endTimeBox.style.display="none";
-  }
-  function resumeTimer(){
-    if(traitedMap.size === ayahs.length) return;
-    if(!pageVisible) return;
-    if(!startTime){
-      startTime=Date.now()-elapsedTime;
-      lastUpdateTime=Date.now();
-      timerInterval=setInterval(()=>updateElapsedTime(),500);
-      startTimerDisplay.textContent = new Date(startTime).toLocaleString();
-    } else if(!timerInterval){
-      lastUpdateTime=Date.now();
-      timerInterval=setInterval(()=>updateElapsedTime(),500);
-    }
-  }
-  document.addEventListener("visibilitychange",()=>{
-    if(document.hidden){
-      pageVisible=false;
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      pageVisible = false;
       clearInterval(timerInterval);
-      timerInterval=null;
+      timerInterval = null;
     } else {
-      pageVisible=true;
-      if(startTime && !endTime && traitedMap.size < ayahs.length){
-        lastUpdateTime=Date.now();
-        timerInterval=setInterval(()=>updateElapsedTime(),500);
+      pageVisible = true;
+      if (startTime && !endTime && traitedMap.size < ayahs.length) {
+        lastUpdateTime = Date.now();
+        timerInterval = setInterval(() => updateElapsedTime(), 500);
       }
     }
   });
-  languageEl.addEventListener("change",()=>{
-    setTexts(languageEl.value);
-    populateSourahOptions(); // Refresh options on language change with correct naming logic
-    updateLimits(true);
-    shuffleAyahs();
-    resetTimer(true);
-    clearVerseDetails();
-    saveProgress();
-  });
-  sourahEl.addEventListener("change",()=>{
-    updateLimits(true);
-    shuffleAyahs();
-    resetTimer(true);
-    clearVerseDetails();
-  });
-  startEl.addEventListener("input", ()=>{ if(validateRange()) shuffleAyahs(); });
-  endEl.addEventListener("input", ()=>{ if(validateRange()) shuffleAyahs(); });
-  btnRedistribuer.addEventListener("click", ()=>{ shuffleAyahs(); resetTimer(true); });
-  btnTrier.addEventListener("click", sortAyahs);
-  btnToggle.addEventListener("click", toggleTreated);
-  btnCorrect.addEventListener("click", ()=> registerAnswer(true));
-  btnIncorrect.addEventListener("click", ()=> registerAnswer(false));
-  document.addEventListener("DOMContentLoaded", ()=>{
-    setTexts(languageEl.value);
+
+  languageEl.addEventListener('change', () => {
+    const lang = languageEl.value;
+    setTexts(lang);
+    updateLanguageFilterLabels(lang);
     populateSourahOptions();
-    if(!loadProgress()){
-      sourahEl.value=1;
-      updateLimits(true);
-      shuffleAyahs();
-    }
+    updateLimits(true);
+    shuffleAyahs();
+    resetTimer(true);
+    clearVerseDetails();
+  });
+
+  sourahEl.addEventListener('change', () => {
+    updateLimits(true);
+    shuffleAyahs();
+    resetTimer(true);
+    clearVerseDetails();
+    clearSelectedNum();
+  });
+
+  startEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
+  endEl.addEventListener('input', () => { if(validateRange()) shuffleAyahs(); });
+  btnRedistribuer.addEventListener('click', () => { shuffleAyahs(); resetTimer(true); });
+  btnTrier.addEventListener('click', sortAyahs);
+  btnToggle.addEventListener('click', toggleTreated);
+  btnCorrect.addEventListener('click', () => registerAnswer(true));
+  btnIncorrect.addEventListener('click', () => registerAnswer(false));
+
+  document.addEventListener('DOMContentLoaded', () => {
+    languageEl.value = 'ar'; // Default Arabic
+    setTexts('ar');
+    updateLanguageFilterLabels('ar');
+    populateSourahOptions();
+    sourahEl.value = '1';
+    updateLimits(true);
+    shuffleAyahs();
   });
 })();
 </script>
