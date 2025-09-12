@@ -29,16 +29,19 @@ h1 {
   font-weight: 700;
   font-size: 1.4em;
   text-align: center;
-  margin: 0.5em 0 1em;
+  margin: 0;
+  margin-bottom: 0.3em;
   color: #222;
   flex-shrink: 0;
+  line-height: 1.2em;
+  user-select: none;
 }
 .filters-container {
   display: flex !important;
   flex-wrap: nowrap !important;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 1rem;
-  margin-bottom: 1em;
+  margin-bottom: 0.3em;
   width: 95%;
   max-width: 650px;
   margin-left: auto;
@@ -60,8 +63,8 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 100px;
-  max-width: 25vw;
+  min-width: 85px;
+  max-width: 20vw;
   flex-shrink: 1;
   padding: 0 4px;
   white-space: normal;
@@ -87,15 +90,16 @@ h1 {
   color: #5a552a;
   border: 2px solid #a89e6e;
   font-size: 0.95em;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: 10px;
-  min-width: 76px;
+  min-width: 65px;
   max-width: 100%;
   cursor: pointer;
   box-shadow: inset 0 1px 5px rgb(0 0 0 / 0.07);
   flex-shrink: 1;
   transition: border-color 0.3s ease;
   font-weight: 600;
+  text-align: center;
 }
 .language-select select:hover,
 .sourah-select select:hover,
@@ -111,10 +115,10 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  max-width: 180px;
+  max-width: 160px;
   background: #fff;
   border-radius: 14px;
-  padding: 6px 16px;
+  padding: 6px 12px;
   box-shadow: 0 4px 18px rgb(0 0 0 / 0.12);
   flex-shrink: 1;
   flex-direction: row;
@@ -123,8 +127,8 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 70px;
-  max-width: 90px;
+  min-width: 65px;
+  max-width: 85px;
   gap: 4px;
 }
 #start-label,
@@ -149,11 +153,11 @@ h1 {
   display: flex !important;
   flex-wrap: nowrap !important;
   gap: 12px;
-  justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 12px;
+  justify-content: flex-start;
+  margin-top: 0;
+  margin-bottom: 1em;
   width: 95%;
-  max-width: 510px;
+  max-width: 650px;
   margin-left: auto;
   margin-right: auto;
   flex-shrink: 0;
@@ -193,7 +197,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-height: 150px;
+  max-height: 190px;
   max-width: 95vw;
   overflow-y: auto;
   border-radius: 14px;
@@ -253,9 +257,9 @@ h1 {
   margin: 0 auto;
   background: #f5f5f5;
   border-radius: 16px;
-  padding: 18px 22px;
+  padding: 20px 22px;
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.14);
-  font-size: 1.18em;
+  font-size: 1.2em;
   line-height: 1.55em;
   direction: rtl;
   text-align: right;
@@ -264,7 +268,7 @@ h1 {
   box-sizing: border-box;
   position: static;
   z-index: 9999;
-  max-height: 28em;
+  max-height: 36em;
   user-select: text;
   display: none;
   flex-shrink: 1;
@@ -279,7 +283,7 @@ h1 {
   box-shadow: inset 0 1px 4px #d2ca5fbb;
 }
 #verse-text {
-  font-size: 1.24em;
+  font-size: 1.26em;
   line-height: 1.5em;
   margin-bottom: 18px;
   overflow-y: auto;
@@ -317,7 +321,7 @@ h1 {
   flex: 1 1 48%;
   font-weight: 700;
   font-size: 0.9em;
-  padding: 7px 14px;
+  padding: 6px 14px;
   border: none;
   border-radius: 16px;
   color: white;
@@ -327,7 +331,7 @@ h1 {
   align-items: center;
   gap: 10px;
   transition: background-color 0.2s ease;
-  max-height: 40px;
+  max-height: 36px;
   line-height: 1.1em;
   white-space: nowrap;
   overflow: hidden;
@@ -350,15 +354,15 @@ h1 {
   font-weight: 700;
 }
 .counter-box {
-  padding: 14px 26px;
+  padding: 8px 18px;
   border-radius: 16px;
   font-weight: 700;
   text-align: center;
   color: white;
-  margin: 4px;
+  margin: 2px;
   user-select: none;
-  font-size: 1.06em;
-  min-width: 92px;
+  font-size: 0.95em;
+  min-width: 90px;
   flex-shrink: 0;
 }
 .counter-correct {
@@ -371,17 +375,29 @@ h1 {
   background-color: #505050;
 }
 #timer-container {
-  margin-top: 28px;
+  margin-top: 8px;
+  margin-bottom: 10px;
   text-align: center;
   font-weight: 700;
-  font-size: 1.16em;
+  font-size: 1.05em;
   color: #606060;
   user-select: none;
   letter-spacing: 0.035em;
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 #timer-container div {
-  margin: 8px 0;
+  margin: 0;
+  padding: 0 8px;
+  border-left: 1.5px solid #bbb;
+  line-height: 1.1em;
+}
+#timer-container div:first-child {
+  border-left: none;
 }
 #timer-end {
   margin-top: 16px;
@@ -408,11 +424,11 @@ h1 {
     max-width: 100% !important;
   }
   .selector-wrapper {
-    max-width: 22vw;
-    min-width: 72px;
+    max-width: 25vw;
+    min-width: 70px;
   }
   .range-wrap {
-    max-width: 150px;
+    max-width: 140px;
   }
   .controls {
     max-width: 100% !important;
@@ -423,15 +439,15 @@ h1 {
     padding: 6px 6px !important;
   }
   .table-wrap {
-    max-height: 120px;
+    max-height: 140px;
     max-width: 100vw;
     padding: 8px 8px;
     overflow-x: auto;
   }
   #ayat-box {
-    max-height: 22em;
+    max-height: 28em;
     padding: 14px 16px;
-    font-size: 1.1em;
+    font-size: 1.12em;
   }
   #response-buttons {
     max-width: 100%;
@@ -442,13 +458,14 @@ h1 {
     max-height: 36px;
   }
   .counter-box {
-    min-width: 80px;
-    padding: 10px 16px;
-    font-size: 1em;
+    min-width: 75px;
+    padding: 7px 12px;
+    font-size: 0.9em;
   }
   #timer-container {
-    font-size: 1em;
-    margin-top: 16px;
+    font-size: 0.95em;
+    margin-top: 6px;
+    margin-bottom: 8px;
   }
 }
 @media (min-width: 1024px) {
@@ -460,20 +477,21 @@ h1 {
     max-width: 720px;
   }
   .table-wrap {
-    max-height: 180px;
+    max-height: 220px;
     max-width: 720px;
   }
   #ayat-box {
-    max-height: 30em;
-    font-size: 1.25em;
+    max-height: 38em;
+    font-size: 1.3em;
   }
   .counter-box {
-    font-size: 1.1em;
+    font-size: 1.06em;
     min-width: 110px;
   }
   #timer-container {
     font-size: 1.2em;
-    margin-top: 30px;
+    margin-top: 12px;
+    margin-bottom: 12px;
   }
 }
 </style>
@@ -501,18 +519,18 @@ h1 {
   <div class="selector-wrapper range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
     <div class="range-input-group">
       <label class="selector-label" id="start-label" for="start" aria-live="polite" aria-atomic="true"></label>
-      <input type="number" id="start" min="1" aria-labelledby="start-label" />
+      <input type="number" id="start" min="1" aria-labelledby="start-label" autocomplete="off"/>
     </div>
     <div class="range-input-group">
       <label class="selector-label" id="end-label" for="end" aria-live="polite" aria-atomic="true"></label>
-      <input type="number" id="end" min="1" aria-labelledby="end-label" />
+      <input type="number" id="end" min="1" aria-labelledby="end-label" autocomplete="off"/>
     </div>
   </div>
-</div>
-<div class="controls" id="controls">
-  <button id="btnRedistribuer" type="button"></button>
-  <button id="btnTrier" type="button"></button>
-  <button id="btnToggle" type="button"></button>
+  <div class="controls" id="controls" style="margin: 0; flex-grow: 0;">
+    <button id="btnRedistribuer" type="button"></button>
+    <button id="btnTrier" type="button"></button>
+    <button id="btnToggle" type="button"></button>
+  </div>
 </div>
 <div class="table-wrap" id="ayahs-container" role="region" aria-label=""></div>
 <div id="ayat-box" style="display:none;" role="region" aria-live="polite" aria-atomic="true">
@@ -523,24 +541,26 @@ h1 {
     <button id="btnIncorrect" type="button"></button>
   </div>
 </div>
-<div id="counters" style="display:flex; justify-content:center; gap:12px; margin-bottom:12px;" aria-live="polite" aria-atomic="true">
-  <div class="counter-box counter-correct" style="flex:1; margin:0;">
-    <span id="label-correct"></span> <span id="correct-count">0</span>
+<div style="display:flex; justify-content:center; gap:8px; align-items:center; flex-wrap: nowrap; max-width: 95vw; margin: 10px auto 8px;" aria-live="polite" aria-atomic="true" id="counters-timer-container">
+  <div id="counters" style="display:flex; gap:8px; margin:0; flex-shrink: 1;">
+    <div class="counter-box counter-correct" style="min-width: 90px; padding: 8px 16px; margin: 0;">
+      <span id="label-correct"></span> <span id="correct-count">0</span>
+    </div>
+    <div class="counter-box counter-incorrect" style="min-width: 90px; padding: 8px 16px; margin: 0;">
+      <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
+    </div>
+    <div class="counter-box counter-remaining" style="min-width: 120px; padding: 8px 14px; margin: 0; text-align: center;">
+      <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
+    </div>
   </div>
-  <div class="counter-box counter-incorrect" style="flex:1; margin:0;">
-    <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
-  </div>
-  <div class="counter-box counter-remaining" style="flex:none; margin:0; min-width:144px; text-align:center;">
-    <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
-  </div>
-  <div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0;">
-    <span></span><span id="end-time-display"></span>
+  <div id="timer-container" aria-live="polite" aria-atomic="true" style="flex-grow: 0; white-space: nowrap;">
+    <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
+    <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
+    <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
   </div>
 </div>
-<div id="timer-container" aria-live="polite" aria-atomic="true">
-  <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
-  <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
-  <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
+<div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0 auto 0 auto;">
+  <span></span><span id="end-time-display"></span>
 </div>
 <script>
 (() => {
