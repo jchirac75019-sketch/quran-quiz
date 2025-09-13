@@ -415,14 +415,14 @@ h1 {
   bottom: 0;
   left: 0;
   width: 100vw;
-  background: #f5f5f5;
-  border-top: 1.5px solid #ccc;
-  box-shadow: 0 -4px 10px rgb(0 0 0 / 0.1);
+  background: linear-gradient(90deg, #d9e4b7, #a79d6e);
+  border-top: 1.5px solid #8c8c7a;
+  box-shadow: 0 -4px 10px rgb(0 0 0 / 0.15);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px 12px;
-  padding: 8px 10px;
+  padding: 12px 14px;
   z-index: 99999;
   user-select: none;
   align-items: center;
@@ -441,66 +441,77 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 4px 12px;
-  background-color: #fff;
-  border-radius: 14px;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.12);
+  gap: 14px;
+  padding: 10px 24px;
+  background-color: #8c8c7a;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 0.25);
+  color: #f5f5e1;
   font-weight: 700;
-  font-size: 1.05em;
-  color: #606060;
-  letter-spacing: 0.035em;
+  font-size: 1.15em;
+  text-align: center;
   user-select: none;
   position: relative;
-}
-#fixed-bottom-bar .counter-box {
-  min-width: 90px;
-  margin: 0 !important;
-  font-size: 0.9em;
+  flex-wrap: nowrap;
 }
 #timer-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 20px;
   user-select: none;
+  width: 100%;
+  flex-wrap: nowrap;
+  text-align: center;
+  flex-grow: 1;
 }
 .timer-arrow {
   user-select: none;
   cursor: pointer;
   font-weight: 700;
-  font-size: 1.6em;
-  color: #606060;
-  padding: 4px 8px;
-  border-radius: 12px;
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  font-size: 1.8em;
+  color: #444;
+  padding: 6px 14px;
+  border-radius: 14px;
+  background-color: #a79d6e;
+  box-shadow: 0 3px 11px rgba(0,0,0,0.22);
   transition: background-color 0.3s ease, transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   position: relative;
+  user-select: none;
 }
 .timer-arrow:hover {
-  background-color: #e0e0e0;
-  color: #444;
+  background-color: #bcbc9a;
+  color: #2e2e1f;
   transform: scale(1.1);
 }
-#arrow-left, #arrow-up {
-  margin-left: 8px;
+#arrow-left, #arrow-right {
+  font-size: 2.4em;
+  padding: 10px 20px;
+  font-weight: 900;
+  background-color: #7a722c;
+  color: #f5f5e1;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  border-radius: 18px;
+  user-select: none;
+  transition: background-color 0.3s ease, transform 0.25s ease;
 }
-#arrow-right, #arrow-down {
-  margin-right: 8px;
+#arrow-left:hover, #arrow-right:hover {
+  background-color: #8e872f;
+  color: #f0f0d7;
+  transform: scale(1.15);
 }
 .arrow-vertical {
-  font-size: 1.3em;
-  padding: 2px 6px;
+  font-size: 1.5em;
+  padding: 4px 10px;
   margin-top: 2px;
   cursor: pointer;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
+  background-color: #a79d6e;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.17);
   user-select: none;
   transition: background-color 0.3s ease, transform 0.2s ease;
   display: flex;
@@ -509,11 +520,12 @@ h1 {
   white-space: nowrap;
 }
 .arrow-vertical:hover {
-  background-color: #e0e0e0;
-  color: #444;
+  background-color: #bcbc9a;
+  color: #2e2e1f;
   transform: scale(1.1);
 }
 #arrow-left, #arrow-up {
+  margin-left: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -522,6 +534,7 @@ h1 {
   margin-top: 4px;
 }
 #arrow-right, #arrow-down {
+  margin-right: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -594,15 +607,21 @@ h1 {
   }
   #timer-container {
     font-size: 0.95em;
+    padding: 8px 16px;
   }
   .timer-arrow {
-    font-size: 1.3em;
-    padding: 3px 6px;
+    font-size: 1.6em;
+    padding: 6px 12px;
+  }
+  #arrow-left, #arrow-right {
+    font-size: 2em;
+    padding: 8px 16px;
   }
   .arrow-vertical {
-    font-size: 1em;
-    padding: 2px 5px;
+    font-size: 1.2em;
+    padding: 3px 7px;
     margin-top: 1px;
+    border-radius: 8px;
   }
 }
 @media (min-width: 1024px) {
@@ -637,6 +656,21 @@ h1 {
   }
   #timer-container {
     font-size: 1.1em;
+    padding: 10px 24px;
+  }
+  .timer-arrow {
+    font-size: 1.8em;
+    padding: 6px 14px;
+  }
+  #arrow-left, #arrow-right {
+    font-size: 2.4em;
+    padding: 10px 20px;
+  }
+  .arrow-vertical {
+    font-size: 1.5em;
+    padding: 4px 10px;
+    margin-top: 2px;
+    border-radius: 10px;
   }
 }
 </style>
@@ -701,7 +735,7 @@ h1 {
   <div id="timer-container" aria-live="polite" aria-atomic="true" role="group" aria-label="Contrôles du chronomètre">
     <div id="arrow-left" class="timer-arrow" role="button" aria-label="Verset précédent" tabindex="0">←</div>
     <div id="arrow-up" class="arrow-vertical" role="button" aria-label="Versets vers le haut" tabindex="0">↑</div>
-    <div>
+    <div id="timer-content">
       <div><strong id="timer-start-label"></strong> <span id="start-time-display">--:--:--</span></div>
       <div><strong id="timer-elapsed-label"></strong> <span id="elapsed-time-display">00:00:00</span></div>
       <div><strong id="timer-end-label"></strong> <span id="timer-end-time">--:--:--</span></div>
@@ -854,13 +888,11 @@ h1 {
   let selectedNumDiv = null;
   let pageVisible = true;
   let wasPageHidden = false;
-
   // Interval holders for long press scrolling on arrows
   let intervalLeft = null;
   let intervalRight = null;
   let intervalUp = null;
   let intervalDown = null;
-
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ayahs, traitedMap: Array.from(traitedMap.entries()),
@@ -1487,13 +1519,11 @@ h1 {
       }
     }
   }
-
   // Setup continuous navigation on long press for arrows
   function setupLongPressContinuous(el, moveFunc) {
     let timerId = null;
     let isLongPress = false;
     const intervalDelay = 150; // ms between repeated calls
-
     const startAction = () => {
       if (timerId) return;
       isLongPress = false;
@@ -1512,7 +1542,6 @@ h1 {
       }
       isLongPress = false;
     };
-
     el.addEventListener('mousedown', (e) => {
       e.preventDefault();
       startAction();
@@ -1539,7 +1568,6 @@ h1 {
       stopAction();
     });
   }
-
   // Initialize long press continuous scrolling on arrows
   function initLongPressScrolling() {
     setupLongPressContinuous(arrowLeft, moveToPreviousAyah);
@@ -1547,17 +1575,14 @@ h1 {
     setupLongPressContinuous(arrowUp, moveToLastAyahAbove);
     setupLongPressContinuous(arrowDown, moveToFirstAyahBelow);
   }
-
   // Remove default click event listeners to avoid double invocation
   arrowLeft.removeEventListener('click', moveToPreviousAyah);
   arrowRight.removeEventListener('click', moveToNextAyah);
   arrowDown.removeEventListener('click', moveToFirstAyahBelow);
   arrowUp.removeEventListener('click', moveToLastAyahAbove);
-
   // Manually remove the keydown listeners to avoid duplicate, they are re-added below anyway
   // They were anonymous functions so no direct removeEventListener possible, so we skip removing 
   // but no conflicts should happen because our long press logic handles only mousedown/touchstart
-
   // Add keydown for accessibility as before
   arrowLeft.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -1583,10 +1608,8 @@ h1 {
       moveToLastAyahAbove();
     }
   });
-
   // Initialize continuous scrolling on long press for arrows
   initLongPressScrolling();
-
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
