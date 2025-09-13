@@ -149,7 +149,7 @@ h1 {
   box-shadow: 0 4px 18px rgb(0 0 0 / 0.12);
   flex-shrink: 1;
   flex-direction: row;
-  position: relative; /* For arrow positioning */
+  position: relative;
 }
 .range-input-group {
   display: flex;
@@ -176,7 +176,7 @@ h1 {
   width: 100%;
   text-align: center;
   line-height: 1.2em;
-  height: 1.8em; /* reduced height */
+  height: 1.8em;
 }
 .controls {
   display: flex !important;
@@ -304,9 +304,9 @@ h1 {
 }
 #verse-header {
   font-weight: 700;
-  font-size: 0.95em; /* reduced font size and height */
+  font-size: 0.95em;
   background: #fff9c4;
-  padding: 6px 16px; /* reduced vertical padding */
+  padding: 6px 16px;
   border-radius: 12px;
   margin-bottom: 16px;
   box-shadow: inset 0 1px 4px #d2ca5fbb;
@@ -314,7 +314,7 @@ h1 {
 }
 #verse-header .surah-number,
 #verse-header .ayah-number {
-  color: blue; /* color numbers blue */
+  color: blue;
 }
 #verse-text {
   font-size: 1.26em;
@@ -418,33 +418,24 @@ h1 {
   user-select: none;
   letter-spacing: 0.035em;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
   position: relative;
   max-width: 520px;
   margin-left: auto;
   margin-right: auto;
+  /* Use flex to center children */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#timer-container div {
-  margin: 8px 0;
-}
-#timer-end {
-  margin-top: 16px;
-  background: #222;
-  color: white;
-  padding: 14px 20px;
-  border-radius: 14px;
-  display: none;
-  text-align: center;
-  font-size: 1.16em;
-  box-shadow: 0 5px 20px #000000dc;
+/* Container for timer text and arrows */
+#timer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
   user-select: none;
-  min-width: 280px;
-  margin: 0 auto 0 auto;
-  flex-shrink: 0;
 }
+/* Arrows styles */
 .timer-arrow {
   user-select: none;
   cursor: pointer;
@@ -467,10 +458,10 @@ h1 {
   transform: scale(1.1);
 }
 #arrow-left {
-  order: -1;
+  margin-left: 8px;
 }
 #arrow-right {
-  order: 1;
+  margin-right: 8px;
 }
 /* Responsive adjustments */
 @media (max-width: 767px) {
@@ -489,7 +480,7 @@ h1 {
     max-width: 28vw;
   }
   .selector-wrapper.non-arabic#sourah-wrapper {
-    max-width: 25vw; /* adjust for smaller screens */
+    max-width: 25vw;
   }
   .range-wrap {
     max-width: 140px;
@@ -531,7 +522,6 @@ h1 {
     font-size: 0.95em;
     margin-top: 6px;
     margin-bottom: 8px;
-    gap: 0.5rem;
   }
   .timer-arrow {
     font-size: 1.3em;
@@ -550,7 +540,7 @@ h1 {
     max-width: 9vw;
   }
   .selector-wrapper.non-arabic#sourah-wrapper {
-    max-width: 8vw; /* same as above for larger screens */
+    max-width: 8vw;
   }
   #ayat-box {
     max-height: 38em;
@@ -589,7 +579,6 @@ h1 {
     </div>
   </div>
   <div class="selector-wrapper range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
-    <div class="timer-arrow" id="arrow-left" role="button" aria-label="Verset suivant" tabindex="0">&#8592;</div>
     <div class="range-input-group">
       <label class="selector-label" id="start-label" for="start" aria-live="polite" aria-atomic="true"></label>
       <input type="number" id="start" min="1" aria-labelledby="start-label" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
@@ -598,7 +587,6 @@ h1 {
       <label class="selector-label" id="end-label" for="end" aria-live="polite" aria-atomic="true"></label>
       <input type="number" id="end" min="1" aria-labelledby="end-label" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     </div>
-    <div class="timer-arrow" id="arrow-right" role="button" aria-label="Verset précédent" tabindex="0">&#8594;</div>
   </div>
   <div class="controls" id="controls" style="margin: 0; flex-grow: 0;">
     <button id="btnRedistribuer" type="button"></button>
@@ -626,10 +614,16 @@ h1 {
     <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
   </div>
 </div>
-<div id="timer-container" aria-live="polite" aria-atomic="true" style="max-width: 520px; margin: 0 auto 12px auto;">
-  <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
-  <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
-  <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
+<div id="timer-container" aria-live="polite" aria-atomic="true">
+  <div id="timer-content" role="group" aria-label="Contrôles du chronomètre">
+    <div class="timer-arrow" id="arrow-left" role="button" aria-label="Verset précédent" tabindex="0">&#8592;</div>
+    <div>
+      <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
+      <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
+      <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
+    </div>
+    <div class="timer-arrow" id="arrow-right" role="button" aria-label="Verset suivant" tabindex="0">&#8594;</div>
+  </div>
 </div>
 <div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0 auto 0 auto;">
   <span></span><span id="end-time-display"></span>
@@ -1105,7 +1099,6 @@ h1 {
     if (currentSourah && currentAyah) {
       const lang = languageEl.value;
       const t = texts[lang] || texts.fr;
-      // Color surah number and ayah number in blue
       verseHeader.innerHTML = `${t.surahPrefix} <span class="surah-number" style="color:blue;">${currentSourah}</span>, ${t.ayahPrefix} <span class="ayah-number" style="color:blue;">${currentAyah}</span>`;
     } else {
       verseHeader.textContent = '';
@@ -1329,11 +1322,9 @@ h1 {
     if (children.length === 0) return;
     const index = children.indexOf(selectedNumDiv);
     if (index === -1) return;
-    // Previous ayah is the previous index in visible ayahs
-    // If at first, wrap to last
     let newIndex;
     if (languageEl.value === 'ar') {
-      // For RTL, left arrow goes forward (next), right arrow goes backward (previous)
+      // RTL: Left arrow → next, Right arrow → previous
       newIndex = (index + 1) % children.length;
     } else {
       newIndex = (index - 1 + children.length) % children.length;
@@ -1349,7 +1340,6 @@ h1 {
     if (index === -1) return;
     let newIndex;
     if (languageEl.value === 'ar') {
-      // For RTL, right arrow goes previous, left arrow goes next
       newIndex = (index - 1 + children.length) % children.length;
     } else {
       newIndex = (index + 1) % children.length;
