@@ -699,15 +699,15 @@ h1 {
     </div>
   </div>
   <div id="timer-container" aria-live="polite" aria-atomic="true" role="group" aria-label="Contrôles du chronomètre">
-    <div id="arrow-left" class="timer-arrow" role="button" aria-label="Verset précédent" tabindex="0">&#8592;</div>
-    <div id="arrow-up" class="arrow-vertical" role="button" aria-label="Versets vers le haut" tabindex="0">&#8593;</div>
+    <div id="arrow-left" class="timer-arrow" role="button" aria-label="Verset précédent" tabindex="0">←</div>
+    <div id="arrow-up" class="arrow-vertical" role="button" aria-label="Versets vers le haut" tabindex="0">↑</div>
     <div>
       <div><strong id="timer-start-label"></strong> <span id="start-time-display">--:--:--</span></div>
       <div><strong id="timer-elapsed-label"></strong> <span id="elapsed-time-display">00:00:00</span></div>
       <div><strong id="timer-end-label"></strong> <span id="timer-end-time">--:--:--</span></div>
     </div>
-    <div id="arrow-down" class="arrow-vertical" role="button" aria-label="Versets vers le bas" tabindex="0">&#8595;</div>
-    <div id="arrow-right" class="timer-arrow" role="button" aria-label="Verset suivant" tabindex="0">&#8594;</div>
+    <div id="arrow-down" class="arrow-vertical" role="button" aria-label="Versets vers le bas" tabindex="0">↓</div>
+    <div id="arrow-right" class="timer-arrow" role="button" aria-label="Verset suivant" tabindex="0">→</div>
   </div>
 </div>
 <div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0 auto 0 auto;">
@@ -854,6 +854,13 @@ h1 {
   let selectedNumDiv = null;
   let pageVisible = true;
   let wasPageHidden = false;
+
+  // Interval holders for long press scrolling on arrows
+  let intervalLeft = null;
+  let intervalRight = null;
+  let intervalUp = null;
+  let intervalDown = null;
+
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ayahs, traitedMap: Array.from(traitedMap.entries()),
@@ -1230,10 +1237,8 @@ h1 {
         wordCounter++;
       }
     }
-    if (firstIdx !== -1)
-      tokens[firstIdx] = `<span class="special-red">${tokens[firstIdx]}</span>`;
-    if (lastIdx !== -1 && lastIdx !== firstIdx)
-      tokens[lastIdx] = `<span class="special-green">${tokens[lastIdx]}</span>`;
+    if (firstIdx !== -1) tokens[firstIdx] = `<span class="special-red">${tokens[firstIdx]}</span>`;
+    if (lastIdx !== -1 && lastIdx !== firstIdx) tokens[lastIdx] = `<span class="special-green">${tokens[lastIdx]}</span>`;
     return symbolYellowSpan + tokens.join('') + (endSymbol ? " " + endSymbol : '');
   }
   function registerAnswer(correct) {
@@ -1482,10 +1487,78 @@ h1 {
       }
     }
   }
-  arrowLeft.addEventListener('click', moveToPreviousAyah);
-  arrowRight.addEventListener('click', moveToNextAyah);
-  arrowDown.addEventListener('click', moveToFirstAyahBelow);
-  arrowUp.addEventListener('click', moveToLastAyahAbove);
+
+  // Setup continuous navigation on long press for arrows
+  function setupLongPressContinuous(el, moveFunc) {
+    let timerId = null;
+    let isLongPress = false;
+    const intervalDelay = 150; // ms between repeated calls
+
+    const startAction = () => {
+      if (timerId) return;
+      isLongPress = false;
+      timerId = setTimeout(() => {
+        isLongPress = true;
+        timerId = setInterval(() => {
+          moveFunc();
+        }, intervalDelay);
+      }, 400);
+    };
+    const stopAction = () => {
+      if(timerId) {
+        clearTimeout(timerId);
+        clearInterval(timerId);
+        timerId = null;
+      }
+      isLongPress = false;
+    };
+
+    el.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      startAction();
+    });
+    el.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startAction();
+    }, {passive:false});
+    el.addEventListener('mouseup', (e) => {
+      e.preventDefault();
+      if(!isLongPress) moveFunc();
+      stopAction();
+    });
+    el.addEventListener('mouseleave', (e) => {
+      stopAction();
+    });
+    el.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      if(!isLongPress) moveFunc();
+      stopAction();
+    });
+    el.addEventListener('touchcancel', (e) => {
+      e.preventDefault();
+      stopAction();
+    });
+  }
+
+  // Initialize long press continuous scrolling on arrows
+  function initLongPressScrolling() {
+    setupLongPressContinuous(arrowLeft, moveToPreviousAyah);
+    setupLongPressContinuous(arrowRight, moveToNextAyah);
+    setupLongPressContinuous(arrowUp, moveToLastAyahAbove);
+    setupLongPressContinuous(arrowDown, moveToFirstAyahBelow);
+  }
+
+  // Remove default click event listeners to avoid double invocation
+  arrowLeft.removeEventListener('click', moveToPreviousAyah);
+  arrowRight.removeEventListener('click', moveToNextAyah);
+  arrowDown.removeEventListener('click', moveToFirstAyahBelow);
+  arrowUp.removeEventListener('click', moveToLastAyahAbove);
+
+  // Manually remove the keydown listeners to avoid duplicate, they are re-added below anyway
+  // They were anonymous functions so no direct removeEventListener possible, so we skip removing 
+  // but no conflicts should happen because our long press logic handles only mousedown/touchstart
+
+  // Add keydown for accessibility as before
   arrowLeft.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -1510,6 +1583,10 @@ h1 {
       moveToLastAyahAbove();
     }
   });
+
+  // Initialize continuous scrolling on long press for arrows
+  initLongPressScrolling();
+
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
