@@ -67,6 +67,7 @@ h1 {
   user-select: none;
   overflow-x: auto;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .rtl {
   direction: rtl !important;
@@ -256,7 +257,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 6px; /* reduced gap */
-  max-height: 255px; /* increased to gain space when timer hidden */
+  height: 126px; /* Fixed height for exactly 3 rows: 3 * (36px + 6px gap) + 16px padding = 126px */
   max-width: 95vw;
   overflow-y: auto;
   border-radius: 14px;
@@ -267,7 +268,7 @@ h1 {
   margin: 0 auto 10px;
   box-shadow: 0 4px 18px rgb(0 0 0 / 0.07);
   justify-content: center;
-  flex-shrink: 1;
+  flex-shrink: 0; /* Fixed height, no shrinking */
 }
 .num {
   border-radius: 12px;
@@ -327,12 +328,12 @@ h1 {
   box-sizing: border-box;
   position: relative;
   z-index: 9999;
-  max-height: 42em; /* increased height when timer hidden */
+  height: auto; /* Dynamic height will be set by JavaScript */
   user-select: text;
   display: none;
-  flex-shrink: 1;
+  flex-grow: 1; /* Allow it to expand into available space */
   scroll-behavior: smooth;
-  transition: max-height 0.3s ease;
+  transition: height 0.3s ease;
 }
 #verse-header {
   font-weight: 700;
@@ -585,7 +586,7 @@ h1 {
     max-width: 100% !important;
   }
   .table-wrap {
-    max-height: 180px;
+    height: 102px; /* Adjusted for mobile: 3 * (32px + 6px gap) + 12px padding = 102px */
     max-width: 100vw;
     padding: 6px 6px;
     overflow-x: auto;
@@ -596,7 +597,6 @@ h1 {
     font-size: 0.9em;
   }
   #ayat-box {
-    max-height: 36em;
     padding: 12px 14px;
     font-size: 1.1em;
   }
@@ -665,7 +665,6 @@ h1 {
     max-width: 8vw;
   }
   #ayat-box {
-    max-height: 42em;
     font-size: 1.3em;
   }
   .counter-box {
@@ -876,7 +875,7 @@ h1 {
     { number:7, names:{ar:"الأعراف",fr:"Al-A'raf",en:"Al-A'raf",es:"Al-A'raf"}, count:206 },
     { number:95, names:{ar:"التين",fr:"At-Tin",en:"At-Tin",es:"At-Tin"}, count:8 }
   ];
-  const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
+  const BISMILLAH = "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ";
   const languageEl = document.getElementById("language");
   const sourahEl = document.getElementById("sourah");
   const startEl = document.getElementById("start");
@@ -928,6 +927,29 @@ h1 {
   let pageVisible = true;
   let wasPageHidden = false;
   let timerVisible = true;
+
+  // Function to calculate and adjust ayat-box height dynamically
+  function adjustAyatBoxHeight() {
+    if (ayatBox.style.display === 'none') return;
+    
+    const viewportHeight = window.innerHeight;
+    const fixedBottomBar = document.getElementById('fixed-bottom-bar');
+    const fixedBottomBarHeight = fixedBottomBar.offsetHeight;
+    
+    // Get the position of the ayat-box relative to the viewport
+    const ayatBoxRect = ayatBox.getBoundingClientRect();
+    const ayatBoxTopFromViewport = ayatBoxRect.top;
+    
+    // Calculate available space from current position to bottom bar
+    const availableHeight = viewportHeight - ayatBoxTopFromViewport - fixedBottomBarHeight - 20; // 20px margin
+    
+    // Set minimum height to prevent too small boxes
+    const minHeight = 200;
+    const finalHeight = Math.max(availableHeight, minHeight);
+    
+    ayatBox.style.height = finalHeight + 'px';
+  }
+
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ayahs, traitedMap: Array.from(traitedMap.entries()),
@@ -1228,6 +1250,10 @@ h1 {
     currentAyah = num;
     currentSourah = sourahEl.value;
     ayatBox.style.display = 'block';
+    
+    // Adjust height after showing the box
+    setTimeout(adjustAyatBoxHeight, 50);
+    
     const key = `${currentSourah}:${currentAyah}:ar`;
     if (verseCache.has(key)) {
       verseText.innerHTML = verseCache.get(key);
@@ -1239,12 +1265,12 @@ h1 {
     try {
       let txt = await fetchVerseWithFallback(currentSourah, currentAyah, 'ar');
       if (surahNo === 95 && currentAyah === 1) {
-        const bismillahRegex = new RegExp('^\\s*بِّسْمِ\\s*ٱللَّهِ\\s*ٱلرَّحْمَٰنِ\\s*ٱلرَّحِيمِ\\s*', 'u');
+        const bismillahRegex = new RegExp('^\s*بِّسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ\s*', 'u');
         txt = txt.replace(bismillahRegex, '').trim();
       } else if (surahNo === 1) {
       } else if (surahNo === 9) {
       } else {
-        const bismillahRegex = new RegExp('^\\s*بِسْمِ\\s*ٱللَّهِ\\s*ٱلرَّحْمَٰنِ\\s*ٱلرَّحِيمِ\\s*', 'u');
+        const bismillahRegex = new RegExp('^\s*بِسْمِ\s*ٱللَّهِ\s*ٱلرَّحْمَٰنِ\s*ٱلرَّحِيمِ\s*', 'u');
         if (num !== 27 || (num === 27 && currentAyah === 30)) {
           txt = txt.replace(bismillahRegex, '').trim();
         }
@@ -1670,14 +1696,12 @@ h1 {
     const timerContainer = document.getElementById('timer-container');
     if(timerVisible){
       timerContainer.style.display = 'flex';
-      ayahsContainer.style.maxHeight = '255px';
-      ayatBox.style.maxHeight = '42em';
     } else {
       timerContainer.style.display = 'none';
-      ayahsContainer.style.maxHeight = '185px';
-      ayatBox.style.maxHeight = '34em';
     }
     updateButtonShowHideTimerText();
+    // Adjust ayat-box height when timer visibility changes
+    setTimeout(adjustAyatBoxHeight, 100);
     if(save) saveState();
   }
   languageEl.addEventListener('change', () => {
@@ -1710,6 +1734,12 @@ h1 {
       saveState();
     }
   });
+
+  // Add resize listener to adjust height dynamically
+  window.addEventListener('resize', () => {
+    setTimeout(adjustAyatBoxHeight, 100);
+  });
+
   let wakeLock = null;
   async function requestWakeLock() {
     if ('wakeLock' in navigator) {
@@ -1745,6 +1775,8 @@ h1 {
       updateLimits(true);
       shuffleAyahs();
     }
+    // Initial height adjustment after everything is loaded
+    setTimeout(adjustAyatBoxHeight, 200);
   });
 })();
 </script>
