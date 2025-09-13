@@ -29,6 +29,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: contain;
   background-attachment: fixed;
+  padding-bottom: 130px; /* reserve space for fixed footer */
 }
 h1 {
   font-weight: 700;
@@ -408,10 +409,31 @@ h1 {
 .counter-remaining {
   background-color: #505050;
 }
+#fixed-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background: #f5f5f5;
+  border-top: 1.5px solid #ccc;
+  box-shadow: 0 -4px 10px rgb(0 0 0 / 0.1);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 10px;
+  z-index: 99999;
+  user-select: none;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+}
+#fixed-bottom-bar .counter-box {
+  min-width: 90px;
+  margin: 0 !important;
+  font-size: 0.9em;
+}
 #timer-container {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  text-align: center;
+  margin: 0;
   font-weight: 700;
   font-size: 1.05em;
   color: #606060;
@@ -419,15 +441,15 @@ h1 {
   letter-spacing: 0.035em;
   flex-shrink: 0;
   position: relative;
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
-  /* Use flex to center children */
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 16px;
+  padding: 4px 12px;
+  background-color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.12);
 }
-/* Container for timer text and arrows */
 #timer-content {
   display: flex;
   align-items: center;
@@ -435,7 +457,6 @@ h1 {
   gap: 16px;
   user-select: none;
 }
-/* Arrows styles */
 .timer-arrow {
   user-select: none;
   cursor: pointer;
@@ -451,23 +472,60 @@ h1 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  position: relative;
 }
 .timer-arrow:hover {
   background-color: #e0e0e0;
   color: #444;
   transform: scale(1.1);
 }
-#arrow-left {
+#arrow-left, #arrow-up {
   margin-left: 8px;
 }
-#arrow-right {
+#arrow-right, #arrow-down {
   margin-right: 8px;
+}
+.arrow-vertical {
+  font-size: 1.3em;
+  padding: 2px 6px;
+  margin-top: 2px;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 0.1);
+  user-select: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.arrow-vertical:hover {
+  background-color: #e0e0e0;
+  color: #444;
+  transform: scale(1.1);
+}
+#arrow-left, #arrow-up {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#arrow-up {
+  margin-top: 4px;
+}
+#arrow-right, #arrow-down {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#arrow-down {
+  margin-top: 4px;
 }
 /* Responsive adjustments */
 @media (max-width: 767px) {
   body {
     font-size: 14px;
     padding: 1em 3vw 1.2em;
+    padding-bottom: 130px; /* reserve space for fixed footer */
   }
   .filters-container {
     max-width: 100% !important;
@@ -518,20 +576,28 @@ h1 {
     padding: 7px 12px;
     font-size: 0.8em;
   }
+  #fixed-bottom-bar {
+    gap: 8px;
+    padding: 6px 8px;
+  }
   #timer-container {
     font-size: 0.95em;
-    margin-top: 6px;
-    margin-bottom: 8px;
   }
   .timer-arrow {
     font-size: 1.3em;
     padding: 3px 6px;
+  }
+  .arrow-vertical {
+    font-size: 1em;
+    padding: 2px 5px;
+    margin-top: 1px;
   }
 }
 @media (min-width: 1024px) {
   body {
     font-size: 17px;
     padding: 1.5em 6vw 1.5em;
+    padding-bottom: 130px; /* reserve space for fixed footer */
   }
   .filters-container {
     max-width: 720px;
@@ -550,10 +616,12 @@ h1 {
     font-size: 1em;
     min-width: 110px;
   }
+  #fixed-bottom-bar {
+    gap: 12px;
+    padding: 8px 14px;
+  }
   #timer-container {
     font-size: 1.1em;
-    margin-top: 12px;
-    margin-bottom: 12px;
   }
 }
 </style>
@@ -603,26 +671,26 @@ h1 {
     <button id="btnIncorrect" type="button"></button>
   </div>
 </div>
-<div id="counters" style="display:flex; justify-content:center; gap:12px; margin-bottom:8px;" aria-live="polite" aria-atomic="true">
-  <div class="counter-box counter-correct" style="flex:1; margin:0;">
+<div id="fixed-bottom-bar" aria-live="polite" aria-atomic="true">
+  <div class="counter-box counter-correct" style="flex:1;">
     <span id="label-correct"></span> <span id="correct-count">0</span>
   </div>
-  <div class="counter-box counter-incorrect" style="flex:1; margin:0;">
+  <div class="counter-box counter-incorrect" style="flex:1;">
     <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
   </div>
-  <div class="counter-box counter-remaining" style="flex:none; margin:0; min-width:144px; text-align:center;">
+  <div class="counter-box counter-remaining" style="flex:none; min-width:144px; text-align:center;">
     <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
   </div>
-</div>
-<div id="timer-container" aria-live="polite" aria-atomic="true">
-  <div id="timer-content" role="group" aria-label="Contrôles du chronomètre">
-    <div class="timer-arrow" id="arrow-left" role="button" aria-label="Verset précédent" tabindex="0">&#8592;</div>
+  <div id="timer-container" aria-live="polite" aria-atomic="true" role="group" aria-label="Contrôles du chronomètre">
+    <div id="arrow-left" class="timer-arrow" role="button" aria-label="Verset précédent" tabindex="0">&#8592;</div>
+    <div id="arrow-up" class="arrow-vertical" role="button" aria-label="Versets vers le haut" tabindex="0">&#8593;</div>
     <div>
-      <div><strong></strong> <span id="start-time-display">--:--:--</span></div>
-      <div><strong></strong> <span id="elapsed-time-display">00:00:00</span></div>
-      <div><strong></strong> <span id="timer-end-time">--:--:--</span></div>
+      <div><strong id="timer-start-label"></strong> <span id="start-time-display">--:--:--</span></div>
+      <div><strong id="timer-elapsed-label"></strong> <span id="elapsed-time-display">00:00:00</span></div>
+      <div><strong id="timer-end-label"></strong> <span id="timer-end-time">--:--:--</span></div>
     </div>
-    <div class="timer-arrow" id="arrow-right" role="button" aria-label="Verset suivant" tabindex="0">&#8594;</div>
+    <div id="arrow-down" class="arrow-vertical" role="button" aria-label="Versets vers le bas" tabindex="0">&#8595;</div>
+    <div id="arrow-right" class="timer-arrow" role="button" aria-label="Verset suivant" tabindex="0">&#8594;</div>
   </div>
 </div>
 <div id="timer-end" style="display:none; flex:none; min-width:280px; margin:0 auto 0 auto;">
@@ -751,6 +819,8 @@ h1 {
   const endTimeDisplay = document.getElementById("end-time-display");
   const arrowLeft = document.getElementById('arrow-left');
   const arrowRight = document.getElementById('arrow-right');
+  const arrowUp = document.getElementById('arrow-up');
+  const arrowDown = document.getElementById('arrow-down');
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -767,7 +837,6 @@ h1 {
   let selectedNumDiv = null;
   let pageVisible = true;
   let wasPageHidden = false;
-
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ayahs, traitedMap: Array.from(traitedMap.entries()),
@@ -848,22 +917,11 @@ h1 {
     labelCorrect.textContent = t.labelCorrect;
     labelIncorrect.textContent = t.labelIncorrect;
     labelRemaining.textContent = t.labelRemaining;
+    timerStartDisplay.previousElementSibling.textContent = t.timerStart;
+    timerElapsedDisplay.previousElementSibling.textContent = t.timerElapsed;
+    timerEndDisplay.previousElementSibling.textContent = t.timerEnd;
+    timerEndDisplay.previousElementSibling.id = "timer-end-label";
     updateDirection(lang);
-    let children = document.getElementById('timer-container').children;
-    if(children.length >= 3) {
-      children[0].querySelector('strong').textContent = t.timerStart;
-      children[1].querySelector('strong').textContent = t.timerElapsed;
-      children[2].querySelector('strong').textContent = t.timerEnd;
-    }
-    const timerEndLabel = document.querySelector('#timer-end > span:first-child');
-    if(timerEndLabel) {
-      timerEndLabel.textContent = t.timerEnd + ' ';
-    }
-    btnCorrect.setAttribute('aria-label', t.correct);
-    btnIncorrect.setAttribute('aria-label', t.incorrect);
-    btnRedistribuer.setAttribute('aria-label', t.redistribuer);
-    btnTrier.setAttribute('aria-label', t.trier);
-    btnToggle.setAttribute('aria-label', t.toggle);
   }
   function updateDirection(lang) {
     const rtl = lang === "ar";
@@ -1292,6 +1350,9 @@ h1 {
           } else {
             newIndex = nextRowIndexes[nextRowIndexes.length -1];
           }
+        } else {
+          // If no next row, stay in same position - do nothing
+          newIndex = index;
         }
         break;
       }
@@ -1307,6 +1368,9 @@ h1 {
           } else {
             newIndex = prevRowIndexes[prevRowIndexes.length -1];
           }
+        } else {
+          // If no previous row, stay in same position - do nothing
+          newIndex = index;
         }
         break;
       }
@@ -1347,8 +1411,68 @@ h1 {
     setSelectedNum(children[newIndex]);
     children[newIndex].focus();
   }
+  function moveToFirstAyahBelow() {
+    if (!selectedNumDiv) return;
+    const children = [...ayahsContainer.children];
+    if (children.length === 0) return;
+    const index = children.indexOf(selectedNumDiv);
+    if (index === -1) return;
+    const elementTops = children.map(c => c.offsetTop);
+    const currentRowTop = selectedNumDiv.offsetTop;
+    const uniqueRowTops = [...new Set(elementTops)].sort((a,b) => a-b);
+    const currentRowNumber = uniqueRowTops.indexOf(currentRowTop);
+    const nextRowNumber = currentRowNumber + 1;
+    if (nextRowNumber < uniqueRowTops.length) {
+      const nextRowTop = uniqueRowTops[nextRowNumber];
+      const nextRowIndexes = children
+        .map((c, i) => (elementTops[i] === nextRowTop ? i : -1))
+        .filter(i => i !== -1);
+      const colIndex = children.indexOf(selectedNumDiv) - children.slice(0, i => i.offsetTop === currentRowTop).length;
+      // Find the column index of selectedNumDiv within its row:
+      let indexesCurrentRow = children
+        .map((c,i) => (elementTops[i] === currentRowTop ? i : -1))
+        .filter(i => i !== -1);
+      const colInRow = indexesCurrentRow.indexOf(index);
+      // Determine target index in next row in same column (colInRow)
+      let targetIndex = (colInRow < nextRowIndexes.length) ? nextRowIndexes[colInRow] : nextRowIndexes[nextRowIndexes.length - 1];
+
+      if (targetIndex !== undefined) {
+        setSelectedNum(children[targetIndex]);
+        children[targetIndex].focus();
+      }
+    }
+  }
+  function moveToLastAyahAbove() {
+    if (!selectedNumDiv) return;
+    const children = [...ayahsContainer.children];
+    if (children.length === 0) return;
+    const index = children.indexOf(selectedNumDiv);
+    if (index === -1) return;
+    const elementTops = children.map(c => c.offsetTop);
+    const currentRowTop = selectedNumDiv.offsetTop;
+    const uniqueRowTops = [...new Set(elementTops)].sort((a,b) => a-b);
+    const currentRowNumber = uniqueRowTops.indexOf(currentRowTop);
+    const prevRowNumber = currentRowNumber - 1;
+    if (prevRowNumber >= 0) {
+      const prevRowTop = uniqueRowTops[prevRowNumber];
+      const prevRowIndexes = children
+        .map((c, i) => (elementTops[i] === prevRowTop ? i : -1))
+        .filter(i => i !== -1);
+      let indexesCurrentRow = children
+        .map((c,i) => (elementTops[i] === currentRowTop ? i : -1))
+        .filter(i => i !== -1);
+      const colInRow = indexesCurrentRow.indexOf(index);
+      let targetIndex = (colInRow < prevRowIndexes.length) ? prevRowIndexes[colInRow] : prevRowIndexes[prevRowIndexes.length - 1];
+      if (targetIndex !== undefined) {
+        setSelectedNum(children[targetIndex]);
+        children[targetIndex].focus();
+      }
+    }
+  }
   arrowLeft.addEventListener('click', moveToPreviousAyah);
   arrowRight.addEventListener('click', moveToNextAyah);
+  arrowDown.addEventListener('click', moveToFirstAyahBelow);
+  arrowUp.addEventListener('click', moveToLastAyahAbove);
   arrowLeft.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -1359,6 +1483,18 @@ h1 {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       moveToNextAyah();
+    }
+  });
+  arrowDown.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      moveToFirstAyahBelow();
+    }
+  });
+  arrowUp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      moveToLastAyahAbove();
     }
   });
   document.addEventListener('visibilitychange', () => {
