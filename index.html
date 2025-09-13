@@ -149,6 +149,7 @@ h1 {
   box-shadow: 0 4px 18px rgb(0 0 0 / 0.12);
   flex-shrink: 1;
   flex-direction: row;
+  position: relative; /* For arrow positioning */
 }
 .range-input-group {
   display: flex;
@@ -417,6 +418,14 @@ h1 {
   user-select: none;
   letter-spacing: 0.035em;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
 }
 #timer-container div {
   margin: 8px 0;
@@ -435,6 +444,33 @@ h1 {
   min-width: 280px;
   margin: 0 auto 0 auto;
   flex-shrink: 0;
+}
+.timer-arrow {
+  user-select: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.6em;
+  color: #606060;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.timer-arrow:hover {
+  background-color: #e0e0e0;
+  color: #444;
+  transform: scale(1.1);
+}
+#arrow-left {
+  order: -1;
+}
+#arrow-right {
+  order: 1;
 }
 /* Responsive adjustments */
 @media (max-width: 767px) {
@@ -495,6 +531,11 @@ h1 {
     font-size: 0.95em;
     margin-top: 6px;
     margin-bottom: 8px;
+    gap: 0.5rem;
+  }
+  .timer-arrow {
+    font-size: 1.3em;
+    padding: 3px 6px;
   }
 }
 @media (min-width: 1024px) {
@@ -548,6 +589,7 @@ h1 {
     </div>
   </div>
   <div class="selector-wrapper range-wrap" style="flex-direction: row; gap: 12px; max-width: auto; min-width: auto; align-items: center; justify-content: center;">
+    <div class="timer-arrow" id="arrow-left" role="button" aria-label="Verset suivant" tabindex="0">&#8592;</div>
     <div class="range-input-group">
       <label class="selector-label" id="start-label" for="start" aria-live="polite" aria-atomic="true"></label>
       <input type="number" id="start" min="1" aria-labelledby="start-label" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
@@ -556,6 +598,7 @@ h1 {
       <label class="selector-label" id="end-label" for="end" aria-live="polite" aria-atomic="true"></label>
       <input type="number" id="end" min="1" aria-labelledby="end-label" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     </div>
+    <div class="timer-arrow" id="arrow-right" role="button" aria-label="Verset précédent" tabindex="0">&#8594;</div>
   </div>
   <div class="controls" id="controls" style="margin: 0; flex-grow: 0;">
     <button id="btnRedistribuer" type="button"></button>
@@ -712,6 +755,8 @@ h1 {
   const timerEndDisplay = document.getElementById("timer-end-time");
   const timerEndBox = document.getElementById("timer-end");
   const endTimeDisplay = document.getElementById("end-time-display");
+  const arrowLeft = document.getElementById('arrow-left');
+  const arrowRight = document.getElementById('arrow-right');
   let ayahs = [];
   let traitedMap = new Map();
   let currentAyah = null;
@@ -728,6 +773,7 @@ h1 {
   let selectedNumDiv = null;
   let pageVisible = true;
   let wasPageHidden = false;
+
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       ayahs, traitedMap: Array.from(traitedMap.entries()),
@@ -1035,7 +1081,6 @@ h1 {
     verseText.textContent = 'Chargement...';
     try {
       let txt = await fetchVerseWithFallback(currentSourah, currentAyah, 'ar');
-
       if (surahNo === 95 && currentAyah === 1) {
         const bismillahRegex = new RegExp('^\\s*بِّسْمِ\\s*ٱللَّهِ\\s*ٱلرَّحْمَٰنِ\\s*ٱلرَّحِيمِ\\s*', 'u');
         txt = txt.replace(bismillahRegex, '').trim();
@@ -1047,7 +1092,6 @@ h1 {
           txt = txt.replace(bismillahRegex, '').trim();
         }
       }
-
       let colored = colorVerseText(txt);
       verseText.innerHTML = `<div>${colored}</div>`;
       verseCache.set(key, verseText.innerHTML);
@@ -1227,9 +1271,7 @@ h1 {
     const colIndex = indexesSameRow.indexOf(index);
     const uniqueRowTops = [...new Set(elementTops)].sort((a,b) => a-b);
     const currentRowNumber = uniqueRowTops.indexOf(currentRowTop);
-
     const isRTL = languageEl.value === "ar";
-
     switch(key) {
       case 'ArrowRight':
         if (isRTL) {
@@ -1281,6 +1323,54 @@ h1 {
       children[newIndex].focus();
     }
   }
+  function moveToPreviousAyah() {
+    if (!selectedNumDiv) return;
+    const children = [...ayahsContainer.children];
+    if (children.length === 0) return;
+    const index = children.indexOf(selectedNumDiv);
+    if (index === -1) return;
+    // Previous ayah is the previous index in visible ayahs
+    // If at first, wrap to last
+    let newIndex;
+    if (languageEl.value === 'ar') {
+      // For RTL, left arrow goes forward (next), right arrow goes backward (previous)
+      newIndex = (index + 1) % children.length;
+    } else {
+      newIndex = (index - 1 + children.length) % children.length;
+    }
+    setSelectedNum(children[newIndex]);
+    children[newIndex].focus();
+  }
+  function moveToNextAyah() {
+    if (!selectedNumDiv) return;
+    const children = [...ayahsContainer.children];
+    if (children.length === 0) return;
+    const index = children.indexOf(selectedNumDiv);
+    if (index === -1) return;
+    let newIndex;
+    if (languageEl.value === 'ar') {
+      // For RTL, right arrow goes previous, left arrow goes next
+      newIndex = (index - 1 + children.length) % children.length;
+    } else {
+      newIndex = (index + 1) % children.length;
+    }
+    setSelectedNum(children[newIndex]);
+    children[newIndex].focus();
+  }
+  arrowLeft.addEventListener('click', moveToPreviousAyah);
+  arrowRight.addEventListener('click', moveToNextAyah);
+  arrowLeft.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      moveToPreviousAyah();
+    }
+  });
+  arrowRight.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      moveToNextAyah();
+    }
+  });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       pageVisible = false;
