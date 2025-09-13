@@ -227,7 +227,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-height: 200px;
+  max-height: 200px; /* Restored scroll with explicit height */
   max-width: 95vw;
   overflow-y: auto;
   border-radius: 14px;
@@ -293,7 +293,7 @@ h1 {
   line-height: 1.55em;
   direction: rtl;
   text-align: right;
-  overflow-y: auto;
+  overflow-y: auto; /* Restored scroll */
   overflow-x: hidden;
   box-sizing: border-box;
   position: static;
@@ -435,82 +435,57 @@ h1 {
   gap: 12px;
   flex-wrap: nowrap;
 }
-/* Modified timer container for smaller width and stacked text */
+/* Adjusted timer container to be wider to hold arrows inside and aligned vertically with three stacked lines */
 #fixed-bottom-bar > #timer-container {
   margin: 0 auto;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 10px 14px;
+  gap: 8px;
+  padding: 12px 28px;
   background-color: #8c8c7a;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgb(0 0 0 / 0.25);
   color: #f5f5e1;
   font-weight: 700;
-  font-size: 1.05em;
+  font-size: 1.1em;
   text-align: center;
   user-select: none;
   position: relative;
   flex-wrap: nowrap;
-  max-width: 165px; /* Reduced width for small screens */
+  max-width: calc(100vw - 80px); /* slightly wider than arrows space */
+  box-sizing: border-box;
 }
-#timer-content {
-  display: flex;
-  flex-direction: column; /* stack lines vertically */
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  user-select: none;
-  width: 100%;
-  text-align: center;
-  flex-grow: 1;
-  white-space: normal;
-}
-.timer-arrow {
-  user-select: none;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 1.8em;
-  color: #444;
-  padding: 6px 14px;
-  border-radius: 14px;
-  background-color: #a79d6e;
-  box-shadow: 0 3px 11px rgba(0,0,0,0.22);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  user-select: none;
-}
-.timer-arrow:hover {
-  background-color: #bcbc9a;
-  color: #2e2e1f;
-  transform: scale(1.1);
-}
-#arrow-left, #arrow-right {
+/* Timer container flex layout for arrows and text lines stacked vertically centered */
+#timer-container > #arrow-left,
+#timer-container > #arrow-right {
   font-size: 2.4em;
-  padding: 10px 20px;
+  padding: 10px 16px;
   font-weight: 900;
   background-color: #7a722c;
   color: #f5f5e1;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   border-radius: 18px;
   user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: background-color 0.3s ease, transform 0.25s ease;
+  flex-shrink: 0;
+  margin-top: 6px;
 }
-#arrow-left:hover, #arrow-right:hover {
+#timer-container > #arrow-left:hover,
+#timer-container > #arrow-right:hover {
   background-color: #8e872f;
   color: #f0f0d7;
   transform: scale(1.15);
 }
-.arrow-vertical {
+#timer-container > #arrow-up,
+#timer-container > #arrow-down {
   font-size: 1.5em;
   padding: 4px 10px;
-  margin-top: 2px;
   cursor: pointer;
   background-color: #a79d6e;
   border-radius: 10px;
@@ -521,29 +496,31 @@ h1 {
   align-items: center;
   justify-content: center;
   white-space: nowrap;
+  margin-top: 4px;
 }
-.arrow-vertical:hover {
+#timer-container > #arrow-up:hover,
+#timer-container > #arrow-down:hover {
   background-color: #bcbc9a;
   color: #2e2e1f;
   transform: scale(1.1);
 }
-#arrow-left, #arrow-up {
-  margin-left: 8px;
+#timer-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* stacked vertically */
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  user-select: none;
+  width: 100%;
+  text-align: center;
+  flex-grow: 1;
+  white-space: normal;
+  margin: 0 10px;
 }
-#arrow-up {
-  margin-top: 4px;
-}
-#arrow-right, #arrow-down {
-  margin-right: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-#arrow-down {
-  margin-top: 4px;
+#timer-content > div {
+  line-height: 1.3em;
+  white-space: nowrap;
+  font-weight: 700;
 }
 /* Responsive adjustments */
 @media (max-width: 767px) {
@@ -608,14 +585,15 @@ h1 {
   #fixed-bottom-bar > .counters-row {
     gap: 8px;
   }
-  /* Override timer width and text stacking on mobile */
+  /* Adjust timer container for mobile, keep arrows inside */
   #fixed-bottom-bar > #timer-container {
-    max-width: 165px;
-    flex-wrap: nowrap;
+    max-width: calc(100vw - 80px);
+    padding: 12px 22px;
   }
   #timer-content {
     flex-direction: column;
     white-space: normal;
+    margin: 0 8px;
   }
   #timer-start-label, #timer-elapsed-label, #timer-end-label {
     display: block;
@@ -624,18 +602,17 @@ h1 {
   #timer-content div {
     line-height: 1.4em;
   }
-  .timer-arrow {
-    font-size: 1.6em;
-    padding: 6px 12px;
-  }
-  #arrow-left, #arrow-right {
+  #timer-container > #arrow-left,
+  #timer-container > #arrow-right {
     font-size: 2em;
-    padding: 8px 16px;
+    padding: 10px 16px;
+    margin-top: 6px;
   }
-  .arrow-vertical {
+  #timer-container > #arrow-up,
+  #timer-container > #arrow-down {
     font-size: 1.2em;
     padding: 3px 7px;
-    margin-top: 1px;
+    margin-top: 4px;
     border-radius: 8px;
   }
 }
@@ -671,20 +648,19 @@ h1 {
   }
   #timer-container {
     font-size: 1.1em;
-    padding: 10px 24px;
+    padding: 12px 28px;
   }
-  .timer-arrow {
-    font-size: 1.8em;
-    padding: 6px 14px;
-  }
-  #arrow-left, #arrow-right {
+  #timer-container > #arrow-left,
+  #timer-container > #arrow-right {
     font-size: 2.4em;
     padding: 10px 20px;
+    margin-top: 6px;
   }
-  .arrow-vertical {
+  #timer-container > #arrow-up,
+  #timer-container > #arrow-down {
     font-size: 1.5em;
     padding: 4px 10px;
-    margin-top: 2px;
+    margin-top: 4px;
     border-radius: 10px;
   }
 }
@@ -1420,7 +1396,6 @@ h1 {
             newIndex = nextRowIndexes[nextRowIndexes.length -1];
           }
         } else {
-          // If no next row, stay in same position - do nothing
           newIndex = index;
         }
         break;
@@ -1438,7 +1413,6 @@ h1 {
             newIndex = prevRowIndexes[prevRowIndexes.length -1];
           }
         } else {
-          // If no previous row, stay in same position - do nothing
           newIndex = index;
         }
         break;
@@ -1457,7 +1431,6 @@ h1 {
     if (index === -1) return;
     let newIndex;
     if (languageEl.value === 'ar') {
-      // RTL: Left arrow → next, Right arrow → previous
       newIndex = (index + 1) % children.length;
     } else {
       newIndex = (index - 1 + children.length) % children.length;
@@ -1595,10 +1568,7 @@ h1 {
   arrowRight.removeEventListener('click', moveToNextAyah);
   arrowDown.removeEventListener('click', moveToFirstAyahBelow);
   arrowUp.removeEventListener('click', moveToLastAyahAbove);
-  // Manually remove the keydown listeners to avoid duplicate, they are re-added below anyway
-  // They were anonymous functions so no direct removeEventListener possible, so we skip removing 
-  // but no conflicts should happen because our long press logic handles only mousedown/touchstart
-  // Add keydown for accessibility as before
+  // Keydown listeners for accessibility
   arrowLeft.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
