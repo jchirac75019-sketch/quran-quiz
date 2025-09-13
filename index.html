@@ -29,7 +29,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: contain;
   background-attachment: fixed;
-  padding-bottom: 130px; /* reserve space for fixed footer */
+  padding-bottom: 150px; /* reserve more space for fixed footer with stacked counters */
 }
 h1 {
   font-weight: 700;
@@ -399,6 +399,7 @@ h1 {
   font-size: 0.86em;
   min-width: 90px;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 .counter-correct {
   background-color: #0b3d0b;
@@ -418,29 +419,25 @@ h1 {
   border-top: 1.5px solid #ccc;
   box-shadow: 0 -4px 10px rgb(0 0 0 / 0.1);
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 8px 12px;
   padding: 8px 10px;
   z-index: 99999;
   user-select: none;
-  flex-wrap: nowrap;
   align-items: center;
   overflow-x: auto;
 }
-#fixed-bottom-bar .counter-box {
-  min-width: 90px;
-  margin: 0 !important;
-  font-size: 0.9em;
+#fixed-bottom-bar > .counters-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
-#timer-container {
-  margin: 0;
-  font-weight: 700;
-  font-size: 1.05em;
-  color: #606060;
-  user-select: none;
-  letter-spacing: 0.035em;
+#fixed-bottom-bar > #timer-container {
+  margin: 0 auto;
   flex-shrink: 0;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -449,6 +446,17 @@ h1 {
   background-color: #fff;
   border-radius: 14px;
   box-shadow: 0 2px 10px rgb(0 0 0 / 0.12);
+  font-weight: 700;
+  font-size: 1.05em;
+  color: #606060;
+  letter-spacing: 0.035em;
+  user-select: none;
+  position: relative;
+}
+#fixed-bottom-bar .counter-box {
+  min-width: 90px;
+  margin: 0 !important;
+  font-size: 0.9em;
 }
 #timer-content {
   display: flex;
@@ -498,6 +506,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
 }
 .arrow-vertical:hover {
   background-color: #e0e0e0;
@@ -525,7 +534,7 @@ h1 {
   body {
     font-size: 14px;
     padding: 1em 3vw 1.2em;
-    padding-bottom: 130px; /* reserve space for fixed footer */
+    padding-bottom: 150px; /* reserve space for fixed footer */
   }
   .filters-container {
     max-width: 100% !important;
@@ -577,8 +586,11 @@ h1 {
     font-size: 0.8em;
   }
   #fixed-bottom-bar {
-    gap: 8px;
+    gap: 6px 8px;
     padding: 6px 8px;
+  }
+  #fixed-bottom-bar > .counters-row {
+    gap: 8px;
   }
   #timer-container {
     font-size: 0.95em;
@@ -597,7 +609,7 @@ h1 {
   body {
     font-size: 17px;
     padding: 1.5em 6vw 1.5em;
-    padding-bottom: 130px; /* reserve space for fixed footer */
+    padding-bottom: 150px; /* reserve space for fixed footer */
   }
   .filters-container {
     max-width: 720px;
@@ -619,6 +631,9 @@ h1 {
   #fixed-bottom-bar {
     gap: 12px;
     padding: 8px 14px;
+  }
+  #fixed-bottom-bar > .counters-row {
+    gap: 12px;
   }
   #timer-container {
     font-size: 1.1em;
@@ -672,14 +687,16 @@ h1 {
   </div>
 </div>
 <div id="fixed-bottom-bar" aria-live="polite" aria-atomic="true">
-  <div class="counter-box counter-correct" style="flex:1;">
-    <span id="label-correct"></span> <span id="correct-count">0</span>
-  </div>
-  <div class="counter-box counter-incorrect" style="flex:1;">
-    <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
-  </div>
-  <div class="counter-box counter-remaining" style="flex:none; min-width:144px; text-align:center;">
-    <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
+  <div class="counters-row">
+    <div class="counter-box counter-correct" style="flex:1;">
+      <span id="label-correct"></span> <span id="correct-count">0</span>
+    </div>
+    <div class="counter-box counter-incorrect" style="flex:1;">
+      <span id="label-incorrect"></span> <span id="incorrect-count">0</span>
+    </div>
+    <div class="counter-box counter-remaining" style="flex:none; min-width:144px; text-align:center;">
+      <span id="label-remaining"></span> <span id="remaining-count">0</span> / <span id="total-count">0</span>
+    </div>
   </div>
   <div id="timer-container" aria-live="polite" aria-atomic="true" role="group" aria-label="Contrôles du chronomètre">
     <div id="arrow-left" class="timer-arrow" role="button" aria-label="Verset précédent" tabindex="0">&#8592;</div>
@@ -1427,15 +1444,11 @@ h1 {
       const nextRowIndexes = children
         .map((c, i) => (elementTops[i] === nextRowTop ? i : -1))
         .filter(i => i !== -1);
-      const colIndex = children.indexOf(selectedNumDiv) - children.slice(0, i => i.offsetTop === currentRowTop).length;
-      // Find the column index of selectedNumDiv within its row:
       let indexesCurrentRow = children
         .map((c,i) => (elementTops[i] === currentRowTop ? i : -1))
         .filter(i => i !== -1);
       const colInRow = indexesCurrentRow.indexOf(index);
-      // Determine target index in next row in same column (colInRow)
       let targetIndex = (colInRow < nextRowIndexes.length) ? nextRowIndexes[colInRow] : nextRowIndexes[nextRowIndexes.length - 1];
-
       if (targetIndex !== undefined) {
         setSelectedNum(children[targetIndex]);
         children[targetIndex].focus();
