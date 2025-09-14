@@ -938,20 +938,38 @@ h1 {
   let wasPageHidden = false;
   let timerVisible = true;
 
-  // Function to calculate and adjust ayat-box height dynamically
+  // Function to calculate and adjust ayat-box height dynamically based on timer visibility
   function adjustAyatBoxHeight() {
     if (ayatBox.style.display === 'none') return;
     
     const viewportHeight = window.innerHeight;
     const fixedBottomBar = document.getElementById('fixed-bottom-bar');
-    const fixedBottomBarHeight = fixedBottomBar.offsetHeight;
+    const timerContainer = document.getElementById('timer-container');
+    
+    // Get actual bottom bar height
+    let actualBottomBarHeight = fixedBottomBar.offsetHeight;
+    
+    // If timer is hidden, calculate what the bottom bar height would be without timer
+    if (!timerVisible) {
+      // Calculate height of just the counters row
+      const countersRow = document.querySelector('.counters-row');
+      if (countersRow) {
+        // Get the bottom bar padding and gap
+        const bottomBarStyle = getComputedStyle(fixedBottomBar);
+        const paddingTop = parseFloat(bottomBarStyle.paddingTop) || 0;
+        const paddingBottom = parseFloat(bottomBarStyle.paddingBottom) || 0;
+        const gap = parseFloat(bottomBarStyle.gap) || 0;
+        
+        actualBottomBarHeight = countersRow.offsetHeight + paddingTop + paddingBottom + gap;
+      }
+    }
     
     // Get the position of the ayat-box relative to the viewport
     const ayatBoxRect = ayatBox.getBoundingClientRect();
     const ayatBoxTopFromViewport = ayatBoxRect.top;
     
     // Calculate available space from current position to bottom bar
-    const availableHeight = viewportHeight - ayatBoxTopFromViewport - fixedBottomBarHeight - 20; // 20px margin
+    const availableHeight = viewportHeight - ayatBoxTopFromViewport - actualBottomBarHeight - 20; // 20px margin
     
     // Set minimum height to prevent too small boxes
     const minHeight = 200;
@@ -1710,7 +1728,7 @@ h1 {
       timerContainer.style.display = 'none';
     }
     updateButtonShowHideTimerText();
-    // Adjust ayat-box height when timer visibility changes
+    // Adjust ayat-box height when timer visibility changes - with improved calculation
     setTimeout(adjustAyatBoxHeight, 100);
     if(save) saveState();
   }
