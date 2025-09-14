@@ -28,7 +28,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: contain;
   background-attachment: fixed;
-  padding-bottom: 130px; /* Adjusted for smaller bottom bar */
+  padding-bottom: 90px; /* Reduced from 130px */
   margin: 0;
 }
 #main-scroll-container {
@@ -421,15 +421,15 @@ h1 {
   font-weight: 700;
 }
 .counter-box {
-  padding: 6px 14px; /* slightly reduced padding */
-  border-radius: 16px;
+  padding: 4px 10px; /* Reduced from 6px 14px */
+  border-radius: 12px; /* Reduced from 16px */
   font-weight: 700;
   text-align: center;
   color: white;
-  margin: 2px;
+  margin: 1px; /* Reduced from 2px */
   user-select: none;
-  font-size: 0.82em; /* smaller font */
-  min-width: 84px; /* reduced min-width */
+  font-size: 0.75em; /* Reduced from 0.82em */
+  min-width: 70px; /* Reduced from 84px */
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -453,8 +453,8 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px 10px; /* reduced gap */
-  padding: 8px 12px; /* reduced padding */
+  gap: 3px 6px; /* Reduced from 6px 10px */
+  padding: 4px 8px; /* Reduced from 8px 12px */
   z-index: 99999;
   user-select: none;
   align-items: center;
@@ -464,7 +464,7 @@ h1 {
   display: flex;
   justify-content: center;
   width: 100%;
-  gap: 10px;
+  gap: 6px; /* Reduced from 10px */
   flex-wrap: nowrap;
 }
 /* Adjusted timer container to be slightly smaller and more compact */
@@ -474,14 +474,14 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px; /* tighter gap */
-  padding: 8px 16px; /* smaller padding */
+  gap: 4px; /* Reduced from 6px */
+  padding: 4px 8px; /* Reduced from 8px 16px */
   background-color: #8c8c7a;
-  border-radius: 16px;
+  border-radius: 12px; /* Reduced from 16px */
   box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
   color: #f5f5e1;
   font-weight: 700;
-  font-size: 1em; /* slightly smaller font */
+  font-size: 0.85em; /* Reduced from 1em */
   text-align: center;
   user-select: none;
   position: relative;
@@ -492,13 +492,13 @@ h1 {
 /* Timer container flex layout for arrows and text lines stacked vertically centered */
 #timer-container > #arrow-left,
 #timer-container > #arrow-right {
-  font-size: 2.2em; /* slightly smaller */
-  padding: 8px 18px; /* reduced padding */
+  font-size: 1.8em; /* Reduced from 2.2em but still visible */
+  padding: 6px 12px; /* Reduced from 8px 18px */
   font-weight: 900;
   background-color: #7a722c;
   color: #f5f5e1;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  border-radius: 18px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3); /* Reduced shadow */
+  border-radius: 14px; /* Reduced from 18px */
   user-select: none;
   display: flex;
   align-items: center;
@@ -506,7 +506,7 @@ h1 {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.25s ease;
   flex-shrink: 0;
-  margin-top: 6px;
+  margin-top: 2px; /* Reduced from 6px */
 }
 #timer-container > #arrow-left:hover,
 #timer-container > #arrow-right:hover {
@@ -516,19 +516,19 @@ h1 {
 }
 #timer-container > #arrow-up,
 #timer-container > #arrow-down {
-  font-size: 1.3em; /* slightly smaller */
-  padding: 4px 8px; /* reduced padding */
+  font-size: 1em; /* Reduced from 1.3em */
+  padding: 2px 6px; /* Reduced from 4px 8px */
   cursor: pointer;
   background-color: #a79d6e;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.17);
+  border-radius: 8px; /* Reduced from 10px */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.17); /* Reduced shadow */
   user-select: none;
   transition: background-color 0.3s ease, transform 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  margin-top: 4px;
+  margin-top: 2px; /* Reduced from 4px */
 }
 #timer-container > #arrow-up:hover,
 #timer-container > #arrow-down:hover {
@@ -541,18 +541,20 @@ h1 {
   flex-direction: column; /* stacked vertically */
   align-items: center;
   justify-content: center;
-  gap: 4px; /* reduced gap */
+  gap: 2px; /* Reduced from 4px */
   user-select: none;
   width: 100%;
   text-align: center;
   flex-grow: 1;
   white-space: normal;
-  margin: 0 8px;
+  margin: 0 4px; /* Reduced from 0 8px */
+  font-size: 0.8em; /* Reduced text size */
 }
 /* Responsive adjustments */
 @media (max-width: 767px) {
   body {
     font-size: 14px;
+    padding-bottom: 70px; /* Reduced from 130px for mobile */
   }
   #main-scroll-container {
     padding: 1em 3vw 1.2em;
@@ -614,43 +616,46 @@ h1 {
     max-height: 34px;
   }
   .counter-box {
-    min-width: 75px;
-    padding: 6px 10px;
-    font-size: 0.8em;
+    min-width: 60px; /* Reduced from 75px */
+    padding: 3px 8px; /* Reduced from 6px 10px */
+    font-size: 0.7em; /* Reduced from 0.8em */
   }
   #fixed-bottom-bar {
-    gap: 4px 6px;
-    padding: 5px 6px;
+    gap: 2px 4px; /* Reduced from 4px 6px */
+    padding: 3px 4px; /* Reduced from 5px 6px */
   }
   #fixed-bottom-bar > .counters-row {
-    gap: 6px;
+    gap: 4px; /* Reduced from 6px */
   }
   #fixed-bottom-bar > #timer-container {
     max-width: calc(100vw - 70px);
-    padding: 8px 12px;
+    padding: 3px 6px; /* Reduced from 8px 12px */
+    gap: 3px; /* Reduced gap */
   }
   #timer-content {
     flex-direction: column;
     white-space: normal;
+    font-size: 0.7em; /* Further reduced for mobile */
+    gap: 1px; /* Minimal gap */
   }
   #timer-start-label, #timer-elapsed-label, #timer-end-label {
     display: block;
     font-weight: 700;
   }
   #timer-content div {
-    line-height: 1.3em;
+    line-height: 1.1em; /* Reduced from 1.3em */
   }
   #timer-container > #arrow-left,
   #timer-container > #arrow-right {
-    font-size: 1.8em;
-    padding: 6px 14px;
+    font-size: 1.6em; /* Maintained good size for mobile use */
+    padding: 4px 10px; /* Reduced from 6px 14px */
   }
   #timer-container > #arrow-up,
   #timer-container > #arrow-down {
-    font-size: 1.1em;
-    padding: 3px 6px;
-    margin-top: 4px;
-    border-radius: 8px;
+    font-size: 0.9em; /* Reduced from 1.1em */
+    padding: 2px 4px; /* Reduced from 3px 6px */
+    margin-top: 2px;
+    border-radius: 6px; /* Reduced from 8px */
   }
 }
 @media (min-width: 1024px) {
@@ -673,31 +678,31 @@ h1 {
     font-size: 1.3em;
   }
   .counter-box {
-    font-size: 0.95em;
-    min-width: 100px;
+    font-size: 0.85em; /* Reduced from 0.95em */
+    min-width: 80px; /* Reduced from 100px */
   }
   #fixed-bottom-bar {
-    gap: 10px;
-    padding: 6px 12px;
+    gap: 4px 8px; /* Reduced from 10px */
+    padding: 4px 8px; /* Reduced from 6px 12px */
   }
   #fixed-bottom-bar > .counters-row {
-    gap: 10px;
+    gap: 8px; /* Reduced from 10px */
   }
   #timer-container {
-    font-size: 1em;
-    padding: 8px 20px;
+    font-size: 0.9em; /* Reduced from 1em */
+    padding: 6px 12px; /* Reduced from 8px 20px */
   }
   #timer-container > #arrow-left,
   #timer-container > #arrow-right {
-    font-size: 2.2em;
-    padding: 8px 18px;
+    font-size: 2em; /* Reduced from 2.2em */
+    padding: 6px 14px; /* Reduced from 8px 18px */
   }
   #timer-container > #arrow-up,
   #timer-container > #arrow-down {
-    font-size: 1.3em;
-    padding: 4px 8px;
-    margin-top: 4px;
-    border-radius: 10px;
+    font-size: 1.1em; /* Reduced from 1.3em */
+    padding: 3px 6px; /* Reduced from 4px 8px */
+    margin-top: 3px; /* Reduced from 4px */
+    border-radius: 8px; /* Reduced from 10px */
   }
 }
 </style>
