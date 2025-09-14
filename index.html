@@ -28,7 +28,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: contain;
   background-attachment: fixed;
-  padding-bottom: 90px; /* Will be adjusted dynamically */
+  padding-bottom: 90px; /* Will be adjusted dynamically - ultra aggressive */
   margin: 0;
 }
 #main-scroll-container {
@@ -554,7 +554,7 @@ h1 {
 @media (max-width: 767px) {
   body {
     font-size: 14px;
-    padding-bottom: 70px; /* Will be adjusted dynamically for mobile */
+    padding-bottom: 35px; /* Ultra reduced for mobile - will be adjusted dynamically */
   }
   #main-scroll-container {
     padding: 1em 3vw 1.2em;
@@ -621,11 +621,11 @@ h1 {
     font-size: 0.7em; /* Reduced from 0.8em */
   }
   #fixed-bottom-bar {
-    gap: 2px 4px; /* Reduced from 4px 6px */
-    padding: 3px 4px; /* Reduced from 5px 6px */
+    gap: 1px 3px; /* Further reduced for mobile */
+    padding: 2px 4px; /* Further reduced for mobile */
   }
   #fixed-bottom-bar > .counters-row {
-    gap: 4px; /* Reduced from 6px */
+    gap: 3px; /* Further reduced from 6px */
   }
   #fixed-bottom-bar > #timer-container {
     max-width: calc(100vw - 70px);
@@ -938,7 +938,7 @@ h1 {
   let wasPageHidden = false;
   let timerVisible = true;
 
-  // New function to dynamically adjust body padding and ayat-box height
+  // ULTRA AGGRESSIVE function to maximize space recovery when timer is hidden
   function adjustLayoutForTimer() {
     const fixedBottomBar = document.getElementById('fixed-bottom-bar');
     const timerContainer = document.getElementById('timer-container');
@@ -949,58 +949,71 @@ h1 {
       // Get current bottom bar height
       const currentBottomBarHeight = fixedBottomBar.offsetHeight;
       
-      // Adjust body padding-bottom to match the current bottom bar height
+      // ULTRA AGGRESSIVE body padding adjustment
       const isMobile = window.innerWidth <= 767;
       let newPaddingBottom;
       
       if (timerVisible) {
-        // Timer is visible - use full height
-        newPaddingBottom = isMobile ? Math.max(currentBottomBarHeight, 70) : Math.max(currentBottomBarHeight, 90);
+        // Timer is visible - use current height with small buffer
+        newPaddingBottom = isMobile ? Math.max(currentBottomBarHeight + 5, 55) : Math.max(currentBottomBarHeight + 10, 90);
       } else {
-        // Timer is hidden - use reduced height (just counters)
+        // Timer is hidden - ULTRA MINIMAL space for counters only
         const countersRow = document.querySelector('.counters-row');
-        const countersHeight = countersRow ? countersRow.offsetHeight : 40;
-        const padding = isMobile ? 6 : 8; // padding from CSS
-        newPaddingBottom = isMobile ? Math.max(countersHeight + padding, 40) : Math.max(countersHeight + padding, 50);
+        if (countersRow) {
+          const countersHeight = countersRow.offsetHeight;
+          
+          // ULTRA AGGRESSIVE space recovery - absolute minimal padding
+          if (isMobile) {
+            newPaddingBottom = Math.max(countersHeight + 2, 10); // ULTRA minimal for mobile (10px minimum!)
+          } else {
+            newPaddingBottom = Math.max(countersHeight + 4, 20); // ULTRA minimal for desktop (20px minimum!)
+          }
+        } else {
+          // Ultra minimal fallback values
+          newPaddingBottom = isMobile ? 10 : 20;
+        }
       }
       
       body.style.paddingBottom = newPaddingBottom + 'px';
       
-      console.log('Timer visible:', timerVisible);
+      console.log('ULTRA AGGRESSIVE MODE - Timer visible:', timerVisible);
       console.log('Bottom bar height:', currentBottomBarHeight);
-      console.log('New body padding-bottom:', newPaddingBottom);
+      console.log('New body padding-bottom (ULTRA AGGRESSIVE):', newPaddingBottom);
       
-      // Now adjust ayat-box height if it's visible
+      // Now adjust ayat-box height with ultra aggressive calculations
       if (ayatBox.style.display !== 'none') {
-        adjustAyatBoxHeight();
+        adjustAyatBoxHeightUltraAggressive();
       }
       
-    }, 100);
+    }, 70); // Even faster response
   }
 
-  // Simplified height adjustment for ayat-box
-  function adjustAyatBoxHeight() {
+  // ULTRA aggressive height adjustment for ayat-box
+  function adjustAyatBoxHeightUltraAggressive() {
     if (ayatBox.style.display === 'none') return;
     
     const viewportHeight = window.innerHeight;
     const ayatBoxRect = ayatBox.getBoundingClientRect();
     const ayatBoxTop = ayatBoxRect.top;
     
-    // Use current body padding-bottom (which we just set)
+    // Use current body padding-bottom (which we just set ultra aggressively)
     const bodyStyle = getComputedStyle(document.body);
     const bodyPaddingBottom = parseFloat(bodyStyle.paddingBottom) || 0;
     
-    // Calculate available space
-    const margin = 20;
+    // Calculate available space with ultra minimal margin
+    const margin = timerVisible ? 12 : 5; // Ultra minimal margin when timer is hidden
     const availableHeight = viewportHeight - ayatBoxTop - bodyPaddingBottom - margin;
     
-    // Set minimum height
-    const minHeight = 200;
+    // Ultra low minimum height for maximum aggressive space usage
+    const minHeight = timerVisible ? 180 : 120; // Much lower minimum when timer is hidden
     const finalHeight = Math.max(availableHeight, minHeight);
     
     ayatBox.style.height = finalHeight + 'px';
     
-    console.log('Ayat-box height adjusted to:', finalHeight);
+    console.log('ULTRA AGGRESSIVE ayat-box height:', finalHeight);
+    console.log('Available height (ultra aggressive):', availableHeight);
+    console.log('Body padding bottom used:', bodyPaddingBottom);
+    console.log('Margin used:', margin);
   }
 
   function saveState() {
@@ -1304,8 +1317,8 @@ h1 {
     currentSourah = sourahEl.value;
     ayatBox.style.display = 'block';
     
-    // Adjust height after showing the box
-    setTimeout(adjustAyatBoxHeight, 50);
+    // Adjust height after showing the box with ultra aggressive method
+    setTimeout(adjustAyatBoxHeightUltraAggressive, 50);
     
     const key = `${currentSourah}:${currentAyah}:ar`;
     if (verseCache.has(key)) {
@@ -1757,7 +1770,7 @@ h1 {
     
     updateButtonShowHideTimerText();
     
-    // NEW: Adjust layout based on timer visibility
+    // ULTRA AGGRESSIVE layout adjustment
     adjustLayoutForTimer();
     
     if(save) saveState();
@@ -1794,7 +1807,7 @@ h1 {
     }
   });
 
-  // Enhanced resize listener
+  // Enhanced resize listener with ultra aggressive recalculation
   window.addEventListener('resize', () => {
     adjustLayoutForTimer();
   });
@@ -1834,8 +1847,8 @@ h1 {
       updateLimits(true);
       shuffleAyahs();
     }
-    // Initial layout adjustment
-    setTimeout(adjustLayoutForTimer, 300);
+    // Ultra aggressive initial layout adjustment
+    setTimeout(adjustLayoutForTimer, 200);
   });
 })();
 </script>
