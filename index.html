@@ -28,7 +28,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: contain;
   background-attachment: fixed;
-  padding-bottom: 90px; /* Reduced from 130px */
+  padding-bottom: 90px; /* Will be adjusted dynamically */
   margin: 0;
 }
 #main-scroll-container {
@@ -554,7 +554,7 @@ h1 {
 @media (max-width: 767px) {
   body {
     font-size: 14px;
-    padding-bottom: 70px; /* Reduced from 130px for mobile */
+    padding-bottom: 70px; /* Will be adjusted dynamically for mobile */
   }
   #main-scroll-container {
     padding: 1em 3vw 1.2em;
@@ -938,44 +938,69 @@ h1 {
   let wasPageHidden = false;
   let timerVisible = true;
 
-  // Function to calculate and adjust ayat-box height dynamically based on timer visibility
+  // New function to dynamically adjust body padding and ayat-box height
+  function adjustLayoutForTimer() {
+    const fixedBottomBar = document.getElementById('fixed-bottom-bar');
+    const timerContainer = document.getElementById('timer-container');
+    const body = document.body;
+    
+    // Wait for DOM to update
+    setTimeout(() => {
+      // Get current bottom bar height
+      const currentBottomBarHeight = fixedBottomBar.offsetHeight;
+      
+      // Adjust body padding-bottom to match the current bottom bar height
+      const isMobile = window.innerWidth <= 767;
+      let newPaddingBottom;
+      
+      if (timerVisible) {
+        // Timer is visible - use full height
+        newPaddingBottom = isMobile ? Math.max(currentBottomBarHeight, 70) : Math.max(currentBottomBarHeight, 90);
+      } else {
+        // Timer is hidden - use reduced height (just counters)
+        const countersRow = document.querySelector('.counters-row');
+        const countersHeight = countersRow ? countersRow.offsetHeight : 40;
+        const padding = isMobile ? 6 : 8; // padding from CSS
+        newPaddingBottom = isMobile ? Math.max(countersHeight + padding, 40) : Math.max(countersHeight + padding, 50);
+      }
+      
+      body.style.paddingBottom = newPaddingBottom + 'px';
+      
+      console.log('Timer visible:', timerVisible);
+      console.log('Bottom bar height:', currentBottomBarHeight);
+      console.log('New body padding-bottom:', newPaddingBottom);
+      
+      // Now adjust ayat-box height if it's visible
+      if (ayatBox.style.display !== 'none') {
+        adjustAyatBoxHeight();
+      }
+      
+    }, 100);
+  }
+
+  // Simplified height adjustment for ayat-box
   function adjustAyatBoxHeight() {
     if (ayatBox.style.display === 'none') return;
     
     const viewportHeight = window.innerHeight;
-    const fixedBottomBar = document.getElementById('fixed-bottom-bar');
-    const timerContainer = document.getElementById('timer-container');
-    
-    // Get actual bottom bar height
-    let actualBottomBarHeight = fixedBottomBar.offsetHeight;
-    
-    // If timer is hidden, calculate what the bottom bar height would be without timer
-    if (!timerVisible) {
-      // Calculate height of just the counters row
-      const countersRow = document.querySelector('.counters-row');
-      if (countersRow) {
-        // Get the bottom bar padding and gap
-        const bottomBarStyle = getComputedStyle(fixedBottomBar);
-        const paddingTop = parseFloat(bottomBarStyle.paddingTop) || 0;
-        const paddingBottom = parseFloat(bottomBarStyle.paddingBottom) || 0;
-        const gap = parseFloat(bottomBarStyle.gap) || 0;
-        
-        actualBottomBarHeight = countersRow.offsetHeight + paddingTop + paddingBottom + gap;
-      }
-    }
-    
-    // Get the position of the ayat-box relative to the viewport
     const ayatBoxRect = ayatBox.getBoundingClientRect();
-    const ayatBoxTopFromViewport = ayatBoxRect.top;
+    const ayatBoxTop = ayatBoxRect.top;
     
-    // Calculate available space from current position to bottom bar
-    const availableHeight = viewportHeight - ayatBoxTopFromViewport - actualBottomBarHeight - 20; // 20px margin
+    // Use current body padding-bottom (which we just set)
+    const bodyStyle = getComputedStyle(document.body);
+    const bodyPaddingBottom = parseFloat(bodyStyle.paddingBottom) || 0;
     
-    // Set minimum height to prevent too small boxes
+    // Calculate available space
+    const margin = 20;
+    const availableHeight = viewportHeight - ayatBoxTop - bodyPaddingBottom - margin;
+    
+    // Set minimum height
     const minHeight = 200;
     const finalHeight = Math.max(availableHeight, minHeight);
     
     ayatBox.style.height = finalHeight + 'px';
+    
+    console.log('Ayat-box height adjusted to:', finalHeight);
   }
 
   function saveState() {
@@ -1719,19 +1744,25 @@ h1 {
   btnShowHideTimer.addEventListener('click', () => {
     setTimerVisibility(!timerVisible,true);
   });
+
   function setTimerVisibility(visible, save = true){
     timerVisible = visible;
     const timerContainer = document.getElementById('timer-container');
+    
     if(timerVisible){
       timerContainer.style.display = 'flex';
     } else {
       timerContainer.style.display = 'none';
     }
+    
     updateButtonShowHideTimerText();
-    // Adjust ayat-box height when timer visibility changes - with improved calculation
-    setTimeout(adjustAyatBoxHeight, 100);
+    
+    // NEW: Adjust layout based on timer visibility
+    adjustLayoutForTimer();
+    
     if(save) saveState();
   }
+
   languageEl.addEventListener('change', () => {
     setTexts(languageEl.value);
     updateLanguageFilterLabels(languageEl.value);
@@ -1763,9 +1794,9 @@ h1 {
     }
   });
 
-  // Add resize listener to adjust height dynamically
+  // Enhanced resize listener
   window.addEventListener('resize', () => {
-    setTimeout(adjustAyatBoxHeight, 100);
+    adjustLayoutForTimer();
   });
 
   let wakeLock = null;
@@ -1803,8 +1834,8 @@ h1 {
       updateLimits(true);
       shuffleAyahs();
     }
-    // Initial height adjustment after everything is loaded
-    setTimeout(adjustAyatBoxHeight, 200);
+    // Initial layout adjustment
+    setTimeout(adjustLayoutForTimer, 300);
   });
 })();
 </script>
