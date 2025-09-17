@@ -734,6 +734,7 @@ h1 {
       <button id="btnRedistribuer" type="button"></button>
       <button id="btnTrier" type="button"></button>
       <button id="btnToggle" type="button"></button>
+      <button id="btnFullScreen" type="button">Plein écran</button>
     </div>
     <div class="controls" style="margin-top: 2px;">
       <button id="btnShowHideTimer" type="button"></button>
@@ -1857,6 +1858,22 @@ h1 {
     }
   });
 })();
+function toggleFullScreen() {
+  const doc = window.document;
+  const docEl = doc.documentElement;
+  const isFull = !!(doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement);
+  if (!isFull) {
+    const request = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+    if (request) request.call(docEl);
+  } else {
+    const exit = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+    if (exit) exit.call(doc);
+  }
+}
+
+// Liaison avec le bouton
+document.getElementById('btnFullScreen').addEventListener('click', toggleFullScreen);
+
 </script>
 </body>
 </html>
