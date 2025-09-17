@@ -1322,18 +1322,40 @@ h1 {
     }
     updateTimerDisplay();
   }
-  async function fetchVerseWithFallback(surah, ayah, lang) {
+    async function fetchVerseWithFallback(surah, ayah, lang) {
     const surahData = SURAHS.find(s => s.number == surah);
     if (!surahData || ayah < 1 || ayah > surahData.count) {
       throw new Error('Verse number out of range');
     }
     const key = `${surah}:${ayah}:${lang}`;
     if (verseCache.has(key)) return verseCache.get(key);
-    const fetchPrimary = () => fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/ar.alafasy`)
-      .then(res => { if (!res.ok) throw new Error('Primary source response not ok'); return res.json(); })
-      .then(data => { if(data.code === 200 && data.data && data.data.text) return data.data.text.trim(); throw new Error('Primary source data missing or invalid'); });
-    try { return await fetchPrimary(); }
-    catch (e) { throw new Error('Verse fetch failed'); }
+
+    // Sources à tester
+    const attempts = [
+      // Source principale
+      { url: `https://api.alquran.cloud/v1/ayah/${surah}:${ayah}/ar.alafasy`, extractor: data => data.data?.text?.trim() },
+      // Source alternative 1
+      { url: `https://alquran-api.pages.dev/ayah/${surah}/${ayah}`, extractor: data => data.text?.trim() },
+      // Source alternative 2
+      { url: `https://tanzil.net/versebyverse.php?chapter=${surah}&verse=${ayah}&mode=json`, extractor: data => data.verse?.text_uthmani?.trim() }
+    ];
+
+    let lastErr;
+    for (const src of attempts) {
+      try {
+        const res = await fetch(src.url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const txt = src.extractor(json);
+        if (!txt) throw new Error('No text in response');
+        verseCache.set(key, txt);
+        return txt;
+      } catch (err) {
+        lastErr = err;
+        console.warn('fallback attempt failed', src.url, err);
+      }
+    }
+    throw new Error('All sources failed: ' + lastErr);
   }
   async function showAyah(num) {
     if (!num) return;
