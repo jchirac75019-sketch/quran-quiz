@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Quiz Versets Coran Avancé</title>
 <style>
 * { box-sizing: border-box; }
@@ -734,6 +736,7 @@ h1 {
       <button id="btnRedistribuer" type="button"></button>
       <button id="btnTrier" type="button"></button>
       <button id="btnToggle" type="button"></button>
+      <button id="btnFullScreen" type="button">Plein écran</button>
     </div>
     <div class="controls" style="margin-top: 2px;">
       <button id="btnShowHideTimer" type="button"></button>
@@ -1857,6 +1860,22 @@ h1 {
     }
   });
 })();
+function toggleFullScreen() {
+  const doc = window.document;
+  const docEl = doc.documentElement;
+  const isFull = !!(doc.fullscreenElement || doc.mozFullScreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement);
+  if (!isFull) {
+    const request = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
+    if (request) request.call(docEl);
+  } else {
+    const exit = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+    if (exit) exit.call(doc);
+  }
+}
+
+// Liaison avec le bouton
+document.getElementById('btnFullScreen').addEventListener('click', toggleFullScreen);
+
 </script>
 </body>
 </html>
