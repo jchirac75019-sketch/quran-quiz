@@ -264,7 +264,8 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 6px; /* reduced gap */
-  max-height: 140px; /* increased to gain space when timer hidden */
+  max-height: calc(3 * 36px + 2 * 6px); /* 3 lignes de 36px + 2 gaps */
+  //max-height: 140px; /* increased to gain space when timer hidden */
   max-width: 95vw;
   overflow-y: auto;
   border-radius: 14px;
