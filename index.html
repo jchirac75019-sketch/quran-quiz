@@ -784,13 +784,6 @@ h1 {
   gap: 12px !important;
 }
 
-/* Autoriser les interactions tactiles sur chaque case */
-.ayah-button, /* ou votre sélecteur de case */
-.ayah-button * {
-  pointer-events: auto !important;
-  -webkit-user-select: text !important; /* permet la sélection au toucher */
-}
-
 </style>
 </head>
 <body>
@@ -1244,22 +1237,14 @@ h1 {
           div.focus();
           ayatBox.scrollTop = 0;
         };
-        function renderAyahs() {
-  ayahsContainer.innerHTML = '';
-  ayahs.forEach(ayah => {
-    const ayahDiv = document.createElement('div');
-    ayahDiv.classList.add('ayah-button');
-    ayahDiv.textContent = ayah.number;
-    // Sélection desktop
-    ayahDiv.addEventListener('click', () => setSelectedNum(ayahDiv, true));
-    // Sélection mobile
-    ayahDiv.addEventListener('touchstart', e => {
-      e.preventDefault();
-      setSelectedNum(ayahDiv, true);
-    });
-    ayahsContainer.appendChild(ayahDiv);
-  });
-}
+        div.ontouchstart = () => {
+          if(!startTime){
+            startTimer();
+          }
+          setSelectedNum(div);
+          div.focus();
+          ayatBox.scrollTop = 0;
+        };
       }
       ayahsContainer.appendChild(div);
     }
@@ -1763,7 +1748,6 @@ function registerAnswer(correct) {
       e.preventDefault();
       moveToPreviousAyah();
     }
-
   });
   arrowRight.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
