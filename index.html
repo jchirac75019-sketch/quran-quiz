@@ -494,6 +494,9 @@ h1 {
 /* Adjusted timer container to be slightly smaller and more compact */
 #fixed-bottom-bar > #timer-container {
   margin: 0 auto;
+  /* margin-top: -4px;
+  /* display: flex;
+  /* align-items: flex-start;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -724,7 +727,7 @@ h1 {
 
 /* === Bande basse : hauteur fixe ajustée et suppression du débordement === */
 #fixed-bottom-bar {
-  /* height: 100px !important;       /* Hauteur totale de la barre */
+  /* height: 120px !important;       /* Hauteur totale de la barre */
   /* overflow: hidden !important;    /* Coupe tout contenu dépassant */
   padding: 0 !important;          /* Suppression du padding vertical */
   gap: 8px !important;            /* Espacement minimal entre éléments */
@@ -744,6 +747,29 @@ h1 {
   font-size: 0.9em !important;
   line-height: 1.2 !important;
 }
+
+/* Réduction de la hauteur de la bande basse dynamique */
+#fixed-bottom-bar {
+  padding: 2px 4px !important;      /* padding vertical réduit à 2px */
+  gap: 4px !important;              /* espacement horizontal minimal */
+  align-items: center !important;   /* aligne verticalement au centre */
+}
+
+/* Compteurs (Réponses, Erreurs, Restantes) */
+#fixed-bottom-bar .counter-box {
+  padding: 2px 6px !important;      /* padding interne réduit */
+  font-size: 0.8em !important;      /* texte plus compact */
+  line-height: 1.1 !important;      /* hauteur de ligne minimale */
+}
+
+/* Chronomètre */
+#fixed-bottom-bar #timer-container {
+  padding: 2px 6px !important;      /* padding vertical et horizontal réduit */
+  font-size: 0.85em !important;     /* taille de texte légèrement petite */
+  line-height: 1.1 !important;      /* hauteur de ligne réduite */
+  align-self: center !important;    /* centre verticalement dans la barre */
+}
+
 
 /* === Pilotage de l’affichage du timer === */
 
