@@ -1244,14 +1244,22 @@ h1 {
           div.focus();
           ayatBox.scrollTop = 0;
         };
-        div.ontouchstart = () => {
-          if(!startTime){
-            startTimer();
-          }
-          setSelectedNum(div);
-          div.focus();
-          ayatBox.scrollTop = 0;
-        };
+        function renderAyahs() {
+  ayahsContainer.innerHTML = '';
+  ayahs.forEach(ayah => {
+    const ayahDiv = document.createElement('div');
+    ayahDiv.classList.add('ayah-button');
+    ayahDiv.textContent = ayah.number;
+    // Sélection desktop
+    ayahDiv.addEventListener('click', () => setSelectedNum(ayahDiv, true));
+    // Sélection mobile
+    ayahDiv.addEventListener('touchstart', e => {
+      e.preventDefault();
+      setSelectedNum(ayahDiv, true);
+    });
+    ayahsContainer.appendChild(ayahDiv);
+  });
+}
       }
       ayahsContainer.appendChild(div);
     }
@@ -1754,23 +1762,6 @@ function registerAnswer(correct) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       moveToPreviousAyah();
-
-// Boucle de rendu des versets
-ayahs.forEach(ayah => {
-  const ayahDiv = document.createElement('div');
-  // … configuration de ayahDiv …
-  ayahDiv.addEventListener('click', () => {
-    setSelectedNum(ayahDiv, true);
-  });
-  // <-- Ajoutez ceci pour le tactile :
-  ayahDiv.addEventListener('touchstart', e => {
-    e.preventDefault();
-    setSelectedNum(ayahDiv, true);
-  });
-  ayahsContainer.appendChild(ayahDiv);
-});
-
-
     }
 
   });
