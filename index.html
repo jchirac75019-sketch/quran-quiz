@@ -751,7 +751,7 @@ h1 {
 /* Réduction de la hauteur de la bande basse dynamique */
 #fixed-bottom-bar {
   padding: 2px 4px !important;      /* padding vertical réduit à 2px */
-  gap: 6px !important;              /* espacement horizontal minimal */
+  gap: 4px !important;              /* espacement horizontal minimal */
   align-items: center !important;   /* aligne verticalement au centre */
 }
 
@@ -764,7 +764,7 @@ h1 {
 
 /* Chronomètre */
 #fixed-bottom-bar #timer-container {
-  padding: 2px 6px !important;      /* padding vertical et horizontal réduit */
+  padding: 2px 10px !important;      /* padding vertical et horizontal réduit */
   font-size: 0.85em !important;     /* taille de texte légèrement petite */
   line-height: 1.1 !important;      /* hauteur de ligne réduite */
   align-self: center !important;    /* centre verticalement dans la barre */
@@ -782,6 +782,13 @@ h1 {
 .hide-timer #fixed-bottom-bar {
   padding: 0 6px !important;
   gap: 12px !important;
+}
+
+/* Autoriser les interactions tactiles sur chaque case */
+.ayah-button, /* ou votre sélecteur de case */
+.ayah-button * {
+  pointer-events: auto !important;
+  -webkit-user-select: text !important; /* permet la sélection au toucher */
 }
 
 </style>
@@ -1893,9 +1900,3 @@ document.getElementById('btnFullScreen').addEventListener('click', toggleFullScr
 </script>
 </body>
 </html>
-
-
-
-
-
-
