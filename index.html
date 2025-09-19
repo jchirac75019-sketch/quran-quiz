@@ -1755,6 +1755,22 @@ function registerAnswer(correct) {
       e.preventDefault();
       moveToPreviousAyah();
     }
+
+// Boucle de rendu des versets
+ayahs.forEach(ayah => {
+  const ayahDiv = document.createElement('div');
+  // … configuration de ayahDiv …
+  ayahDiv.addEventListener('click', () => {
+    setSelectedNum(ayahDiv, true);
+  });
+  // <-- Ajoutez ceci pour le tactile :
+  ayahDiv.addEventListener('touchstart', e => {
+    e.preventDefault();
+    setSelectedNum(ayahDiv, true);
+  });
+  ayahsContainer.appendChild(ayahDiv);
+});
+
   });
   arrowRight.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
