@@ -1754,7 +1754,6 @@ function registerAnswer(correct) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       moveToPreviousAyah();
-    }
 
 // Boucle de rendu des versets
 ayahs.forEach(ayah => {
@@ -1770,6 +1769,9 @@ ayahs.forEach(ayah => {
   });
   ayahsContainer.appendChild(ayahDiv);
 });
+
+
+    }
 
   });
   arrowRight.addEventListener('keydown', e => {
