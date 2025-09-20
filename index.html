@@ -812,6 +812,17 @@ body {
   box-sizing: border-box;
 }
 
+function fixBottomBarHeight() {
+  fixedBar.style.height = '50px';
+  fixedBar.style.maxHeight = '50px';
+}
+
+window.addEventListener('resize', fixBottomBarHeight);
+window.addEventListener('scroll', fixBottomBarHeight);
+
+fixBottomBarHeight();
+
+
 </style>
 </head>
 <body>
