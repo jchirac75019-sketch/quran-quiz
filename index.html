@@ -704,12 +704,35 @@ h1 {
     border-radius: 10px;
   }
 
+/* === Bande basse : hauteur fixe ajustée et suppression du débordement === */
+#fixed-bottom-bar {
+  /* height: 120px !important;       /* Hauteur totale de la barre */
+  /* overflow: hidden !important;    /* Coupe tout contenu dépassant */
+  padding: 0 !important;          /* Suppression du padding vertical */
+  gap: 8px !important;            /* Espacement minimal entre éléments */
+  align-items: center !important; /* Centrage vertical du contenu */
+}
+
+/* Ajustements pour les compteurs */
+#fixed-bottom-bar .counter-box {
+  padding: 8px 10px !important;
+  font-size: 0.9em !important;
+  line-height: 1.6 !important;
+}
+
+/* Ajustements pour le timer */
+#fixed-bottom-bar #timer-container {
+  padding: 0 8px !important;
+  font-size: 0.9em !important;
+  line-height: 1.2 !important;
+}
+
 /* Réduction de la hauteur de la bande basse dynamique */
-//#fixed-bottom-bar {
-  //padding: 2px 4px !important;      /* padding vertical réduit à 2px */
-  //gap: 4px !important;              /* espacement horizontal minimal */
-  //align-items: center !important;   /* aligne verticalement au centre */
-//}
+#fixed-bottom-bar {
+  padding: 2px 4px !important;      /* padding vertical réduit à 2px */
+  gap: 4px !important;              /* espacement horizontal minimal */
+  align-items: center !important;   /* aligne verticalement au centre */
+}
 
 /* Compteurs (Réponses, Erreurs, Restantes) */
 #fixed-bottom-bar .counter-box {
@@ -726,6 +749,7 @@ h1 {
   align-self: center !important;    /* centre verticalement dans la barre */
 }
 
+
 /* === Pilotage de l’affichage du timer === */
 
 /* Cache le timer quand la classe hide-timer est ajoutée */
@@ -737,13 +761,6 @@ h1 {
 .hide-timer #fixed-bottom-bar {
   padding: 0 6px !important;
   gap: 12px !important;
-}
-
-/* Réduction de la hauteur de la bande basse dynamique */
-#fixed-bottom-bar {
-  padding: 2px 4px !important;      /* padding vertical réduit à 2px */
-  gap: 4px !important;              /* espacement horizontal minimal */
-  align-items: center !important;   /* aligne verticalement au centre */
 }
 
 /* Empêcher le chevauchement entre sélecteurs */
@@ -765,24 +782,6 @@ h1 {
   margin-left: 0.07rem !important;
 }
 
-/* Ajuste la bande basse quand le timer est masqué */
-.hide-timer #fixed-bottom-bar {
-  padding: 0 6px !important;
-  gap: 12px !important;
-}
-
-/* Empêcher le chevauchement entre sélecteurs */
-.filters-container {
-  gap: 0.1rem !important;        /* Espace suffisant entre tous les filtres */
-  flex-wrap: nowrap !important;/* Pas de retour à la ligne */
-}
-
-/* Chaque wrapper garde sa taille minimale et ne rétrécit pas */
-.selector-wrapper {
-  flex: 0 0 auto !important;   /* flex-grow:0, flex-shrink:0, flex-basis:auto */
-}
-
-}
 </style>
 </head>
 <body>
