@@ -5,14 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<script>
-if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-  document.body.classList.add('ios-device');
-}
-</script>
-
-
 <title>Quiz Versets Coran Avancé</title>
 <style>
 * { box-sizing: border-box; }
@@ -802,6 +794,10 @@ body.ios-device .bande-basse {
   height: 50px !important; /* hauteur réduite sur iOS */
 }
 
+body.ios-device #fixed-bottom-bar {
+  height: 50px !important;
+}
+
 
 </style>
 </head>
@@ -886,6 +882,11 @@ body.ios-device .bande-basse {
   <span></span><span id="end-time-display"></span>
 </div>
 <script>
+
+if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+  document.body.classList.add('ios-device');
+}
+
 (() => {
   const STORAGE_KEY = 'quranQuizState_v1';
   const texts = {
