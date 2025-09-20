@@ -883,6 +883,7 @@ body.ios-device #fixed-bottom-bar {
 </div>
 <script>
 
+// Détection iOS
 if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
   document.body.classList.add('ios-device');
 }
@@ -1353,6 +1354,7 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
       // Source alternative 2
       { url: `https://tanzil.net/versebyverse.php?chapter=${surah}&verse=${ayah}&mode=json`, extractor: data => data.verse?.text_uthmani?.trim() }
     ];
+
 
     let lastErr;
     for (const src of attempts) {
