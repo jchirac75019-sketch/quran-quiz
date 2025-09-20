@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<script>
+if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+  document.body.classList.add('ios-device');
+}
+</script>
+
+
 <title>Quiz Versets Coran Avancé</title>
 <style>
 * { box-sizing: border-box; }
@@ -784,6 +792,16 @@ h1 {
 #sourah-wrapper {
   margin-left: 0.07rem !important;
 }
+
+/* Hauteur de la bande basse pour Android et iOS */
+.bande-basse {
+  height: 80px; /* hauteur par défaut (Android, desktop) */
+}
+
+body.ios-device .bande-basse {
+  height: 50px; /* hauteur réduite sur iOS */
+}
+
 
 </style>
 </head>
