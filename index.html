@@ -1259,10 +1259,24 @@ h1 {
     saveState();
     checkIfQuizFinished();
   }
+
+    function scrollToCenter(element) {
+    const container = element.parentElement; // conteneur de la grille
+    const containerHeight = container.clientHeight;
+    const elementTop = element.offsetTop;
+    const elementHeight = element.offsetHeight;
+    const scrollTop = elementTop - containerHeight / 2 + elementHeight / 2;
+    container.scrollTo({
+    top: scrollTop,
+    behavior: 'smooth'
+  });
+}
+
   function setSelectedNum(div, showAyahFlag = true) {
     if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
     selectedNumDiv = div;
     if (selectedNumDiv) selectedNumDiv.classList.add('selected');
+    scrollToCenter(selectedNumDiv);
     if(showAyahFlag && selectedNumDiv) {
       const ayahNum = Number(selectedNumDiv.textContent);
       const surahNo = Number(sourahEl.value);
