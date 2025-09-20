@@ -1127,17 +1127,21 @@ h1 {
     updateButtonShowHideTimerText();
   }
   function populateSourahOptions() {
+  // Mémoriser la valeur sélectionnée avant de vider la liste
+  const selectedBefore = sourahEl.value;
   sourahEl.innerHTML = '';
-  // NE remplir qu’une seule fois : si des options existent déjà, ne rien faire
-  if (sourahEl.options.length > 0) return;
   const lang = languageEl.value;
   for (const s of SURAHS) {
     const opt = document.createElement('option');
     opt.value = s.number;
-    opt.textContent = lang === 'ar'
-      ? `${s.number} - ${s.names.ar}`
-      : `${s.number} - ${s.names[lang] || s.names.fr || s.names.ar}`;
+    opt.textContent = (lang === 'ar')
+      ? `${s.number} – ${s.names.ar}`
+      : `${s.number} – ${s.names.fr}`;
     sourahEl.appendChild(opt);
+  }
+  // Réappliquer la sélection précédente si possible
+  if ([...sourahEl.options].some(o => o.value === selectedBefore)) {
+    sourahEl.value = selectedBefore;
   }
 }
   function updateLimits(reinit = true) {
