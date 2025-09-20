@@ -1261,22 +1261,23 @@ h1 {
   }
 
     function scrollToCenter(element) {
-    const container = element.parentElement; // conteneur de la grille
-    const containerHeight = container.clientHeight;
-    const elementTop = element.offsetTop;
-    const elementHeight = element.offsetHeight;
-    const scrollTop = elementTop - containerHeight / 2 + elementHeight / 2;
-    container.scrollTo({
-    top: scrollTop,
-    behavior: 'smooth'
+  element.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',   // centre verticalement l'élément si possible
+    inline: 'nearest'  // comportement horizontal (ne pas décaler)
   });
 }
+
 
   function setSelectedNum(div, showAyahFlag = true) {
     if (selectedNumDiv) selectedNumDiv.classList.remove('selected');
     selectedNumDiv = div;
     if (selectedNumDiv) selectedNumDiv.classList.add('selected');
+
+    setTimeout(() => {
     scrollToCenter(selectedNumDiv);
+    }, 10); // Petit délai avant scroll
+
     if(showAyahFlag && selectedNumDiv) {
       const ayahNum = Number(selectedNumDiv.textContent);
       const surahNo = Number(sourahEl.value);
@@ -1471,6 +1472,20 @@ h1 {
       // clearVerseDetails(); // removed to keep display
       saveState();
       checkIfQuizFinished();
+
+      // Sélectionner la case suivante (Pourque ça fonctionne supprime // du code (que les titres non))
+      // const currentIndex = [...ayahsContainer.children].findIndex(child => child.textContent == currentAyah);
+      // const nextIndex = currentIndex + 1;
+      // if (nextIndex < ayahsContainer.children.length) {
+      // setSelectedNum(ayahsContainer.children[nextIndex], false);
+     // }
+
+      // Sélectionner la case même de la grille sans passer à la suivante.
+      const currentIndex = [...ayahsContainer.children].findIndex(child => child.textContent == currentAyah);
+      if (currentIndex >= 0 && currentIndex < ayahsContainer.children.length) {
+      setSelectedNum(ayahsContainer.children[currentIndex], false);
+     }
+
     }
   }
   function toggleTreated() {
