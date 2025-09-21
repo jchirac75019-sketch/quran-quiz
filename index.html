@@ -753,22 +753,22 @@ body.ios-device #fixed-bottom-bar {
 }
 
 /* Nouvelle règle forte pour réduire la hauteur de la bande basse */
-//body {
-  //padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 50px) !important;
-//}
+body {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 50px) !important;
+}
 
-//#fixed-bottom-bar {
-  //height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
-  //max-height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
-  //padding: 4px 8px !important;
-  //overflow: hidden !important;
-  //box-sizing: border-box;
-//}
+#fixed-bottom-bar {
+  height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 4px 8px !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
 
-//function fixBottomBarHeight() {
-  //fixedBar.style.height = '50px';
-  //fixedBar.style.maxHeight = '50px';
-//}
+function fixBottomBarHeight() {
+  fixedBar.style.height = '50px';
+  fixedBar.style.maxHeight = '50px';
+}
 
 window.addEventListener('resize', fixBottomBarHeight);
 window.addEventListener('scroll', fixBottomBarHeight);
