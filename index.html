@@ -758,16 +758,16 @@ body {
 }
 
 #fixed-bottom-bar {
-  height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+  height: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   padding: 4px 8px !important;
   overflow: hidden !important;
   box-sizing: border-box;
 }
 
 function fixBottomBarHeight() {
-  fixedBar.style.height = '50px';
-  fixedBar.style.maxHeight = '50px';
+  fixedBar.style.height = '80px';
+  fixedBar.style.maxHeight = '80px';
 }
 
 window.addEventListener('resize', fixBottomBarHeight);
