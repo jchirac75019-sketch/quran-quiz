@@ -680,6 +680,20 @@ h1 {
    align-items: center !important;   /* aligne verticalement au centre */
  }
 
+/* Hauteur de la bande basse pour Android et iOS */
+.bande-basse {
+  height: 80px !important; /* hauteur par défaut (Android, desktop) */
+}
+
+body.ios-device .bande-basse {
+  height: 50px !important; /* hauteur réduite sur iOS */
+padding-bottom: constant(safe-area-inset-bottom);
+}
+
+body.ios-device #fixed-bottom-bar {
+  height: 50px !important;
+}
+
 
 }
 /* ======= Écran d'ordinateur et tablette : LES MESURES : hauteur - largeur - longueur ======= */
