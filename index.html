@@ -740,11 +740,11 @@ h1 {
 
 /* Hauteur de la bande basse pour Android et iOS */
 .bande-basse {
-  height: 80px !important; /* hauteur par défaut (Android, desktop) */
+  height: 90px !important; /* hauteur par défaut (Android, desktop) */
 }
 
 body.ios-device .bande-basse {
-  height: 80px !important; /* hauteur réduite sur iOS */
+  height: 90px !important; /* hauteur réduite sur iOS */
 padding-bottom: constant(safe-area-inset-bottom);
 }
 
@@ -754,20 +754,20 @@ body.ios-device #fixed-bottom-bar {
 
 /* Nouvelle règle forte pour réduire la hauteur de la bande basse */
 body {
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px) !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px) !important;
 }
 
 #fixed-bottom-bar {
-  height: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
-  max-height: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  height: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
   padding: 4px 8px !important;
   overflow: hidden !important;
   box-sizing: border-box;
 }
 
 function fixBottomBarHeight() {
-  fixedBar.style.height = '80px';
-  fixedBar.style.maxHeight = '80px';
+  fixedBar.style.height = '90px';
+  fixedBar.style.maxHeight = '90px';
 }
 
 window.addEventListener('resize', fixBottomBarHeight);
