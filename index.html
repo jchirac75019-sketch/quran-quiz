@@ -660,18 +660,28 @@ h1 {
   }
 
 
-//#fixed-bottom-bar {
-  //height: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
-  //max-height: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
-  //padding: 4px 8px !important;
-  //overflow: hidden !important;
-  //box-sizing: border-box;
-//}
+/* === Bande basse : hauteur fixe ajustée et suppression du débordement === */
+#fixed-bottom-bar {
+  /* height: 120px !important;       /* Hauteur totale de la barre */
+  /* overflow: hidden !important;    /* Coupe tout contenu dépassant */
+  padding: 0 !important;          /* Suppression du padding vertical */
+  gap: 8px !important;            /* Espacement minimal entre éléments */
+  align-items: center !important; /* Centrage vertical du contenu */
+}
 
-//function fixBottomBarHeight() {
-  //fixedBar.style.height = '50px';
-  //fixedBar.style.maxHeight = '50px';
-//}
+/* Ajustements pour les compteurs */
+#fixed-bottom-bar .counter-box {
+  padding: 8px 10px !important;
+  font-size: 0.9em !important;
+  line-height: 1.6 !important;
+}
+
+/* Ajustements pour le timer */
+#fixed-bottom-bar #timer-container {
+  padding: 0 8px !important;
+  font-size: 0.9em !important;
+  line-height: 1.2 !important;
+}
 
 /* Réduction de la hauteur de la bande basse dynamique */
  #fixed-bottom-bar {
@@ -679,6 +689,54 @@ h1 {
    gap: 4px !important;              /* espacement horizontal minimal */
    align-items: center !important;   /* aligne verticalement au centre */
  }
+
+/* Compteurs (Réponses, Erreurs, Restantes) */
+#fixed-bottom-bar .counter-box {
+  padding: 2px 6px !important;      /* padding interne réduit */
+  font-size: 0.8em !important;      /* texte plus compact */
+  line-height: 1.1 !important;      /* hauteur de ligne minimale */
+}
+
+/* Chronomètre */
+#fixed-bottom-bar #timer-container {
+  padding: 2px 10px !important;      /* padding vertical et horizontal réduit */
+  font-size: 0.85em !important;     /* taille de texte légèrement petite */
+  line-height: 1.1 !important;      /* hauteur de ligne réduite */
+  align-self: center !important;    /* centre verticalement dans la barre */
+}
+
+
+/* === Pilotage de l’affichage du timer === */
+
+/* Cache le timer quand la classe hide-timer est ajoutée */
+.hide-timer #timer-container {
+  display: none !important;
+}
+
+/* Ajuste la bande basse quand le timer est masqué */
+.hide-timer #fixed-bottom-bar {
+  padding: 0 6px !important;
+  gap: 12px !important;
+}
+
+/* Empêcher le chevauchement entre sélecteurs */
+.filters-container {
+  gap: 0.1rem !important;        /* Espace suffisant entre tous les filtres */
+  flex-wrap: nowrap !important;/* Pas de retour à la ligne */
+}
+
+/* Chaque wrapper garde sa taille minimale et ne rétrécit pas */
+.selector-wrapper {
+  flex: 0 0 auto !important;   /* flex-grow:0, flex-shrink:0, flex-basis:auto */
+}
+
+/* Espace spécifique entre langue et sourate */
+#language-wrapper {
+  margin-right: 0.07rem !important;
+}
+#sourah-wrapper {
+  margin-left: 0.07rem !important;
+}
 
 /* Hauteur de la bande basse pour Android et iOS */
 .bande-basse {
@@ -694,6 +752,28 @@ body.ios-device #fixed-bottom-bar {
   height: 50px !important;
 }
 
+/* Nouvelle règle forte pour réduire la hauteur de la bande basse */
+body {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 50px) !important;
+}
+
+#fixed-bottom-bar {
+  height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+  max-height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 4px 8px !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+function fixBottomBarHeight() {
+  fixedBar.style.height = '50px';
+  fixedBar.style.maxHeight = '50px';
+}
+
+window.addEventListener('resize', fixBottomBarHeight);
+window.addEventListener('scroll', fixBottomBarHeight);
+
+fixBottomBarHeight();
 
 }
 /* ======= Écran d'ordinateur et tablette : LES MESURES : hauteur - largeur - longueur ======= */
