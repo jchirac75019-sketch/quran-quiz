@@ -320,23 +320,23 @@ h1 {
   text-decoration: line-through;
 }
 #ayat-box {
-  max-width: 90vw; /* reduced width for better centering */
-  margin: 0 auto 10px auto; /* margin-bottom for separation */
-  background: #f5f5f5;
-  border-radius: 16px;
-  padding: 18px 20px; /* slightly reduced padding */
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.14);
-  font-size: 1.3em;
-  line-height: 1.55em;
-  direction: rtl;
-  text-align: right;
-  overflow-y: auto; /* ensure scroll */
-  overflow-x: hidden;
-  box-sizing: border-box;
+  max-width: 90vw; /* Largeur maximale du bloc (90% de l'écran) */
+  margin: 0 auto 10px auto; /* Centre horizontalement, espace bas 10px */
+  background: #f5f5f5; /* Couleur de fond claire */
+  border-radius: 16px; /* Bords arrondis */
+  padding: 18px 20px; /* Espace interne : haut/bas 18px, côtés 20px */
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.14); /* Ombre portée douce */
+  font-size: 1.3em; /* Texte agrandi */
+  line-height: 1.55em; /* Hauteur de ligne confortable */
+  direction: rtl; /* Texte de droite à gauche (arabe) */
+  text-align: right; /* Alignement à droite */
+  overflow-y: auto; /* Défilement vertical si nécessaire */
+  overflow-x: hidden; /* Pas de défilement horizontal */
+  box-sizing: border-box; /* Prend en compte le padding dans la largeur/hauteur */
   position: relative;
   z-index: 9999;
-  max-height: 50em; /* increased height when timer hidden */
-  user-select: text;
+  max-height: 80em; /* Hauteur maximale du bloc (augmentée à 80em) */
+  user-select: text; /* Autorise la sélection du texte */
   display: none;
   flex-shrink: 1;
   scroll-behavior: smooth;
@@ -744,7 +744,7 @@ h1 {
 }
 
 body.ios-device .bande-basse {
-  height: 50px !important; /* hauteur réduite sur iOS */
+  height: 80px !important; /* hauteur réduite sur iOS */
 padding-bottom: constant(safe-area-inset-bottom);
 }
 
@@ -796,7 +796,7 @@ fixBottomBarHeight();
   }
   #ayat-box {
     max-height: 42em;
-    font-size: 1.3em;
+    font-size: 2.3em;
   }
   .counter-box {
     font-size: 0.95em;
