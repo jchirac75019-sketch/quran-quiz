@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<button onclick="toggleBottomBar()">Masquer / Afficher chronomètre</button>
+
 <title>Quiz Versets Coran Avancé</title>
 <style>
 * { box-sizing: border-box; }
@@ -560,6 +562,20 @@ h1 {
   white-space: normal;
   margin: 0 8px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*Début******************* Taille de police par défaut (pour tous les types d'écran) ********************' Début/
 
@@ -2296,6 +2312,25 @@ function toggleFullScreen() {
 
 // Liaison avec le bouton
 document.getElementById('btnFullScreen').addEventListener('click', toggleFullScreen);
+
+
+const arrowLeft = document.getElementById('arrow-left');
+    const arrowRight = document.getElementById('arrow-right');
+    const responseButtons = document.getElementById('response-buttons');
+    const timerContainer = document.getElementById('timer-container');
+    const fixedBottomBar = document.getElementById('fixed-bottom-bar');
+    const body = document.body;
+
+    function toggleBottomBar() {
+      body.classList.toggle('hide-timer');
+      if(body.classList.contains('hide-timer')) {
+        responseButtons.appendChild(arrowLeft);
+        responseButtons.appendChild(arrowRight);
+      } else {
+        timerContainer.appendChild(arrowLeft);
+        timerContainer.appendChild(arrowRight);
+      }
+    }
 
 
 </script>
