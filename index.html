@@ -587,6 +587,36 @@ h1 {
 }
 /*Fin******************* Taille de police par défaut (pour tous les types d'écran) ********************' Fin/
 
+/*------------------------------------------------------------------------------
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* hauteur totale du viewport */
+}
+
+.header {
+  /* Bande supérieure type */
+  height: 60px;
+}
+
+.verset-block {
+  flex: 1 1 auto; /* occupe tout l'espace restant */
+  min-height: 0; /* assure le remplissage sans scroll interne */
+  overflow: visible; /* le bloc peut dépasser si nécessaire */
+}
+
+.footer {
+  height: 70px; /* bande basse masquable */
+}
+/*------------------------------------------------------------------------------
+
 
 /* ======= Écran des téléphones : LES MESURES : hauteur - largeur - longueur ======= */
 @media (max-width: 767px) {
