@@ -590,31 +590,31 @@ h1 {
 /*----------Agrandir automatiquement le bloc des versets jusqu'en bas de l'écran sur mobile ----------' Début : Que pour écran de téléphone
 
 /* Par défaut (chronomètre MASQUÉ) : bloc extensible sans scroll */
-//@media (max-width: 767px) {
-  //#main-scroll-container {
-    //height: auto !important;
-    //min-height: 100vh !important;
-    //overflow-y: visible !important; /* Pas de scroll sur le conteneur */
-  //}
-  //#ayat-box {
-    //max-height: none;
-    //height: auto;
-    //margin-bottom: 140px; /* espace pour barre basse */
-    //overflow-y: visible;  /* pas de scroll dans le bloc */
-  //}
-//}
+@media (max-width: 767px) {
+  #main-scroll-container {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: visible !important; /* Pas de scroll sur le conteneur */
+  }
+  #ayat-box {
+    max-height: none;
+    height: auto;
+    margin-bottom: 140px; /* espace pour barre basse */
+    overflow-y: visible;  /* pas de scroll dans le bloc */
+  }
+}
 
 /* Quand chronomètre VISIBLE : scroll activé dans le bloc versets */
-//.show-timer #main-scroll-container {
-  //height: 100vh !important;
-  //overflow-y: auto !important; /* Scroll possible */
-//}
-//.show-timer #ayat-box {
-  //max-height: calc(100vh - 140px); /* hauteur jusqu'à la barre basse */
-  //height: auto;
-  //margin-bottom: 0; /* Pas d’espace supplémentaire */
-  //overflow-y: auto; /* Scroll interne activé */
-//}
+.show-timer #main-scroll-container {
+  height: 100vh !important;
+  overflow-y: auto !important; /* Scroll possible */
+}
+.show-timer #ayat-box {
+  max-height: calc(100vh - 140px); /* hauteur jusqu'à la barre basse */
+  height: auto;
+  margin-bottom: 0; /* Pas d’espace supplémentaire */
+  overflow-y: auto; /* Scroll interne activé */
+}
 
 /*----------Agrandir automatiquement le bloc des versets jusqu'en bas de l'écran sur mobile ----------' Fin : Que pour écran de téléphone
 
