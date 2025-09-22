@@ -321,10 +321,10 @@ h1 {
 }
 #ayat-box {
   max-width: 90vw; /* Largeur maximale du bloc (90% de l'écran) */
-  margin: 0 auto 10px auto; /* Centre horizontalement le bloc, espace bas 10px */
+  margin: 0 auto 50px auto; /* Centre horizontalement le bloc, espace bas 10px */
   background: #f5f5f5; /* Couleur de fond claire */
   border-radius: 16px; /* Bords arrondis */
-  //padding: 18px 20px; /* Espace interne : haut/bas 18px, côtés 20px */ /* C'est pour laisser un cardon vide tout au tour du bloc des versets (entre le texte et le bloc) */
+  padding: 18px 20px; /* Espace interne : haut/bas 18px, côtés 20px */ /* C'est pour laisser un cardon vide tout au tour du bloc des versets (entre le texte et le bloc) */
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.14); /* Ombre portée douce */
   //font-size: 1.7em; /* Texte agrandi */
   line-height: 1.05em; /* Hauteur de ligne jaune dans le bloc */
@@ -560,6 +560,34 @@ h1 {
   white-space: normal;
   margin: 0 8px;
 }
+
+/*Début******************* Taille de police par défaut (pour tous les types d'écran) ********************' Début/
+
+/* Style par défaut (ex. pour écrans intermédiaires) */
+#ayat-box, #verse-text {
+  font-size: 1.3em;
+}
+/* Pour les écrans de téléphone (petit écran) */
+@media (max-width: 767px) {
+  #ayat-box, #verse-text {
+    font-size: 1.1em;
+  }
+}
+/* Pour les tablettes (écrans moyens, optionnel) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #ayat-box, #verse-text {
+    font-size: 1.5em;
+  }
+}
+/* Pour les ordinateurs (grands écrans) */
+@media (min-width: 1024px) {
+  #ayat-box, #verse-text {
+    font-size: 1.7em;
+  }
+}
+/*Fin******************* Taille de police par défaut (pour tous les types d'écran) ********************' Fin/
+
+
 /* ======= Écran des téléphones : LES MESURES : hauteur - largeur - longueur ======= */
 @media (max-width: 767px) {
   body {
@@ -808,7 +836,7 @@ fixBottomBarHeight();
   }
   #ayat-box {
     max-height: 42em;
-    font-size: 7.7em !important;
+    font-size: 1.3em !important;
   }
 
   .counter-box {
@@ -2208,6 +2236,7 @@ function toggleFullScreen() {
 
 // Liaison avec le bouton
 document.getElementById('btnFullScreen').addEventListener('click', toggleFullScreen);
+
 
 </script>
 </body>
