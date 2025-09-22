@@ -589,55 +589,32 @@ h1 {
 
 /*------------------------------------------------------------------------------
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* hauteur totale du viewport */
-}
-
-.header {
-  /* Bande supérieure type */
-  height: 60px;
-}
-
-.verset-block {
-  flex: 1 1 auto; /* occupe tout l'espace restant */
-  min-height: 0; /* assure le remplissage sans scroll interne */
-  overflow: visible; /* le bloc peut dépasser si nécessaire */
-}
-
-.footer {
-  height: 70px; /* bande basse masquable */
-}
-
-.footer.hidden {
-  display: none;
-}
-
-
-
-
-
+/* Par défaut (chronomètre MASQUÉ) : bloc extensible sans scroll */
 @media (max-width: 767px) {
   #main-scroll-container {
     height: auto !important;
     min-height: 100vh !important;
-    overflow-y: visible !important;
+    overflow-y: visible !important; /* Pas de scroll sur le conteneur */
   }
   #ayat-box {
     max-height: none;
     height: auto;
+    margin-bottom: 140px; /* espace pour barre basse */
+    overflow-y: visible;  /* pas de scroll dans le bloc */
   }
 }
 
-
-
+/* Quand chronomètre VISIBLE : scroll activé dans le bloc versets */
+.show-timer #main-scroll-container {
+  height: 100vh !important;
+  overflow-y: auto !important; /* Scroll possible */
+}
+.show-timer #ayat-box {
+  max-height: calc(100vh - 140px); /* hauteur jusqu'à la barre basse */
+  height: auto;
+  margin-bottom: 0; /* Pas d’espace supplémentaire */
+  overflow-y: auto; /* Scroll interne activé */
+}
 
 /*------------------------------------------------------------------------------
 
