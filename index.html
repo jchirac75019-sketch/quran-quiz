@@ -36,8 +36,8 @@ body {
 #main-scroll-container {
   display: flex;
   flex-direction: column;
-  //height: 100vh;
-  //overflow-y: auto;
+  //height: 100vh; /* J'ai désactivé cette ligne pour que le bloc des versets puisse s'étaler sur tous l'écran et qu'il ne soit pas d'une hauteur fixe.
+  //overflow-y: auto; /* J'ai désactivé le scroll car il y'est en dessous. 
   padding: 1em 4vw 1.5em;
 }
 h1 {
@@ -702,10 +702,10 @@ h1 {
     //font-size: 1.1em;
   //}
 /* === le bloc des versets n’ait aucune limite et prenne tout l’espace disponible === */
-#ayat-box {
-  max-height: none;
-  height: auto;
-}
+//#ayat-box {
+  //max-height: none;
+  //height: auto;
+//}
   #response-buttons {
     max-width: 100%;
   }
@@ -894,10 +894,10 @@ fixBottomBarHeight();
   .selector-wrapper.non-arabic#sourah-wrapper {
     max-width: 8vw;
   }
-  #ayat-box {
-    max-height: 42em;
-    font-size: 1.3em !important;
-  }
+  //#ayat-box {
+    //max-height: 42em;
+    //font-size: 1.3em !important;
+  //}
 
   .counter-box {
     font-size: 0.95em;
