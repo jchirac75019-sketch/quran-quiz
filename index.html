@@ -1065,37 +1065,35 @@ fixBottomBarHeight();
 }
 
 
-/* Style des flèches dupliquées */
-.fake-arrow-btn {
-  display: flex;
-  font-size: 2.4em;
-  padding: 10px 16px;
-  background-color: #7a722c;
-  color: #f5f5e1;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  margin: 0 8px;
+/* === STYLE FORCÉ DES FLÈCHES DUPLIQUÉES === */
+/*=== STYLE SPÉCIFIQUE AUX FAKE ARROWS DANS LES CONTENEURS DÉDIÉS ===*/
+#left-fake-arrow-container .fake-arrow-btn,
+#right-fake-arrow-container .fake-arrow-btn {
+  display: flex !important;               /* toujours visibles */
+  width: auto !important;                 /* annule tout width fixe */
+  height: auto !important;                /* annule tout height fixe */
+  font-size: 2.4em !important;            /* plus grandes */
+  padding: 10px 16px !important;          /* zone tactile élargie */
+  background-color: #7a722c !important;   /* couleur uniforme */
+  color: #f5f5e1 !important;
+  border-radius: 20px !important;         /* coins arrondis */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease !important;
+  margin: 0 8px !important;               /* espacement */
 }
-.fake-arrow-btn:hover {
-  transform: scale(1.2);
+#left-fake-arrow-container .fake-arrow-btn:hover,
+#right-fake-arrow-container .fake-arrow-btn:hover {
+  transform: scale(1.2) !important;       /* zoom au survol */
 }
 @media (max-width: 767px) {
-  .fake-arrow-btn {
-    font-size: 2em;
-    padding: 12px 20px;
-    border-radius: 24px;
+  #left-fake-arrow-container .fake-arrow-btn,
+  #right-fake-arrow-container .fake-arrow-btn {
+    font-size: 2em !important;
+    padding: 12px 20px !important;
+    border-radius: 24px !important;
   }
 }
-
-.fake-arrow-btn {
-  /* … votre style … */
-  font-size: 2.4em !important;
-  padding: 12px 20px !important;
-  border-radius: 20px !important;
-}
-
 
 </style>
 </head>
@@ -2056,6 +2054,8 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
     leftFakeArrow.setAttribute('role', 'button');
     leftFakeArrow.setAttribute('aria-label', 'Verset précédent');
     leftFakeArrow.tabIndex = 0;
+    leftFakeArrow.style.cssText =
+    'display:flex;width:auto;height:38px;font-size:2.4em;padding:4px 16px;border-radius:20px;background:#7a722c;color:#f5f5e1;box-shadow:0 4px 12px rgba(0,0,0,0.3);margin:0 8px;justify-content:center;align-items:center;';
 
     // Créer la flèche droite dupliquée
     rightFakeArrow = document.createElement('div');
@@ -2064,6 +2064,9 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
     rightFakeArrow.setAttribute('role', 'button');
     rightFakeArrow.setAttribute('aria-label', 'Verset suivant');
     rightFakeArrow.tabIndex = 0;
+    rightFakeArrow.style.cssText =
+    'display:flex;width:auto;height:38px;font-size:2.4em;padding:4px 16px;border-radius:20px;background:#7a722c;color:#f5f5e1;box-shadow:0 4px 12px rgba(0,0,0,0.3);margin:0 8px;justify-content:center;align-items:center;';
+
 
     // Ajouter les conteneurs
     const leftContainer = document.getElementById('left-fake-arrow-container');
@@ -2299,11 +2302,7 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
     renderAyahs();
   }
 
-  // *** CRÉER LES FLÈCHES DUPLIQUÉES AU CHARGEMENT ***
-  createDuplicateArrows();
-});
-
-})();
+ 
 function toggleFullScreen() {
   const doc = window.document;
   const docEl = doc.documentElement;
@@ -2320,15 +2319,11 @@ function toggleFullScreen() {
 // Liaison avec le bouton
 document.getElementById('btnFullScreen').addEventListener('click', toggleFullScreen);
 
-function createDuplicateArrows(){
-  const left=document.createElement('div'), right=document.createElement('div');
-  left.className='fake-arrow-btn'; left.textContent='←'; left.onclick=moveToPreviousAyah;
-  right.className='fake-arrow-btn'; right.textContent='→'; right.onclick=moveToNextAyah;
-  document.getElementById('left-fake-arrow-container').appendChild(left);
-  document.getElementById('right-fake-arrow-container').appendChild(right);
-}
-document.addEventListener('DOMContentLoaded', createDuplicateArrows);
 
+ // *** CRÉER LES FLÈCHES DUPLIQUÉES AU CHARGEMENT ***
+  createDuplicateArrows();
+});
+})();
 
 </script>
 </body>
