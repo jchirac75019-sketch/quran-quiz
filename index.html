@@ -1095,6 +1095,18 @@ fixBottomBarHeight();
   }
 }
 
+@media (max-width: 767px) {
+  /* Réduire l’écart entre flèches dupliquées et compteurs */
+  #left-fake-arrow-container,
+  #right-fake-arrow-container {
+    margin: 0 4px !important;
+  }
+  /* Réduire l’écart entre compteurs */
+  #counters-buttons-group {
+    gap: 4px !important;
+  }
+}
+
 </style>
 </head>
 <body>
