@@ -2059,26 +2059,37 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
 
   // *** NOUVELLES FONCTIONS POUR LES FLÈCHES DUPLIQUÉES OPTIMISÉES ***
   function createDuplicateArrows() {
-    // Créer la flèche gauche dupliquée
-    leftFakeArrow = document.createElement('div');
-    leftFakeArrow.className = 'fake-arrow-btn';
-    leftFakeArrow.textContent = '←';
-    leftFakeArrow.setAttribute('role', 'button');
-    leftFakeArrow.setAttribute('aria-label', 'Verset précédent');
-    leftFakeArrow.tabIndex = 0;
-    leftFakeArrow.style.cssText =
-    'display:flex;width:auto;height:38px;font-size:2.4em;padding:4px 16px;border-radius:20px;background:#7a722c;color:#f5f5e1;box-shadow:0 4px 12px rgba(0,0,0,0.3);margin:0 8px;justify-content:center;align-items:center;';
+  // Créer la flèche gauche
+  leftFakeArrow = document.createElement('div');
+  leftFakeArrow.className = 'fake-arrow-btn';
+  leftFakeArrow.textContent = '←';
+  leftFakeArrow.setAttribute('role', 'button');
+  leftFakeArrow.setAttribute('aria-label', 'Verset précédent');
+  leftFakeArrow.tabIndex = 0;
 
-    // Créer la flèche droite dupliquée
-    rightFakeArrow = document.createElement('div');
-    rightFakeArrow.className = 'fake-arrow-btn';
-    rightFakeArrow.textContent = '→';
-    rightFakeArrow.setAttribute('role', 'button');
-    rightFakeArrow.setAttribute('aria-label', 'Verset suivant');
-    rightFakeArrow.tabIndex = 0;
-    rightFakeArrow.style.cssText =
-    'display:flex;width:auto;height:38px;font-size:2.4em;padding:4px 16px;border-radius:20px;background:#7a722c;color:#f5f5e1;box-shadow:0 4px 12px rgba(0,0,0,0.3);margin:0 8px;justify-content:center;align-items:center;';
+  // Créer la flèche droite
+  rightFakeArrow = document.createElement('div');
+  rightFakeArrow.className = 'fake-arrow-btn';
+  rightFakeArrow.textContent = '→';
+  rightFakeArrow.setAttribute('role', 'button');
+  rightFakeArrow.setAttribute('aria-label', 'Verset suivant');
+  rightFakeArrow.tabIndex = 0;
 
+  // Dimensions et centrage
+  const baseStyle =
+    'display:flex;width:auto;height:38px;font-size:2.4em;padding:10px 16px;border-radius:20px;' +
+    'background:#7a722c;color:#f5f5e1;box-shadow:0 4px 12px rgba(0,0,0,0.3);justify-content:center;align-items:center;';
+
+  // Espacement desktop vs mobile
+  const isMobile = window.innerWidth <= 767;
+  const horizontalMargin = isMobile ? '4px' : '8px';
+
+  leftFakeArrow.style.cssText = `${baseStyle}margin:0 ${horizontalMargin};`;
+  rightFakeArrow.style.cssText = `${baseStyle}margin:0 ${horizontalMargin};`;
+
+  // Insérer dans le DOM
+  document.getElementById('left-fake-arrow-container').appendChild(leftFakeArrow);
+  document.getElementById('right-fake-arrow-container').appendChild(rightFakeArrow);
 
     // Ajouter les conteneurs
     const leftContainer = document.getElementById('left-fake-arrow-container');
