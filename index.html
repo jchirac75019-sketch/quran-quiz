@@ -2093,14 +2093,14 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
   const isMobile = window.innerWidth <= 767;
   const isIOS = document.body.classList.contains('ios-device');
 
-  // Espacement : Android 2px, iOS 0px
+  // Espacement : Android 0px, iOS 0px
   let horizontalMargin;
   if (isMobile && isIOS) {
     horizontalMargin = '0px';
   } else if (isMobile) {
     horizontalMargin = '2px';
   } else {
-    horizontalMargin = '8px';
+    horizontalMargin = '6px';
   }
 
   leftFakeArrow.style.cssText = `${baseStyle}margin:0 ${horizontalMargin};`;
