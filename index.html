@@ -1064,67 +1064,38 @@ fixBottomBarHeight();
   transition: min-width 0.2s, padding 0.2s;
 }
 
-/* ===== NOUVELLES FLÈCHES DUPLIQUÉES OPTIMISÉES PROFESSIONNELLES ===== */
-/* Flèches dupliquées optimisées */
+
+/* Style des flèches dupliquées */
 .fake-arrow-btn {
-  display: none;
+  display: flex;
   font-size: 2.4em;
-  width: 56px; height:56px;
-  background: linear-gradient(145deg,#ecf0f1,#bdc3c7);
-  border:3px solid #34495e; border-radius:50%;
-  cursor:pointer;
-  box-shadow:0 6px 20px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.3);
-  transition:all 0.3s ease;
+  padding: 10px 16px;
+  background-color: #7a722c;
+  color: #f5f5e1;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 0 8px;
 }
 .fake-arrow-btn:hover {
-  background:linear-gradient(145deg,#3498db,#2980b9);
-  color:#fff; transform:translateY(-3px) scale(1.05);
+  transform: scale(1.2);
 }
-.hide-timer .fake-arrow-btn { display:flex!important; }
-
-.fake-arrow-btn:active {
-  transform: translateY(-1px) scale(0.98); /* Effet d'enfoncement */
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-/* Affichage uniquement quand chrono masqué */
-.hide-timer .fake-arrow-btn {
-  display: flex !important;
-}
-
-.hide-timer #custom-counters-row .counter-box {
-  min-width: 60px;
-  padding: 5px 2px;
-}
-
-/* Responsive pour flèches dupliquées */
 @media (max-width: 767px) {
   .fake-arrow-btn {
-    font-size: 2.0em;
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+    font-size: 2em;
+    padding: 12px 20px;
+    border-radius: 24px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  .fake-arrow-btn {
-    font-size: 2.2em;
-    width: 54px;
-    height: 54px;
-    min-width: 54px;
-  }
+.fake-arrow-btn {
+  /* … votre style … */
+  font-size: 2.4em !important;
+  padding: 12px 20px !important;
+  border-radius: 20px !important;
 }
 
-@media (min-width: 1024px) {
-  .fake-arrow-btn {
-    font-size: 2.4em;
-    width: 56px;
-    height: 56px;
-    min-width: 56px;
-  }
-}
-/*****Pour affiner la taille des boutons et assurer la bonne disposition des flèches et des boutons*****/
 
 </style>
 </head>
