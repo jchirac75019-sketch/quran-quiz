@@ -1115,6 +1115,12 @@ body.ios-device @media (max-width: 767px) {
   }
 }
 
+@media (max-width: 767px) {
+  body.ios-device #left-fake-arrow-container .fake-arrow-btn,
+  body.ios-device #right-fake-arrow-container .fake-arrow-btn {
+    margin: 0 -2px !important;  /* réduit l’écart avec marge négative */
+  }
+}
 
 </style>
 </head>
@@ -2096,9 +2102,9 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
   // Espacement : Android 0px, iOS 0px
   let horizontalMargin;
   if (isMobile && isIOS) {
-    horizontalMargin = '0px';
+    horizontalMargin = '-2px';
   } else if (isMobile) {
-    horizontalMargin = '2px';
+    horizontalMargin = '0px';
   } else {
     horizontalMargin = '6px';
   }
