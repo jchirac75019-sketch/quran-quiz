@@ -839,7 +839,7 @@ h1 {
    align-items: center !important;   /* aligne verticalement au centre */
  }
 
-/* Compteurs (Réponses, Erreurs, Restantes) */
+/* Compteurs (Réponses, Erreurs, Reste) */
 #fixed-bottom-bar .counter-box {
   padding: 2px 6px !important;      /* padding interne réduit */
   font-size: 0.8em !important;      /* texte plus compact */
@@ -924,7 +924,6 @@ window.addEventListener('resize', fixBottomBarHeight);
 window.addEventListener('scroll', fixBottomBarHeight);
 
 fixBottomBarHeight();
-
 
 /*****Pour affiner la taille des boutons et assurer la bonne disposition des flèches et des boutons*****/
 
@@ -1137,7 +1136,7 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
       incorrect: "Mauvaise réponse",
       labelCorrect: "Réponses",
       labelIncorrect: "Erreurs",
-      labelRemaining: "Restantes",
+      labelRemaining: "Reste",
       surahPrefix: "Sourate",
       ayahPrefix: "Verset",
       timerStart: "Début:",
@@ -1181,7 +1180,7 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
       incorrect: "Incorrecto",
       labelCorrect: "Correctos",
       labelIncorrect: "Errores",
-      labelRemaining: "Restantes",
+      labelRemaining: "Restante",
       surahPrefix: "Sura",
       ayahPrefix: "Verso",
       timerStart: "Inicio:",
@@ -1834,7 +1833,6 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
       if (currentIndex >= 0 && currentIndex < ayahsContainer.children.length) {
       setSelectedNum(ayahsContainer.children[currentIndex], false);
      }
-
     }
   }
   function toggleTreated() {
@@ -2150,7 +2148,7 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
     }
   }
 
-  // Setup continuous navigation on long press for arrows
+  // Configurer la navigation continue en appuyant longuement sur les flèches
   function setupLongPressContinuous(el, moveFunc) {
     let timerId = null;
     let isLongPress = false;
@@ -2343,7 +2341,6 @@ if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
     renderAyahs();
   }
 
- 
 function toggleFullScreen() {
   const doc = window.document;
   const docEl = doc.documentElement;
@@ -2359,7 +2356,6 @@ function toggleFullScreen() {
 
 // Liaison avec le bouton
 document.getElementById('btnFullScreen').addEventListener('click', toggleFullScreen);
-
 
  // *** CRÉER LES FLÈCHES DUPLIQUÉES AU CHARGEMENT ***
   createDuplicateArrows();
